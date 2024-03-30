@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager
 
 import androidx.room.Room
 import com.ocproject.realestatemanager.db.PropertyDatabase
+import com.ocproject.realestatemanager.repositories.PropertyRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -16,5 +17,9 @@ val dataModule = module {
 
     single {
         get<PropertyDatabase>().dao
+    }
+
+    single {
+        get<PropertyRepository>()
     }
 }

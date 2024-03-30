@@ -11,3 +11,4 @@ class ViewModelModule
 val presentationModule = listOf(
     ViewModelModule().module
 )
+

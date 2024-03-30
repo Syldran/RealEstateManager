@@ -2,8 +2,8 @@ package com.ocproject.realestatemanager.ui.scenes.propertylist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ocproject.realestatemanager.db.PropertyDao
 import com.ocproject.realestatemanager.models.PropertyWithPictures
+import com.ocproject.realestatemanager.repositories.PropertyRepository
 import com.openclassrooms.realestatemanager.models.Property
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,14 +17,16 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class PropertyListViewModel(
-    private val dao: PropertyDao
+//    private val dao: PropertyDao,
+    private val propertyRepository: PropertyRepository
 ) : ViewModel() {
     //    private val propertyId: Int = checkNotNull(savedStateHandle["propertyId"])
     private val _sortType = MutableStateFlow(SortType.PRICE)
     private val _contacts = _sortType
         .flatMapLatest { sortType ->
             when (sortType) {
-                SortType.PRICE -> dao.getPropertiesOrderedByPrice()
+//                SortType.PRICE -> dao.getPropertiesOrderedByPrice()
+                SortType.PRICE -> propertyRepository.getPropertyListOrderedByPrice()
                 /* SortType.LAST_NAME -> dao.getContactOrderedByLastName()
                  SortType.PHONE_NUMBER -> dao.getContactOrderedByPhoneNumber()*/
             }
@@ -35,13 +37,13 @@ class PropertyListViewModel(
             properties = properties,
             sortType = sortType
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PropertyListState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), PropertyListState())
 
     fun onEvent(event: PropertyListEvent) {
         when (event) {
             is PropertyListEvent.DeleteProperty -> {
                 viewModelScope.launch {
-                    dao.deleteProperty(event.property)
+//                    dao.deleteProperty(event.property)
                 }
             }
 
