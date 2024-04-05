@@ -2,6 +2,8 @@ package com.ocproject.realestatemanager.db
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.ocproject.realestatemanager.models.PropertyWithPictures
@@ -14,8 +16,10 @@ import kotlinx.coroutines.flow.Flow
 interface PropertyDao {
 
     @Upsert
-    suspend fun upsertProperty(property: Property)
-    //voir pour recup l'id 
+    suspend fun upsertProperty(property: Property) : Long
+
+    @Upsert
+    suspend fun upsertPictureofProperty(pictureOfProperty: PictureOfProperty)
 
     @Delete
     suspend fun deleteProperty(property: Property)

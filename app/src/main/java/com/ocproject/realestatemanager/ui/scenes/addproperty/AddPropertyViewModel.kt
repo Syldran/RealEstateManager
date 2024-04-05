@@ -1,10 +1,10 @@
 package com.ocproject.realestatemanager.ui.scenes.addproperty
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ocproject.realestatemanager.db.PropertyDao
-import com.ocproject.realestatemanager.models.PropertyWithPictures
+import com.ocproject.realestatemanager.repositories.PropertyRepository
+import com.ocproject.realestatemanager.utils.UtilsKotlin
 import com.openclassrooms.realestatemanager.models.InterestPoint
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import com.openclassrooms.realestatemanager.models.Property
@@ -17,15 +17,15 @@ import java.util.Calendar
 
 @KoinViewModel
 class AddPropertyViewModel(
-    private val dao: PropertyDao
+    private val dao: PropertyDao,
+    private val propertyRepository: PropertyRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
-//
+    //
     fun onEvent(event: AddPropertyEvent) {
         when (event) {
-
 
 
             AddPropertyEvent.SaveProperty -> {
@@ -68,8 +68,25 @@ class AddPropertyViewModel(
                 )
 
                 viewModelScope.launch {
-                    dao.upsertProperty(property)
+                    val id = propertyRepository.upsertProperty(property)
+
+                    for (pic in pictureList){
+                        if(pic.isMain) {
+                            val pictureOfProperty = PictureOfProperty(
+                                isMain = true, uri = pic.uri,
+                                name = "test", propertyId = id.toInt()
+                            )
+                            propertyRepository.upsertPictureOfProperty(pictureOfProperty)
+                        } else {
+                            val pictureOfProperty = PictureOfProperty(
+                                isMain = false, uri = pic.uri,
+                                name = "test", propertyId = id.toInt()
+                            )
+                            propertyRepository.upsertPictureOfProperty(pictureOfProperty)
+                        }
+                    }
                 }
+
                 _state.update {
                     it.copy(
                         type = "",
@@ -100,16 +117,22 @@ class AddPropertyViewModel(
 
             is AddPropertyEvent.SetPrice -> {
                 _state.update {
-                    it.copy(
-                        price = event.price
-                    )
+                    if (event.price.isBlank()) {
+                        it.copy(
+                            price = 0
+                        )
+                    } else if (UtilsKotlin.isInteger(event.price)) {
+                        it.copy(
+                            price = event.price.toInt()
+                        )
+                    } else return
                 }
             }
 
             is AddPropertyEvent.SetArea -> {
                 _state.update {
                     it.copy(
-                        area = event.area
+                        area = event.area.toInt()
                     )
                 }
             }
@@ -133,24 +156,31 @@ class AddPropertyViewModel(
             is AddPropertyEvent.SetLat -> {
                 _state.update {
                     it.copy(
-                        lat = event.lat
+                        lat = event.lat.toDouble()
                     )
                 }
             }
 
             is AddPropertyEvent.SetLng -> {
                 _state.update {
+
                     it.copy(
-                        lng = event.lng
+                        lng = event.lng.toDouble()
                     )
                 }
             }
 
             is AddPropertyEvent.SetNumberOfRooms -> {
                 _state.update {
-                    it.copy(
-                        numberOfRooms = event.numberOfRooms
-                    )
+                    if (event.numberOfRooms.isBlank()) {
+                        it.copy(
+                            numberOfRooms = 0
+                        )
+                    } else if (UtilsKotlin.isInteger(event.numberOfRooms)) {
+                        it.copy(
+                            numberOfRooms = event.numberOfRooms.toInt()
+                        )
+                    } else return
                 }
             }
 
@@ -167,6 +197,7 @@ class AddPropertyViewModel(
 //            }
 
             is AddPropertyEvent.SetInterestPoints -> TODO()
+
             is AddPropertyEvent.SetPictureList -> {
                 _state.update {
                     it.copy(
@@ -184,16 +215,16 @@ class AddPropertyViewModel(
     sealed interface AddPropertyEvent {
         data object SaveProperty : AddPropertyEvent
         data class SetType(val type: String) : AddPropertyEvent
-        data class SetPrice(val price: Int) : AddPropertyEvent
-        data class SetArea(val area: Int) : AddPropertyEvent
-        data class SetNumberOfRooms(val numberOfRooms: Int) : AddPropertyEvent
+        data class SetPrice(val price: String) : AddPropertyEvent
+        data class SetArea(val area: String) : AddPropertyEvent
+        data class SetNumberOfRooms(val numberOfRooms: String) : AddPropertyEvent
         data class SetDescription(val description: String) : AddPropertyEvent
         data class SetAddress(val address: String) : AddPropertyEvent
         data class SetState(val state: String) : AddPropertyEvent
-        data class SetLat(val lat: Double) : AddPropertyEvent
-        data class SetLng(val lng: Double) : AddPropertyEvent
-        data class SetPictureList(val pictureList: List<Uri>): AddPropertyEvent
-        data class SetInterestPoints(val interestPoints: List<InterestPoint>): AddPropertyEvent
+        data class SetLat(val lat: String) : AddPropertyEvent
+        data class SetLng(val lng: String) : AddPropertyEvent
+        data class SetPictureList(val pictureList: List<PictureOfProperty>) : AddPropertyEvent
+        data class SetInterestPoints(val interestPoints: List<InterestPoint>) : AddPropertyEvent
     }
 
     data class AddPropertyState(
@@ -202,7 +233,7 @@ class AddPropertyViewModel(
         val area: Int = 0,
         val numberOfRooms: Int = 0,
         val description: String = "",
-        val picturesList: List<Uri> = emptyList(), // to create
+        val picturesList: List<PictureOfProperty> = emptyList(), // to create
         val address: String = "",
         val interestPoints: List<InterestPoint> = emptyList(), // to create
         val state: String = "",
@@ -212,7 +243,7 @@ class AddPropertyViewModel(
         val lat: Double = 0.0,
         val lng: Double = 0.0,
         //
-        val isAddingProperty:Boolean = false,
+        val isAddingProperty: Boolean = false,
     )
 
 }

@@ -4,7 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ocproject.realestatemanager.db.PropertyDao
+import com.ocproject.realestatemanager.repositories.PropertyRepository
 import com.openclassrooms.realestatemanager.models.InterestPoint
+import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,7 +17,7 @@ import org.koin.core.annotation.InjectedParam
 class PropertyDetailsViewModel(
     @InjectedParam
     private val propertyId: Int,
-    private val dao: PropertyDao,
+    private val propertyRepository: PropertyRepository,
 
     ) : ViewModel() {
     val state = MutableStateFlow(PropertyDetailsState())
@@ -27,7 +29,7 @@ class PropertyDetailsViewModel(
     // mettre en suspend faire dans treah io
     fun getPropertyDetails() {
         viewModelScope.launch {
-            val propertyDetails = dao.getPropertyDetails(propertyId)
+            val propertyDetails = propertyRepository.getProperty(propertyId)
             state.update {
                 it.copy(
                     type = propertyDetails.property.type,
@@ -35,7 +37,7 @@ class PropertyDetailsViewModel(
                     area = propertyDetails.property.area,
                     numberOfRooms = propertyDetails.property.numberOfRooms,
                     description = propertyDetails.property.description,
-                    //picturesList = ,
+                    picturesList = propertyDetails.pictureList,
                     address = propertyDetails.property.address,
                     //interestPoints = propertyDetails.property.interestPoints,
                     state = propertyDetails.property.state,
@@ -56,7 +58,7 @@ class PropertyDetailsViewModel(
         val area: Int = 0,
         val numberOfRooms: Int = 0,
         val description: String = "",
-        val picturesList: List<Uri> = emptyList(), // to create
+        val picturesList: List<PictureOfProperty> = emptyList(), // to create
         val address: String = "",
         val interestPoints: List<InterestPoint> = emptyList(), // to create
         val state: String = "",

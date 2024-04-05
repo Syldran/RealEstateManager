@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.ocproject.realestatemanager.db.PropertyDatabase
 import com.ocproject.realestatemanager.repositories.PropertyRepository
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -19,7 +20,5 @@ val dataModule = module {
         get<PropertyDatabase>().dao
     }
 
-    single {
-        get<PropertyRepository>()
-    }
+    singleOf(::PropertyRepository)
 }

@@ -2,9 +2,13 @@ package com.ocproject.realestatemanager.ui.scenes.propertydetails
 
 
 import android.util.Log
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,9 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
-import kotlin.math.log
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 @Composable
 fun PropertyDetail(
@@ -24,7 +32,7 @@ fun PropertyDetail(
 ) {
     val state by viewModel.state.collectAsState()
     PropertyDetailsScreen(
-       state = state,
+        state = state,
     )
 }
 
@@ -51,5 +59,36 @@ fun PropertyDetailsScreen(
         Text(text = "Property agent id : ${state.agentId}")
         Text(text = "Property lat : ${state.lat}")
         Text(text = "Property lng : ${state.lng}")
+        Log.d("TAG1", "PropertyDetailsScreen: ${state.picturesList.size}")
+        Row(modifier = Modifier) {
+            state.picturesList.forEach() {
+
+            Log.d("TAG1", "PropertyDetailsScreen: ${it.uri}")
+
+                when (it.isMain) {
+                    true -> AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillHeight,
+                        modifier = Modifier
+                            .weight(0.25f)
+                            .border(2.dp, shape = RectangleShape, color = Color.Red)
+                            .height(64.dp)
+                    )
+
+                    else -> {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
+                                .weight(0.25f)
+                                .border(2.dp, shape = RectangleShape, color = Color.Black)
+                                .height(64.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }

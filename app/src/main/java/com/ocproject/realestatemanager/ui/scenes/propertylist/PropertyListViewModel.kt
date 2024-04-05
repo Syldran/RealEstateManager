@@ -37,13 +37,14 @@ class PropertyListViewModel(
             properties = properties,
             sortType = sortType
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), PropertyListState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PropertyListState())
 
     fun onEvent(event: PropertyListEvent) {
         when (event) {
             is PropertyListEvent.DeleteProperty -> {
                 viewModelScope.launch {
 //                    dao.deleteProperty(event.property)
+                    propertyRepository.deleteProperty(event.property)
                 }
             }
 

@@ -25,9 +25,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ocproject.realestatemanager.ui.scenes.propertylist.components.PropertyListTopBar
 import com.ocproject.realestatemanager.ui.theme.RealestatemanagerTheme
 import com.openclassrooms.realestatemanager.models.Property
@@ -125,13 +129,35 @@ fun ListPropertiesScreen(
                             onNavigateToDetailsPropertyScreen(property.property.id)
                         })
                 ) {
+                    Row(modifier = Modifier.weight(0.25f)) {
+                        property.pictureList.forEach {
+                            when (it.isMain) {
+                                true -> {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(it.uri)
+                                            .build(),
+                                        contentDescription = "Main picture of property",
+                                        contentScale = ContentScale.Fit,
+
+                                        )
+                                }
+
+                                false -> {}
+                            }
+                        }
+
+///storage/self/primary/Pictures/.thumbnails/31.jpg
+                    }
                     Column(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(0.75f)
+                            .padding(start = 8.dp),
                     ) {
                         Divider()
                         Text(
                             text = "id : ${property.property.id}",
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
                         )
                         Text(
                             text = property.property.address,

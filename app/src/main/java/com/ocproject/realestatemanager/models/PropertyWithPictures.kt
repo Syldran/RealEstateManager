@@ -9,7 +9,8 @@ data class PropertyWithPictures(
     @Embedded val property: Property,
     @Relation(
         parentColumn = "id",
-        entityColumn = "propertyId"
+        entityColumn = "propertyId",
+        entity = PictureOfProperty::class
     )
-    val pictureList: List<PictureOfProperty> // <-- This is a one-to-many relationship, since each artist has many albums, hence returning a List here
+    val pictureList: List<PictureOfProperty>
 )

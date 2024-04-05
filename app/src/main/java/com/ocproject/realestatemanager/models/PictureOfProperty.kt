@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.models
 
 import android.net.Uri
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -21,5 +22,6 @@ data class PictureOfProperty(
     val name: String = "",
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val propertyId: Int = 0,
+    @ColumnInfo(index = true)
+    val propertyId: Int?,
 )
