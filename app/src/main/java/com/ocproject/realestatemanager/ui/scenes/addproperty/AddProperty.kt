@@ -1,5 +1,8 @@
 package com.ocproject.realestatemanager.ui.scenes.addproperty
 
+import android.content.ContentResolver
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -23,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +42,7 @@ import coil.request.ImageRequest
 import com.ocproject.realestatemanager.ui.theme.RealestatemanagerTheme
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun AddProperty(
@@ -103,33 +108,65 @@ fun AddPropertyScreen(
     onMakeMainPicture: () -> Unit,
 ) {
 
+    val context = LocalContext.current
+    val isDirectoryPicked = remember { mutableStateOf(false) }
+    val dirPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree(),
+        onResult = { maybeUri ->
+            maybeUri?.let { uri ->
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                if (checkUriPersisted(context.contentResolver, uri)) {
+                    context.contentResolver.releasePersistableUriPermission(uri, flags)
+                }
+                context.contentResolver.takePersistableUriPermission(uri, flags)
+                // Do Something
+                isDirectoryPicked.value = true
+            }
+        }
+    )
+
 
     val result = remember { mutableStateListOf<PictureOfProperty>() }
     val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) {
-            result.clear()
-            var index = 0
-            it.forEach {
-                when (index) {
-                    0 -> result.add(
-                        PictureOfProperty(
-                            uri = it.toString(),
-                            propertyId = 1,
-                            isMain = true
-                        )
-                    )
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickMultipleVisualMedia(),
+            onResult = { maybeUris ->
+                maybeUris?.let { uris ->
+                    val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    uris.forEach {
+                        if (checkUriPersisted(context.contentResolver, it)) {
+                            context.contentResolver.releasePersistableUriPermission(it, flags)
+                        }
+                        context.contentResolver.takePersistableUriPermission(it, flags)
+                    }
+                    result.clear()
+                    var index = 0
+                    uris.forEach {
+                        when (index) {
+                            0 -> result.add(
+                                PictureOfProperty(
+                                    uri = it.toString(),
+                                    propertyId = 1,
+                                    isMain = true
+                                )
+                            )
 
-                    else -> result.add(
-                        PictureOfProperty(
-                            uri = it.toString(),
-                            propertyId = 1,
-                            isMain = false
-                        )
-                    )
+                            else -> result.add(
+                                PictureOfProperty(
+                                    uri = it.toString(),
+                                    propertyId = 1,
+                                    isMain = false
+                                )
+                            )
+                        }
+                        index++
+                    }
                 }
-                index++
-            }
-        }
+            },
+        )
+
 
 
     Column(
@@ -272,13 +309,17 @@ fun AddPropertyScreen(
 
         Row() {
             result.forEach {
-                when (it.isMain){
+                when (it.isMain) {
                     true -> AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
                         contentDescription = null,
                         contentScale = ContentScale.FillHeight,
-                        modifier = Modifier.weight(0.25f).border(2.dp, shape = RectangleShape, color = Color.Red).height(64.dp)
+                        modifier = Modifier
+                            .weight(0.25f)
+                            .border(2.dp, shape = RectangleShape, color = Color.Red)
+                            .height(64.dp)
                     )
+
                     else -> {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
@@ -311,6 +352,11 @@ fun AddPropertyScreen(
             }
         }
     }
+
+}
+
+fun checkUriPersisted(contentResolver: ContentResolver, uri: Uri): Boolean {
+    return contentResolver.persistedUriPermissions.any { perm -> perm.uri == uri }
 }
 
 
@@ -335,4 +381,3 @@ private fun AddPropertyPreview() {
         )
     }
 }
-

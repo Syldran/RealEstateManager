@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.ui.scenes.propertylist
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,8 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -25,7 +27,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ContentScale.Companion.Fit
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -120,65 +125,78 @@ fun ListPropertiesScreen(
                         }
                     }
                 }
+                HorizontalDivider()
             }
             items(state.properties) { property ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(onClick = {
-                            onNavigateToDetailsPropertyScreen(property.property.id)
-                        })
-                ) {
-                    Row(modifier = Modifier.weight(0.25f)) {
-                        property.pictureList.forEach {
-                            when (it.isMain) {
-                                true -> {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(it.uri)
-                                            .build(),
-                                        contentDescription = "Main picture of property",
-                                        contentScale = ContentScale.Fit,
+                Column {
 
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable(onClick = {
+                                onNavigateToDetailsPropertyScreen(property.property.id)
+                            })
+                    ) {
+                        Row(modifier = Modifier.weight(0.25f)) {
+                            property.pictureList.forEach {
+                                when (it.isMain) {
+                                    true -> {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(it.uri)
+                                                .crossfade(true)
+                                                .build(),
+                                            contentDescription = "Main picture of property",
+                                            contentScale = ContentScale.FillBounds,
+                                            modifier = Modifier
+                                                .height(64.dp)
+                                                .border(
+                                                    2.dp,
+                                                    shape = RectangleShape,
+                                                    color = Color.Black
+                                                ),
                                         )
-                                }
+                                    }
 
-                                false -> {}
+                                    false -> {}
+                                }
                             }
                         }
+                        Column(
+                            modifier = Modifier
+                                .weight(0.75f)
+                                .padding(start = 8.dp),
+                        ) {
 
-///storage/self/primary/Pictures/.thumbnails/31.jpg
-                    }
-                    Column(
-                        modifier = Modifier
-                            .weight(0.75f)
-                            .padding(start = 8.dp),
-                    ) {
-                        Divider()
-                        Text(
-                            text = "id : ${property.property.id}",
-                            fontSize = 14.sp,
+                            Text(
+                                text = "id : ${property.property.id}",
+                                fontSize = 14.sp,
+                            )
+                            Text(
+                                text = property.property.address,
+                                fontSize = 20.sp
+                            )
+                            Text(text = property.property.price.toString(), fontSize = 12.sp)
+                        }
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Property",
+                            modifier = Modifier
+                                .clickable {
+                                    onDelete(property.property)
+                                }
+                                .align(CenterVertically)
                         )
-                        Text(
-                            text = property.property.address,
-                            fontSize = 20.sp
-                        )
-                        Text(text = property.property.price.toString(), fontSize = 12.sp)
+
                     }
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Property",
-                        modifier = Modifier
-                            .clickable {
-                                onDelete(property.property)
-                            }
-                            .align(CenterVertically)
-                    )
+                    HorizontalDivider()
                 }
             }
         }
     }
 }
+
 
 @Preview
 @Composable
