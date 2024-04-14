@@ -16,9 +16,8 @@ import androidx.room.PrimaryKey
     )]
 )
 data class PictureOfProperty(
-    val isMain: Boolean = false,
+    var isMain: Boolean = false, //check is allowed to use var
     val uri: String,
-//    val description: String,
     val name: String = "",
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

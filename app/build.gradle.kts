@@ -116,4 +116,7 @@ dependencies {
     implementation(libs.koin.core)
     ksp(libs.koin.compiler)
 
+    implementation ("org.orbit-mvi:orbit-viewmodel:4.5.0")
+    implementation ("org.orbit-mvi:orbit-compose:4.5.0")
+
 }

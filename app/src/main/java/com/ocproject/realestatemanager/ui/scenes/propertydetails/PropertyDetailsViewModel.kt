@@ -8,9 +8,11 @@ import com.ocproject.realestatemanager.repositories.PropertyRepository
 import com.openclassrooms.realestatemanager.models.InterestPoint
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.KoinApplication.Companion.init
 import org.koin.core.annotation.InjectedParam
 
 @KoinViewModel
@@ -20,7 +22,8 @@ class PropertyDetailsViewModel(
     private val propertyRepository: PropertyRepository,
 
     ) : ViewModel() {
-    val state = MutableStateFlow(PropertyDetailsState())
+    private val _state = MutableStateFlow(PropertyDetailsState())
+    val state = _state.asStateFlow()
 
     init {
         getPropertyDetails()
@@ -30,7 +33,7 @@ class PropertyDetailsViewModel(
     fun getPropertyDetails() {
         viewModelScope.launch {
             val propertyDetails = propertyRepository.getProperty(propertyId)
-            state.update {
+            _state.update {
                 it.copy(
                     type = propertyDetails.property.type,
                     price = propertyDetails.property.price,

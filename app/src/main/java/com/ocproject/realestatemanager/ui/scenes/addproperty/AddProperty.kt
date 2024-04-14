@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager.ui.scenes.addproperty
 
 import android.content.ContentResolver
 import android.content.Intent
+import android.graphics.Picture
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,50 +50,53 @@ fun AddProperty(
     onNavigateToPropertiesScreen: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
+//    val flowBorderColor by viewModel.colorBorder.collectAsState()
     AddPropertyScreen(
         state = state,
         onSetType = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetType(it))
+            viewModel.onEvent(AddPropertyEvent.SetType(it))
         },
         onSetPrice = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetPrice(it))
+            viewModel.onEvent(AddPropertyEvent.SetPrice(it))
         },
         onSetDescription = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetDescription(it))
+            viewModel.onEvent(AddPropertyEvent.SetDescription(it))
         },
         onSetArea = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetArea(it))
+            viewModel.onEvent(AddPropertyEvent.SetArea(it))
         },
         onSetNumberOfRooms = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetNumberOfRooms(it))
+            viewModel.onEvent(AddPropertyEvent.SetNumberOfRooms(it))
         },
         onSetAddress = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetAddress(it))
+            viewModel.onEvent(AddPropertyEvent.SetAddress(it))
         },
         onSetState = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetState(it))
+            viewModel.onEvent(AddPropertyEvent.SetState(it))
         },
         onSetLat = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetLat(it))
+            viewModel.onEvent(AddPropertyEvent.SetLat(it))
         },
         onSetLng = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetLng(it))
+            viewModel.onEvent(AddPropertyEvent.SetLng(it))
         },
         onSetPictureList = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SetPictureList(it))
+            viewModel.onEvent(AddPropertyEvent.SetPictureList(it))
         },
         onSaveClick = {
-            viewModel.onEvent(AddPropertyViewModel.AddPropertyEvent.SaveProperty)
+            viewModel.onEvent(AddPropertyEvent.SaveProperty)
             onNavigateToPropertiesScreen()
         },
-        onMakeMainPicture = {}
+        onSetMainPicture = {
+            viewModel.onEvent(AddPropertyEvent.SetMainPicture(it))
+        }
     )
 
 }
 
 @Composable
 fun AddPropertyScreen(
-    state: AddPropertyViewModel.AddPropertyState,
+    state: AddPropertyState,
     onSetType: (type: String) -> Unit,
     onSetPrice: (price: String) -> Unit,
     onSetDescription: (description: String) -> Unit,
@@ -105,34 +108,16 @@ fun AddPropertyScreen(
     onSetLng: (lat: String) -> Unit,
     onSetPictureList: (pictureList: List<PictureOfProperty>) -> Unit,
     onSaveClick: () -> Unit,
-    onMakeMainPicture: () -> Unit,
+    onSetMainPicture: (picture: PictureOfProperty) -> Unit,
 ) {
 
     val context = LocalContext.current
-    val isDirectoryPicked = remember { mutableStateOf(false) }
-    val dirPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocumentTree(),
-        onResult = { maybeUri ->
-            maybeUri?.let { uri ->
-                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                if (checkUriPersisted(context.contentResolver, uri)) {
-                    context.contentResolver.releasePersistableUriPermission(uri, flags)
-                }
-                context.contentResolver.takePersistableUriPermission(uri, flags)
-                // Do Something
-                isDirectoryPicked.value = true
-            }
-        }
-    )
-
-
     val result = remember { mutableStateListOf<PictureOfProperty>() }
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickMultipleVisualMedia(),
             onResult = { maybeUris ->
-                maybeUris?.let { uris ->
+                maybeUris.let { uris ->
                     val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     uris.forEach {
@@ -143,50 +128,33 @@ fun AddPropertyScreen(
                     }
                     result.clear()
                     var index = 0
+                    var mainPicture: PictureOfProperty
+                    if (state.mainPic == null) {
+                        mainPicture = PictureOfProperty(uri = uris[0].toString(), id = 0, isMain = true, propertyId = 1)
+                    } else {
+                        mainPicture= state.mainPic
+                    }
                     uris.forEach {
-                        when (index) {
-                            0 -> result.add(
-                                PictureOfProperty(
-                                    uri = it.toString(),
-                                    propertyId = 1,
-                                    isMain = true
-                                )
+                        result.add(
+                            PictureOfProperty(
+                                uri = it.toString(),
+                                propertyId = 1,
+                                isMain = if (it.toString() == mainPicture.uri) true else false
                             )
-
-                            else -> result.add(
-                                PictureOfProperty(
-                                    uri = it.toString(),
-                                    propertyId = 1,
-                                    isMain = false
-                                )
-                            )
-                        }
+                        )
                         index++
                     }
+                    onSetPictureList(result)
                 }
             },
         )
-
-
-
     Column(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-//        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-//        var input by rememberSaveable { mutableStateOf("") }
-//        TextField(
-//            value = input,
-//            onValueChange = { newText ->
-//                input = newText.trimStart { it == '0' }
-//            },
-//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-//        )
-
-
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.type,
@@ -196,14 +164,10 @@ fun AddPropertyScreen(
                 Text(text = "Type")
             },
         )
-        TextField(// check somewhere that text entered is a number
+        TextField(
             modifier = Modifier.fillMaxWidth(),
             value = if (state.price == 0) "" else state.price.toString(),
             onValueChange = onSetPrice,
-//            {
-//                viewModel.onEvent(PropertyEvent.SetPrice(it.toInt()))
-//            },
-
             placeholder = {
                 Text(text = "Price")
             },
@@ -214,14 +178,11 @@ fun AddPropertyScreen(
             modifier = Modifier.fillMaxWidth(),
             value = if (state.area == 0) "" else state.area.toString(),
             onValueChange = onSetArea,
-            /*{
-                viewModel.onEvent(PropertyEvent.SetArea(it.toInt()))
-            },*/
             placeholder = {
                 Text(text = "Area")
             }
         )
-        TextField(// check somewhere that text entered is a number
+        TextField(
             modifier = Modifier.fillMaxWidth(),
             value = if (state.numberOfRooms == 0) "" else state.numberOfRooms.toString(),
             onValueChange = onSetNumberOfRooms,
@@ -234,9 +195,6 @@ fun AddPropertyScreen(
             modifier = Modifier.fillMaxWidth(),
             value = state.description,
             onValueChange = onSetDescription,
-//            {
-//                viewModel.onEvent(PropertyEvent.SetDescription(it))
-//            },
             placeholder = {
                 Text(text = "Description")
             }
@@ -245,9 +203,6 @@ fun AddPropertyScreen(
             modifier = Modifier.fillMaxWidth(),
             value = state.address,
             onValueChange = onSetAddress,
-//            {
-//                viewModel.onEvent(PropertyEvent.SetAddress(it))
-//            },
             placeholder = {
                 Text(text = "Address")
             }
@@ -256,14 +211,11 @@ fun AddPropertyScreen(
             modifier = Modifier.fillMaxWidth(),
             value = state.state,
             onValueChange = onSetState,
-//            {
-//                viewModel.onEvent(PropertyEvent.SetState(it))
-//            },
             placeholder = {
                 Text(text = "State")
             }
         )
-        TextField(// check somewhere that text entered is a number
+        TextField(
             modifier = Modifier.fillMaxWidth(),
             value = if (state.lat == 0.0) "" else state.lat.toString(),
             onValueChange = {
@@ -308,52 +260,48 @@ fun AddPropertyScreen(
         }
 
         Row() {
-            result.forEach {
-                when (it.isMain) {
-                    true -> AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillHeight,
-                        modifier = Modifier
-                            .weight(0.25f)
-                            .border(2.dp, shape = RectangleShape, color = Color.Red)
-                            .height(64.dp)
-                    )
 
-                    else -> {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier
-                                .weight(0.25f)
-                                .border(2.dp, shape = RectangleShape, color = Color.Black)
-                                .height(64.dp)
-                                .clickable {
-                                    onMakeMainPicture()
-                                }
+            result.forEach {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillHeight,
+                    modifier = Modifier
+                        .weight(0.25f)
+                        .border(
+                            2.dp,
+                            shape = RectangleShape,
+                            color = if (it.uri == state.mainPic?.uri) Color.Red else Color.Black
                         )
-                    }
-                }
+                        .height(64.dp)
+                        .clickable {
+                            onSetMainPicture(it)
+                            Log.d("TAG", "AddPropertyScreen: HERE id ${state.mainPic!!.id}, propertyId ${state.mainPic!!.propertyId}, isMain ${state.mainPic!!.isMain}, uri ${state.mainPic!!.uri}")
+                            state.picturesList.forEach {
+                                Log.d("TAG", "AddPropertyScreen: THERE id ${it.id}, propertyId ${it.propertyId}, isMain ${it.isMain}, uri ${it.uri}")
+
+                            }
+
+                        }
+                )
 
             }
-        }
 
+        }
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomCenter
         ) {
             Button(onClick = {
-                onSetPictureList(result)
-                Log.d("TAG", "AddPropertyScreen: remember value is ${result.size}")
+                onSetPictureList(state.picturesList)
                 onSaveClick()
             }) {
                 Text(text = "Save")
             }
         }
     }
-
 }
+
 
 fun checkUriPersisted(contentResolver: ContentResolver, uri: Uri): Boolean {
     return contentResolver.persistedUriPermissions.any { perm -> perm.uri == uri }
@@ -365,7 +313,7 @@ fun checkUriPersisted(contentResolver: ContentResolver, uri: Uri): Boolean {
 private fun AddPropertyPreview() {
     RealestatemanagerTheme {
         AddPropertyScreen(
-            state = AddPropertyViewModel.AddPropertyState(),
+            state = AddPropertyState(),
             onSetType = {},
             onSetPrice = {},
             onSetDescription = {},
@@ -377,7 +325,7 @@ private fun AddPropertyPreview() {
             onSetLng = {},
             onSetPictureList = {},
             onSaveClick = {},
-            onMakeMainPicture = {},
+            onSetMainPicture = {},
         )
     }
 }

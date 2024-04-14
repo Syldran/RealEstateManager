@@ -4,6 +4,7 @@ import com.ocproject.realestatemanager.repositories.PropertyRepository
 import com.ocproject.realestatemanager.ui.DataState
 import com.ocproject.realestatemanager.ui.UIComponent
 import com.openclassrooms.realestatemanager.models.Property
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.single
@@ -17,7 +18,7 @@ class GetPropertyList(
             emit(DataState.Loading(true))
             try {
                 val propertyList = repo.getPropertyListOrderedByPrice().single()
-//                emit(DataState.Success(propertyList.))
+//                emit(DataState.Success())
             } catch (e: Exception) {
                 e.printStackTrace()
                 emit(DataState.Error(UIComponent.Toast(e.message ?: "Unknow Error")))
@@ -26,4 +27,6 @@ class GetPropertyList(
             }
         }
     }
+
+
 }

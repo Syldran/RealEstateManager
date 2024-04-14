@@ -1,5 +1,7 @@
 package com.ocproject.realestatemanager.ui.scenes.addproperty
 
+import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ocproject.realestatemanager.db.PropertyDao
@@ -17,17 +19,13 @@ import java.util.Calendar
 
 @KoinViewModel
 class AddPropertyViewModel(
-    private val dao: PropertyDao,
     private val propertyRepository: PropertyRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
-    //
     fun onEvent(event: AddPropertyEvent) {
         when (event) {
-
-
             AddPropertyEvent.SaveProperty -> {
                 val type = state.value.type
                 val price = state.value.price
@@ -52,7 +50,6 @@ class AddPropertyViewModel(
                     area = area,
                     numberOfRooms = numberOfRooms,
                     description = description,
-//                    pictureList = emptyList(),
                     address = address,
                     interestPoints = interestPoint.toString(),
                     state = state1,
@@ -71,19 +68,13 @@ class AddPropertyViewModel(
                     val id = propertyRepository.upsertProperty(property)
 
                     for (pic in pictureList){
-                        if(pic.isMain) {
                             val pictureOfProperty = PictureOfProperty(
-                                isMain = true, uri = pic.uri,
-                                name = "test", propertyId = id.toInt()
+                                isMain =  pic.isMain,
+                                uri = pic.uri,
+                                name = pic.name,
+                                propertyId = id.toInt()
                             )
                             propertyRepository.upsertPictureOfProperty(pictureOfProperty)
-                        } else {
-                            val pictureOfProperty = PictureOfProperty(
-                                isMain = false, uri = pic.uri,
-                                name = "test", propertyId = id.toInt()
-                            )
-                            propertyRepository.upsertPictureOfProperty(pictureOfProperty)
-                        }
                     }
                 }
 
@@ -201,9 +192,24 @@ class AddPropertyViewModel(
             is AddPropertyEvent.SetPictureList -> {
                 _state.update {
                     it.copy(
+                        mainPic = event.pictureList[0],
                         picturesList = event.pictureList
                     )
                 }
+            }
+
+            is AddPropertyEvent.SetMainPicture -> {
+                _state.update {
+                    it.copy(
+                      mainPic = event.picture
+                    )
+                }
+                viewModelScope.launch {
+                    _state.value.picturesList.forEach {
+                        it.isMain = it.uri == _state.value.mainPic?.uri
+                    }
+                }
+
             }
         }
     }
@@ -212,38 +218,8 @@ class AddPropertyViewModel(
 //        return dao.getPropertyDetails(id)
 //    }
 
-    sealed interface AddPropertyEvent {
-        data object SaveProperty : AddPropertyEvent
-        data class SetType(val type: String) : AddPropertyEvent
-        data class SetPrice(val price: String) : AddPropertyEvent
-        data class SetArea(val area: String) : AddPropertyEvent
-        data class SetNumberOfRooms(val numberOfRooms: String) : AddPropertyEvent
-        data class SetDescription(val description: String) : AddPropertyEvent
-        data class SetAddress(val address: String) : AddPropertyEvent
-        data class SetState(val state: String) : AddPropertyEvent
-        data class SetLat(val lat: String) : AddPropertyEvent
-        data class SetLng(val lng: String) : AddPropertyEvent
-        data class SetPictureList(val pictureList: List<PictureOfProperty>) : AddPropertyEvent
-        data class SetInterestPoints(val interestPoints: List<InterestPoint>) : AddPropertyEvent
-    }
 
-    data class AddPropertyState(
-        val type: String = "",
-        val price: Int = 0,
-        val area: Int = 0,
-        val numberOfRooms: Int = 0,
-        val description: String = "",
-        val picturesList: List<PictureOfProperty> = emptyList(), // to create
-        val address: String = "",
-        val interestPoints: List<InterestPoint> = emptyList(), // to create
-        val state: String = "",
-        val createDate: String = "",
-        val soldDate: String = "",
-        val agentId: String = "",
-        val lat: Double = 0.0,
-        val lng: Double = 0.0,
-        //
-        val isAddingProperty: Boolean = false,
-    )
+
+
 
 }

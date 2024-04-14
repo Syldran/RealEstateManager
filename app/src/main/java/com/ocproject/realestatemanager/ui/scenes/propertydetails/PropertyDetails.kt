@@ -59,35 +59,22 @@ fun PropertyDetailsScreen(
         Text(text = "Property agent id : ${state.agentId}")
         Text(text = "Property lat : ${state.lat}")
         Text(text = "Property lng : ${state.lng}")
-        Log.d("TAG1", "PropertyDetailsScreen: ${state.picturesList.size}")
+
         Row(modifier = Modifier) {
             state.picturesList.forEach() {
-
-            Log.d("TAG1", "PropertyDetailsScreen: ${it.uri}")
-
-                when (it.isMain) {
-                    true -> AsyncImage(
+                  AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
                         contentDescription = null,
                         contentScale = ContentScale.FillHeight,
                         modifier = Modifier
                             .weight(0.25f)
-                            .border(2.dp, shape = RectangleShape, color = Color.Red)
+                            .border(
+                                2.dp,
+                                shape = RectangleShape,
+                                color = if (it.isMain) Color.Red else Color.Black
+                            )
                             .height(64.dp)
                     )
-
-                    else -> {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier
-                                .weight(0.25f)
-                                .border(2.dp, shape = RectangleShape, color = Color.Black)
-                                .height(64.dp)
-                        )
-                    }
-                }
             }
         }
     }
