@@ -1,26 +1,30 @@
 package com.ocproject.realestatemanager.ui.scenes.addproperty
 
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
-import android.graphics.Picture
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -39,9 +43,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.android.gms.common.api.ApiException
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.ocproject.realestatemanager.ui.theme.RealestatemanagerTheme
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 
 @Composable
@@ -52,6 +65,7 @@ fun AddProperty(
     val state by viewModel.state.collectAsState()
 //    val flowBorderColor by viewModel.colorBorder.collectAsState()
     AddPropertyScreen(
+        viewModel = viewModel,
         state = state,
         onSetType = {
             viewModel.onEvent(AddPropertyEvent.SetType(it))
@@ -96,6 +110,7 @@ fun AddProperty(
 
 @Composable
 fun AddPropertyScreen(
+    viewModel: AddPropertyViewModel,
     state: AddPropertyState,
     onSetType: (type: String) -> Unit,
     onSetPrice: (price: String) -> Unit,
@@ -128,18 +143,19 @@ fun AddPropertyScreen(
                     }
                     result.clear()
                     var index = 0
-                    var mainPicture: PictureOfProperty
-                    if (state.mainPic == null) {
-                        mainPicture = PictureOfProperty(uri = uris[0].toString(), id = 0, isMain = true, propertyId = 1)
-                    } else {
-                        mainPicture= state.mainPic
-                    }
+                    val mainPicture: PictureOfProperty = state.mainPic
+                        ?: PictureOfProperty(
+                            uri = uris[0].toString(),
+                            id = 0,
+                            isMain = true,
+                            propertyId = 1
+                        )
                     uris.forEach {
                         result.add(
                             PictureOfProperty(
                                 uri = it.toString(),
                                 propertyId = 1,
-                                isMain = if (it.toString() == mainPicture.uri) true else false
+                                isMain = it.toString() == mainPicture.uri
                             )
                         )
                         index++
@@ -148,165 +164,308 @@ fun AddPropertyScreen(
                 }
             },
         )
-    Column(
+
+    Box(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+//        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.type,
-            onValueChange = onSetType,
+        Column {
 
-            placeholder = {
-                Text(text = "Type")
-            },
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = if (state.price == 0) "" else state.price.toString(),
-            onValueChange = onSetPrice,
-            placeholder = {
-                Text(text = "Price")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 
-        )
-        TextField(// check somewhere that text entered is a number
-            modifier = Modifier.fillMaxWidth(),
-            value = if (state.area == 0) "" else state.area.toString(),
-            onValueChange = onSetArea,
-            placeholder = {
-                Text(text = "Area")
-            }
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = if (state.numberOfRooms == 0) "" else state.numberOfRooms.toString(),
-            onValueChange = onSetNumberOfRooms,
-            placeholder = {
-                Text(text = "Number of rooms")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.description,
-            onValueChange = onSetDescription,
-            placeholder = {
-                Text(text = "Description")
-            }
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.address,
-            onValueChange = onSetAddress,
-            placeholder = {
-                Text(text = "Address")
-            }
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.state,
-            onValueChange = onSetState,
-            placeholder = {
-                Text(text = "State")
-            }
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = if (state.lat == 0.0) "" else state.lat.toString(),
-            onValueChange = {
-                try {
-                    onSetLat(it)
-                } catch (e: Exception) {
+            AutocompletePredictionList(viewModel, context, state)
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.type,
+                onValueChange = onSetType,
+
+                placeholder = {
+                    Text(text = "Type")
+                },
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = if (state.price == 0) "" else state.price.toString(),
+                onValueChange = onSetPrice,
+                placeholder = {
+                    Text(text = "Price")
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
+            )
+            TextField(// check somewhere that text entered is a number
+                modifier = Modifier.fillMaxWidth(),
+                value = if (state.area == 0) "" else state.area.toString(),
+                onValueChange = onSetArea,
+                placeholder = {
+                    Text(text = "Area")
                 }
-
-            },
-            placeholder = {
-                Text(text = "Latitude")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-        )
-
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = if (state.lng == 0.0) "" else state.lng.toString(),
-            onValueChange = {
-                try {
-                    onSetLng(it)
-                } catch (e: Exception) {
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = if (state.numberOfRooms == 0) "" else state.numberOfRooms.toString(),
+                onValueChange = onSetNumberOfRooms,
+                placeholder = {
+                    Text(text = "Number of rooms")
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.description,
+                onValueChange = onSetDescription,
+                placeholder = {
+                    Text(text = "Description")
                 }
-            },
-            placeholder = {
-                Text(text = "Longitude")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-        )
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.address,
+                onValueChange = onSetAddress,
+                placeholder = {
+                    Text(text = "Address")
+                }
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.state,
+                onValueChange = onSetState,
+                placeholder = {
+                    Text(text = "State")
+                }
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = if (state.lat == 0.0) "" else state.lat.toString(),
+                onValueChange = {
+                    try {
+                        onSetLat(it)
+                    } catch (e: Exception) {
+                    }
+
+                },
+                placeholder = {
+                    Text(text = "Latitude")
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            )
+
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = if (state.lng == 0.0) "" else state.lng.toString(),
+                onValueChange = {
+                    try {
+                        onSetLng(it)
+                    } catch (e: Exception) {
+                    }
+                },
+                placeholder = {
+                    Text(text = "Longitude")
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            )
 
 
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Button(onClick = {
-                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
-            }) {
-                Text(text = "Browse Picture")
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Button(onClick = {
+                    launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                }) {
+                    Text(text = "Browse Picture")
 
+                }
             }
-        }
 
-        Row() {
+            Row {
 
-            result.forEach {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier
-                        .weight(0.25f)
-                        .border(
-                            2.dp,
-                            shape = RectangleShape,
-                            color = if (it.uri == state.mainPic?.uri) Color.Red else Color.Black
-                        )
-                        .height(64.dp)
-                        .clickable {
-                            onSetMainPicture(it)
-                            Log.d("TAG", "AddPropertyScreen: HERE id ${state.mainPic!!.id}, propertyId ${state.mainPic!!.propertyId}, isMain ${state.mainPic!!.isMain}, uri ${state.mainPic!!.uri}")
-                            state.picturesList.forEach {
-                                Log.d("TAG", "AddPropertyScreen: THERE id ${it.id}, propertyId ${it.propertyId}, isMain ${it.isMain}, uri ${it.uri}")
+                result.forEach { it ->
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillHeight,
+                        modifier = Modifier
+                            .weight(0.25f)
+                            .border(
+                                2.dp,
+                                shape = RectangleShape,
+                                color = if (it.uri == state.mainPic?.uri) Color.Red else Color.Black
+                            )
+                            .height(64.dp)
+                            .clickable {
+                                onSetMainPicture(it)
+                                Timber
+                                    .tag("TAG")
+                                    .d("AddPropertyScreen: HERE id " + state.mainPic?.id + ", propertyId " + state.mainPic?.propertyId + ", isMain " + state.mainPic?.isMain + ", uri " + state.mainPic?.uri)
+                                state.picturesList.forEach {
+                                    Timber
+                                        .tag("TAG")
+                                        .d("AddPropertyScreen: THERE id " + it.id + ", propertyId " + it.propertyId + ", isMain " + it.isMain + ", uri " + it.uri)
+
+                                }
 
                             }
+                    )
 
-                        }
-                )
+                }
 
             }
-
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Button(onClick = {
+                    onSetPictureList(state.picturesList)
+                    onSaveClick()
+                }) {
+                    Text(text = "Save")
+                }
+            }
         }
-        Box(
+    }
+}
+
+fun checkUriPersisted(contentResolver: ContentResolver, uri: Uri): Boolean {
+    return contentResolver.persistedUriPermissions.any { perm -> perm.uri == uri }
+}
+
+
+@Composable
+fun AutocompletePredictionList(
+    viewModel: AddPropertyViewModel,
+    context: Context,
+    state: AddPropertyState,
+) {
+
+    Column {
+        TextField(
+            enabled = true,
+            value = state.changeText,
+            onValueChange = { it ->
+                viewModel.onEvent(AddPropertyEvent.ChangeText(it))
+                autocompleteProgra(it, context = context) {
+                    viewModel.onEvent(AddPropertyEvent.UpdatePredictions(it))
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Button(onClick = {
-                onSetPictureList(state.picturesList)
-                onSaveClick()
-            }) {
-                Text(text = "Save")
+            placeholder = { Text(text = "Search") }
+        )
+//        Spacer(modifier = Modifier.height(16.dp))
+        Box {
+            if (state.isSearching) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+
+                if (state.updatedPredictions.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+//                                    .weight(1f)
+                            .background(Color.White)
+                            .height(296.dp)
+                    ) {
+                        items(state.updatedPredictions) { prediction ->
+                            Text(
+                                text = "${prediction.getFullText(null)}",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 16.dp, horizontal = 16.dp)
+                                    .clickable {
+                                        viewModel.onEvent(
+                                            AddPropertyEvent.ChangeText(
+                                                prediction
+                                                    .getFullText(null)
+                                                    .toString()
+                                            )
+                                        )
+                                        autocompleteFetch(prediction.placeId, context, viewModel)
+                                        viewModel.onEvent(
+                                            AddPropertyEvent.UpdatePredictions(
+                                                emptyList()
+                                            )
+                                        )
+                                    }
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 
-fun checkUriPersisted(contentResolver: ContentResolver, uri: Uri): Boolean {
-    return contentResolver.persistedUriPermissions.any { perm -> perm.uri == uri }
+fun autocompleteProgra(
+    query: String,
+    context: Context,
+    onUpdatePredictions: (List<AutocompletePrediction>) -> Unit
+) {
+
+    val placesClient = Places.createClient(context)
+    // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
+    // and once again when the user makes a selection (for example when calling fetchPlace()).
+    val token = AutocompleteSessionToken.newInstance()
+    // Use the builder to create a FindAutocompletePredictionsRequest.
+    val request =
+        FindAutocompletePredictionsRequest.builder()
+            .setCountries("FR")
+            .setSessionToken(token)
+            .setQuery(query)
+            .build()
+    placesClient.findAutocompletePredictions(request)
+        .addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
+            onUpdatePredictions(response.autocompletePredictions)
+//            for (prediction in response.autocompletePredictions) {
+//                Timber.tag("TAG").i(prediction.placeId)
+//                Timber.tag("TAG").i(prediction.getPrimaryText(null).toString())
+//            }
+        }.addOnFailureListener { exception: Exception? ->
+            if (exception is ApiException) {
+                Timber.tag("TAG").e("Place not found: " + exception.statusCode)
+            }
+        }
+
 }
 
+fun autocompleteFetch(
+    query: String,
+    context: Context,
+    viewModel: AddPropertyViewModel
+) {
+
+    val placesClient = Places.createClient(context)
+    val token = AutocompleteSessionToken.newInstance()
+    val placeFields =
+        listOf(Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS, Place.Field.TYPES)
+    val request =
+        FetchPlaceRequest.builder(query, placeFields)
+            .setSessionToken(token)
+            .build()
+    placesClient.fetchPlace(request)
+        .addOnSuccessListener { response ->
+
+//            viewModel.onEvent(AddPropertyEvent.SetLng(response.place.latLng?.longitude.toString()))
+//            viewModel.onEvent(AddPropertyEvent.SetLat(response.place.latLng?.latitude.toString()))
+//            viewModel.onEvent(AddPropertyEvent.SetAddress(response.place.address!!))
+            viewModel.setAddressFromPlace(response.place)
+//            viewModel.onEvent(AddPropertyEvent.SetType(response.place.placeTypes!!.toString()))
+//            viewModel.onEvent(AddPropertyEvent.SetState("France"))
+
+
+        }.addOnFailureListener { exception: Exception? ->
+            if (exception is ApiException) {
+                Timber.tag("TAG").e("Place not found: " + exception.statusCode)
+            }
+        }
+
+}
 
 @Preview
 @Composable
@@ -326,6 +485,11 @@ private fun AddPropertyPreview() {
             onSetPictureList = {},
             onSaveClick = {},
             onSetMainPicture = {},
+            viewModel = koinViewModel()
         )
     }
 }
+
+
+
+

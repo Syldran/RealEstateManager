@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.ocproject.realestatemanager.ui.scenes.propertydetails.PropertyDetail
 import com.ocproject.realestatemanager.ui.scenes.addproperty.addPropertyScreen
 import com.ocproject.realestatemanager.ui.scenes.propertydetails.PropertyDetailsViewModel
+import com.ocproject.realestatemanager.ui.scenes.propertydetails.addPropertyDetailsScreen
 import com.ocproject.realestatemanager.ui.scenes.propertylist.addPropertyListScreen
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -29,39 +30,22 @@ fun Navigation() {
 
         addPropertyScreen(navController)
 
-        composable(
-            route = Screen.PropertyDetail.route + "/{id}",
-            arguments = listOf(
-                navArgument("id") {
-                    type = NavType.IntType
-                }
-            )
-        ) { navBackStackEntry ->
-            val id = navBackStackEntry.arguments!!.getInt("id")
-            PropertyDetail(
-                viewModel = getViewModel(parameters = { parametersOf(id)})
-//                navController = navController,
-
-
-
-            )
-        }
+        addPropertyDetailsScreen(navController)
+//        composable(
+//            route = Screen.PropertyDetail.route + "/{id}",
+//            arguments = listOf(
+//                navArgument("id") {
+//                    type = NavType.IntType
+//                }
+//            )
+//        ) { navBackStackEntry ->
+//            val id = navBackStackEntry.arguments!!.getInt("id")
+//            PropertyDetail(
+//                viewModel = getViewModel(parameters = { parametersOf(id)})
+//            )
+//        }
     }
 }
-
-
-//
-//@Composable
-//fun Navigation1(navController: NavHostController) {
-//
-//    NavHost(navController = navController, startDestination = Screen.PropertiesScreen.route) {
-//        composable(route = Screen.PropertiesScreen.route) {
-//            val viewModel = getViewModel<PropertyViewModel>()
-//
-//            PropertiesScreen()
-//        }
-//    }
-//}
 
 
 

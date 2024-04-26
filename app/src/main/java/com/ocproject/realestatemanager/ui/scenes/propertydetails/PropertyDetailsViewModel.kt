@@ -1,10 +1,8 @@
 package com.ocproject.realestatemanager.ui.scenes.propertydetails
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ocproject.realestatemanager.db.PropertyDao
-import com.ocproject.realestatemanager.repositories.PropertyRepository
+import com.ocproject.realestatemanager.data.repositories.PropertyRepository
 import com.openclassrooms.realestatemanager.models.InterestPoint
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +10,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import org.koin.core.KoinApplication.Companion.init
 import org.koin.core.annotation.InjectedParam
 
 @KoinViewModel
@@ -29,7 +26,7 @@ class PropertyDetailsViewModel(
         getPropertyDetails()
     }
 
-    // mettre en suspend faire dans treah io
+
     fun getPropertyDetails() {
         viewModelScope.launch {
             val propertyDetails = propertyRepository.getProperty(propertyId)
@@ -42,7 +39,6 @@ class PropertyDetailsViewModel(
                     description = propertyDetails.property.description,
                     picturesList = propertyDetails.pictureList,
                     address = propertyDetails.property.address,
-                    //interestPoints = propertyDetails.property.interestPoints,
                     state = propertyDetails.property.state,
                     createDate = propertyDetails.property.createDate,
                     soldDate = propertyDetails.property.soldDate,

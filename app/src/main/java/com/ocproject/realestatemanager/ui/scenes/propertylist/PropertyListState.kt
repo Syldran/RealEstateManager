@@ -1,7 +1,6 @@
 package com.ocproject.realestatemanager.ui.scenes.propertylist
 
 import com.ocproject.realestatemanager.models.PropertyWithPictures
-import com.openclassrooms.realestatemanager.models.Property
 
 
 data class PropertyListState (

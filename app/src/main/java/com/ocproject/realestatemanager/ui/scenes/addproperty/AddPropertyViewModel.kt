@@ -1,13 +1,11 @@
 package com.ocproject.realestatemanager.ui.scenes.addproperty
 
-import android.net.Uri
-import androidx.compose.ui.graphics.Color
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ocproject.realestatemanager.db.PropertyDao
-import com.ocproject.realestatemanager.repositories.PropertyRepository
+import com.google.android.libraries.places.api.model.Place
+import com.ocproject.realestatemanager.data.repositories.PropertyRepository
 import com.ocproject.realestatemanager.utils.UtilsKotlin
-import com.openclassrooms.realestatemanager.models.InterestPoint
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import com.openclassrooms.realestatemanager.models.Property
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,15 +13,41 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
 import java.util.Calendar
 
 @KoinViewModel
 class AddPropertyViewModel(
+    @InjectedParam
+    private val propertyId: Int,
     private val propertyRepository: PropertyRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
+    fun setAddressFromPlace(place: Place){
+        var listaddressComponents = place.addressComponents?.asList()?.toList()
+        var address :String =""
+        var country : String=""
+        var code : String= ""
+        listaddressComponents?.forEach{
+            Log.d("TAG", "setAddressFromPlace: ${it.types}")
+            Log.d("TAG", "setAddressFromPlace: ${it.name}")
+            when (it.types.toString()){
+                "[street_number]" -> {address+="${it.name} "}
+                "[route]" -> {address+="${it.name}, "}
+                "[locality, political]" -> {address+="${it.name} "}
+                "[country, political]"-> {country="${it.name} "}
+                "[postal_code]"-> {code="${it.name} "}
+            }
+            code += country
+        }
+        Log.d("TAG", "setAddressFromPlace: $address $code")
+        onEvent(AddPropertyEvent.SetAddress(address))
+        onEvent(AddPropertyEvent.SetState(code))
+        onEvent(AddPropertyEvent.SetLat(place.latLng?.latitude.toString()))
+        onEvent(AddPropertyEvent.SetLng(place.latLng?.longitude.toString()))
+    }
     fun onEvent(event: AddPropertyEvent) {
         when (event) {
             AddPropertyEvent.SaveProperty -> {
@@ -67,14 +91,14 @@ class AddPropertyViewModel(
                 viewModelScope.launch {
                     val id = propertyRepository.upsertProperty(property)
 
-                    for (pic in pictureList){
-                            val pictureOfProperty = PictureOfProperty(
-                                isMain =  pic.isMain,
-                                uri = pic.uri,
-                                name = pic.name,
-                                propertyId = id.toInt()
-                            )
-                            propertyRepository.upsertPictureOfProperty(pictureOfProperty)
+                    for (pic in pictureList) {
+                        val pictureOfProperty = PictureOfProperty(
+                            isMain = pic.isMain,
+                            uri = pic.uri,
+                            name = pic.name,
+                            propertyId = id.toInt()
+                        )
+                        propertyRepository.upsertPictureOfProperty(pictureOfProperty)
                     }
                 }
 
@@ -201,7 +225,7 @@ class AddPropertyViewModel(
             is AddPropertyEvent.SetMainPicture -> {
                 _state.update {
                     it.copy(
-                      mainPic = event.picture
+                        mainPic = event.picture
                     )
                 }
                 viewModelScope.launch {
@@ -211,15 +235,34 @@ class AddPropertyViewModel(
                 }
 
             }
+
+            is AddPropertyEvent.UpdatePredictions -> {
+//                if (state.value.isSearching) {
+                    _state.update {
+                        it.copy(
+                            updatedPredictions = event.predictions,
+                            isSearching = false
+                        )
+                    }
+//                }
+            }
+
+            is AddPropertyEvent.ChangeText -> {
+                _state.update {
+                    it.copy(
+                        changeText = event.text,
+                        isSearching = true
+                    )
+                }
+            }
+
+            is AddPropertyEvent.IsSearching -> {
+                _state.update {
+                    it.copy(
+                        isSearching = event.searching
+                    )
+                }
+            }
         }
     }
-
-//    fun getPropertyDetail(id: Int): PropertyWithPictures {
-//        return dao.getPropertyDetails(id)
-//    }
-
-
-
-
-
 }

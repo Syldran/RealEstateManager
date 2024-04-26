@@ -1,8 +1,12 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jlleitschuh.gradle.ktlint") version "11.6.0"
+//    alias(libs.plugins.ktlint)
     id("com.google.devtools.ksp")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -21,7 +25,22 @@ android {
             useSupportLibrary = true
         }
     }
-
+//    defaultConfig {
+//        //load the values from .properties file
+//        val keystoreFile = project.rootProject.file("local.properties")
+//        val properties = Properties()
+//        properties.load(keystoreFile.inputStream())
+//
+//        //return empty key in case something goes wrong
+//        val apiKey = properties.getProperty("PLACES_API_KEY")
+//
+//        buildConfigField("String", "PLACES_API_KEY", apiKey) ?: ""
+//
+//        //inject the key dynamically into the manifest
+//        manifestPlaceholders["PLACES_API_KEY"] = apiKey
+//
+//
+//    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -30,6 +49,7 @@ android {
                 "proguard-rules.pro",
             )
         }
+
     }
 
     compileOptions {
@@ -41,9 +61,10 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
     packaging {
         resources {
@@ -54,7 +75,25 @@ android {
     applicationVariants.all {
         addJavaSourceFoldersToModel(file("build/generated/ksp/$name/kotlin"))
     }
+
+
 }
+
+secrets{
+    // Optionally specify a different file name containing your secrets.
+    // The plugin defaults to "local.properties"
+    propertiesFileName = "local.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.properties"
+
+    // Configure which keys should be ignored by the plugin by providing regular expressions.
+    // "sdk.dir" is ignored by default.
+    ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
+    ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
+}
+
 
 
 
@@ -102,11 +141,11 @@ dependencies {
     androidTestImplementation(libs.compose.ui.ui.test.junit4)
     debugImplementation(libs.compose.ui.ui.tooling)
     debugImplementation(libs.compose.ui.ui.test.manifest)
+
     // Room, for linking with bdd
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
 //    annotationProcessor(libs.room.compiler)
-
     ksp(libs.room.compiler)
 
     implementation(libs.koin.bom)
@@ -116,7 +155,15 @@ dependencies {
     implementation(libs.koin.core)
     ksp(libs.koin.compiler)
 
-    implementation ("org.orbit-mvi:orbit-viewmodel:4.5.0")
-    implementation ("org.orbit-mvi:orbit-compose:4.5.0")
+    //google maps
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
+    implementation (libs.places)
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
+
+    val lifecycle_version = "2.6.0-alpha03"
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
 
 }

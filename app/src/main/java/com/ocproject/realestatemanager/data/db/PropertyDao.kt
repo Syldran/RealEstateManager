@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.db
+package com.ocproject.realestatemanager.data.db
 
 import androidx.room.Dao
 import androidx.room.Delete

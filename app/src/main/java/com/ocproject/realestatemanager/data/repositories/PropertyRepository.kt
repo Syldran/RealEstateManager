@@ -1,6 +1,6 @@
-package com.ocproject.realestatemanager.repositories
+package com.ocproject.realestatemanager.data.repositories
 
-import com.ocproject.realestatemanager.db.PropertyDao
+import com.ocproject.realestatemanager.data.db.PropertyDao
 import com.ocproject.realestatemanager.models.PropertyWithPictures
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 import com.openclassrooms.realestatemanager.models.Property

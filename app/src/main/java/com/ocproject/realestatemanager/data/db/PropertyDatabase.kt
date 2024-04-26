@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.db
+package com.ocproject.realestatemanager.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

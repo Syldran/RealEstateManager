@@ -1,6 +1,6 @@
 package com.ocproject.realestatemanager.ui.scenes.addproperty
 
-import android.graphics.Picture
+import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.openclassrooms.realestatemanager.models.InterestPoint
 import com.openclassrooms.realestatemanager.models.PictureOfProperty
 
@@ -23,4 +23,7 @@ data class AddPropertyState(
     val isAddingProperty: Boolean = false,
     val picturesList: List<PictureOfProperty> = emptyList(),
     val mainPic: PictureOfProperty ?= null,
+    val updatedPredictions : List<AutocompletePrediction> = emptyList(),
+    val changeText: String = "",
+    val isSearching: Boolean = false
 )
