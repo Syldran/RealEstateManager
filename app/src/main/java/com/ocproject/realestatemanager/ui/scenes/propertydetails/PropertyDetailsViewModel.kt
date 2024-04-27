@@ -15,7 +15,7 @@ import org.koin.core.annotation.InjectedParam
 @KoinViewModel
 class PropertyDetailsViewModel(
     @InjectedParam
-    private val propertyId: Int,
+    private val propertyId: Int?,
     private val propertyRepository: PropertyRepository,
 
     ) : ViewModel() {
@@ -27,11 +27,12 @@ class PropertyDetailsViewModel(
     }
 
 
-    fun getPropertyDetails() {
+    private fun getPropertyDetails() {
         viewModelScope.launch {
-            val propertyDetails = propertyRepository.getProperty(propertyId)
+            val propertyDetails = propertyRepository.getProperty(propertyId!!)
             _state.update {
                 it.copy(
+                    id = propertyDetails.property.id,
                     type = propertyDetails.property.type,
                     price = propertyDetails.property.price,
                     area = propertyDetails.property.area,
@@ -49,28 +50,4 @@ class PropertyDetailsViewModel(
             }
         }
     }
-
-
-    data class PropertyDetailsState(
-        val type: String = "",
-        val price: Int = 0,
-        val area: Int = 0,
-        val numberOfRooms: Int = 0,
-        val description: String = "",
-        val picturesList: List<PictureOfProperty> = emptyList(), // to create
-        val address: String = "",
-        val interestPoints: List<InterestPoint> = emptyList(), // to create
-        val state: String = "",
-        val createDate: String = "",
-        val soldDate: String = "",
-        val agentId: String = "",
-        val lat: Double = 0.0,
-        val lng: Double = 0.0,
-    )
-
-
-//
-//    data class PropertyDetailsState(
-//        val propertyWithPictures: PropertyWithPictures,
-//    )
 }

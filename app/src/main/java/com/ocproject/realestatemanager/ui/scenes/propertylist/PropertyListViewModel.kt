@@ -15,7 +15,6 @@ import org.koin.android.annotation.KoinViewModel
 @KoinViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class PropertyListViewModel(
-//    private val dao: PropertyDao,
     private val propertyRepository: PropertyRepository,
 ) : ViewModel() {
     //    private val propertyId: Int = checkNotNull(savedStateHandle["propertyId"])

@@ -44,7 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PropertyList(
     viewModel: PropertyListViewModel = koinViewModel(),
-    onNavigateToAddPropertyScreen: () -> Unit,
+    onNavigateToAddPropertyScreen: (propertyId: Int?) -> Unit,
     onNavigateToDetailsPropertyScreen: (propertyId: Int) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
@@ -66,20 +66,20 @@ fun ListPropertiesScreen(
     state: PropertyListState,
     onDelete: (property: Property) -> Unit,
     onSortProperties: (sortType: SortType) -> Unit,
-    onNavigateToAddPropertyScreen: () -> Unit,
+    onNavigateToAddPropertyScreen: (propertyId: Int?) -> Unit,
     onNavigateToDetailsPropertyScreen: (propertyId: Int) -> Unit,
 ) {
     Scaffold(
         topBar = {
-            PropertyListTopBar(
-                modifier = Modifier.fillMaxWidth(),
-                onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen
-            )
+//            PropertyListTopBar(
+//                modifier = Modifier.fillMaxWidth(),
+//                onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen(null)
+//            )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    onNavigateToAddPropertyScreen()
+                    onNavigateToAddPropertyScreen(null)
                 }
             ) {
                 Icon(

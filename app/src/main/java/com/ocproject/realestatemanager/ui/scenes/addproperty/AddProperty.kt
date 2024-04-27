@@ -13,7 +13,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -450,15 +449,7 @@ fun autocompleteFetch(
             .build()
     placesClient.fetchPlace(request)
         .addOnSuccessListener { response ->
-
-//            viewModel.onEvent(AddPropertyEvent.SetLng(response.place.latLng?.longitude.toString()))
-//            viewModel.onEvent(AddPropertyEvent.SetLat(response.place.latLng?.latitude.toString()))
-//            viewModel.onEvent(AddPropertyEvent.SetAddress(response.place.address!!))
-            viewModel.setAddressFromPlace(response.place)
-//            viewModel.onEvent(AddPropertyEvent.SetType(response.place.placeTypes!!.toString()))
-//            viewModel.onEvent(AddPropertyEvent.SetState("France"))
-
-
+            viewModel.setPropertyFromPlace(response.place)
         }.addOnFailureListener { exception: Exception? ->
             if (exception is ApiException) {
                 Timber.tag("TAG").e("Place not found: " + exception.statusCode)

@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun PropertyListTopBar(
     modifier: Modifier = Modifier,
-    onNavigateToAddPropertyScreen: () -> Unit,
+    onNavigateToAddPropertyScreen: (propertyId: Int?) -> Unit,
 ) {
     val context = LocalContext.current
     var menuExpanded by remember {
@@ -59,7 +59,7 @@ fun PropertyListTopBar(
                     },
                     onClick = {
                         Toast.makeText(context, "Add Property", Toast.LENGTH_LONG).show()
-                        onNavigateToAddPropertyScreen()
+                        onNavigateToAddPropertyScreen(null)
                     },
                 )
                 DropdownMenuItem(

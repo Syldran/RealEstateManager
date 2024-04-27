@@ -13,32 +13,78 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import org.koin.core.annotation.InjectedParam
 import java.util.Calendar
 
 @KoinViewModel
 class AddPropertyViewModel(
-    @InjectedParam
-    private val propertyId: Int,
+//    @InjectedParam
+    private val propertyId: Int?,
     private val propertyRepository: PropertyRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
-    fun setAddressFromPlace(place: Place){
+    init {
+
+        getProperty()
+
+    }
+
+
+
+    fun getProperty() {
+        if (propertyId != null && propertyId != 0) {
+            viewModelScope.launch {
+                val propertyDetails = propertyRepository.getProperty(propertyId)
+                _state.update {
+                    it.copy(
+                        type = propertyDetails.property.type,
+                        price = propertyDetails.property.price,
+                        area = propertyDetails.property.area,
+                        numberOfRooms = propertyDetails.property.numberOfRooms,
+                        description = propertyDetails.property.description,
+                        picturesList = propertyDetails.pictureList,
+                        address = propertyDetails.property.address,
+                        state = propertyDetails.property.state,
+                        createDate = propertyDetails.property.createDate,
+                        soldDate = propertyDetails.property.soldDate,
+                        agentId = propertyDetails.property.agentId,
+                        lat = propertyDetails.property.lat,
+                        lng = propertyDetails.property.lng,
+                    )
+                }
+            }
+        }
+    }
+
+    fun setPropertyFromPlace(place: Place) {
         var listaddressComponents = place.addressComponents?.asList()?.toList()
-        var address :String =""
-        var country : String=""
-        var code : String= ""
-        listaddressComponents?.forEach{
+        var address: String = ""
+        var country: String = ""
+        var code: String = ""
+        listaddressComponents?.forEach {
             Log.d("TAG", "setAddressFromPlace: ${it.types}")
             Log.d("TAG", "setAddressFromPlace: ${it.name}")
-            when (it.types.toString()){
-                "[street_number]" -> {address+="${it.name} "}
-                "[route]" -> {address+="${it.name}, "}
-                "[locality, political]" -> {address+="${it.name} "}
-                "[country, political]"-> {country="${it.name} "}
-                "[postal_code]"-> {code="${it.name} "}
+            when (it.types.toString()) {
+                "[street_number]" -> {
+                    address += "${it.name} "
+                }
+
+                "[route]" -> {
+                    address += "${it.name}, "
+                }
+
+                "[locality, political]" -> {
+                    address += "${it.name} "
+                }
+
+                "[country, political]" -> {
+                    country = "${it.name} "
+                }
+
+                "[postal_code]" -> {
+                    code = "${it.name} "
+                }
             }
             code += country
         }
@@ -238,12 +284,12 @@ class AddPropertyViewModel(
 
             is AddPropertyEvent.UpdatePredictions -> {
 //                if (state.value.isSearching) {
-                    _state.update {
-                        it.copy(
-                            updatedPredictions = event.predictions,
-                            isSearching = false
-                        )
-                    }
+                _state.update {
+                    it.copy(
+                        updatedPredictions = event.predictions,
+                        isSearching = false
+                    )
+                }
 //                }
             }
 

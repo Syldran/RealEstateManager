@@ -9,7 +9,7 @@ fun NavGraphBuilder.addPropertyListScreen(navController: NavController){
     composable(route = Screen.PropertiesScreen.route) {
         PropertyList(
             onNavigateToAddPropertyScreen = {
-                navController.navigate(Screen.AddProperty.route)
+                navController.navigate(Screen.AddProperty.withArgs(it?:0))
             },
             onNavigateToDetailsPropertyScreen = {
                 navController.navigate(Screen.PropertyDetail.withArgs(it))

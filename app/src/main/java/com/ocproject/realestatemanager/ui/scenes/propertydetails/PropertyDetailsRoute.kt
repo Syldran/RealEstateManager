@@ -22,7 +22,7 @@ fun NavGraphBuilder.addPropertyDetailsScreen(navController: NavController) {
 
     {
             navBackStackEntry ->
-        val id = navBackStackEntry.arguments!!.getInt("id")
+        val id = navBackStackEntry.arguments?.getInt("id")
         PropertyDetail(
             viewModel = getViewModel(parameters = { parametersOf(id) }),
             onNavigateToAddPropertyScreen = {

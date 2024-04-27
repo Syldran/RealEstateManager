@@ -36,11 +36,13 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import org.koin.androidx.compose.koinViewModel
+import org.koin.androidx.compose.viewModel
 
 @Composable
 fun PropertyDetail(
-    viewModel: PropertyDetailsViewModel,
-    onNavigateToAddPropertyScreen: () -> Unit,
+    viewModel: PropertyDetailsViewModel = koinViewModel(),
+    onNavigateToAddPropertyScreen: (propertyId: Int?) -> Unit,
 
     ) {
     val state by viewModel.state.collectAsState()
@@ -52,8 +54,8 @@ fun PropertyDetail(
 
 @Composable
 fun PropertyDetailsScreen(
-    state: PropertyDetailsViewModel.PropertyDetailsState,
-    onNavigateToAddPropertyScreen: () -> Unit,
+    state: PropertyDetailsState,
+    onNavigateToAddPropertyScreen: (propertyId: Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -62,12 +64,13 @@ fun PropertyDetailsScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val latLng: LatLng = LatLng(state.lat, state.lng)
+        val latLng = LatLng(state.lat, state.lng)
         val cameraPositionState = CameraPositionState(
             position = CameraPosition.fromLatLngZoom(
                 latLng, 10f
             )
         )
+        Text(text = "Property type : ${state.id}")
         Text(text = "Property type : ${state.type}")
         Text(text = "Property price : ${state.price}")
         Text(text = "Property area : ${state.area}")
@@ -101,7 +104,7 @@ fun PropertyDetailsScreen(
         Box(contentAlignment = Alignment.BottomCenter) {
             Button(
                 onClick = {
-                    onNavigateToAddPropertyScreen()
+                    onNavigateToAddPropertyScreen(state.id)
                 }
             ){
                 Icon(
