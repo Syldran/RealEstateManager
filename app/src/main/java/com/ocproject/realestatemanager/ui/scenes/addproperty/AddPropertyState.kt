@@ -6,6 +6,7 @@ import com.openclassrooms.realestatemanager.models.PictureOfProperty
 
 
 data class AddPropertyState(
+    val id: Int = 0,
     val type: String = "",
     val price: Int = 0,
     val area: Int = 0,

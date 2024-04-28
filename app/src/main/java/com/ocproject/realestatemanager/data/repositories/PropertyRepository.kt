@@ -15,11 +15,15 @@ class PropertyRepository(
     }
 
     suspend fun upsertPictureOfProperty(pictureOfProperty: PictureOfProperty) {
-        return dao.upsertPictureofProperty(pictureOfProperty)
+        return dao.upsertPictureOfProperty(pictureOfProperty)
     }
 
     suspend fun deleteProperty(property: Property) {
         dao.deleteProperty(property)
+    }
+
+    suspend fun deletePicturesOfPropertyById(propertyId: Int) {
+        dao.deletePicturesOfPropertyById(propertyId)
     }
 
     fun getPropertyListOrderedByPrice(): Flow<List<PropertyWithPictures>> {

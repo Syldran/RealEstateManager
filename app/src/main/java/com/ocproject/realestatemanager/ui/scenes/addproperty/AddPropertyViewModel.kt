@@ -18,26 +18,27 @@ import java.util.Calendar
 @KoinViewModel
 class AddPropertyViewModel(
 //    @InjectedParam
-    private val propertyId: Int?,
+    val propertyId: Int?,
     private val propertyRepository: PropertyRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
     init {
-
         getProperty()
-
     }
 
-
-
-    fun getProperty() {
+    private fun getProperty() {
         if (propertyId != null && propertyId != 0) {
             viewModelScope.launch {
                 val propertyDetails = propertyRepository.getProperty(propertyId)
+                var mainPicture: PictureOfProperty? = null
+                propertyDetails.pictureList.forEach {
+                    if (it.isMain) mainPicture = it
+                }
                 _state.update {
                     it.copy(
+                        id = propertyDetails.property.id,
                         type = propertyDetails.property.type,
                         price = propertyDetails.property.price,
                         area = propertyDetails.property.area,
@@ -51,6 +52,7 @@ class AddPropertyViewModel(
                         agentId = propertyDetails.property.agentId,
                         lat = propertyDetails.property.lat,
                         lng = propertyDetails.property.lng,
+                        mainPic = mainPicture,
                     )
                 }
             }
@@ -94,9 +96,11 @@ class AddPropertyViewModel(
         onEvent(AddPropertyEvent.SetLat(place.latLng?.latitude.toString()))
         onEvent(AddPropertyEvent.SetLng(place.latLng?.longitude.toString()))
     }
+
     fun onEvent(event: AddPropertyEvent) {
         when (event) {
             AddPropertyEvent.SaveProperty -> {
+                val id = state.value.id
                 val type = state.value.type
                 val price = state.value.price
                 val area = state.value.area
@@ -115,6 +119,7 @@ class AddPropertyViewModel(
 
                 val calendar = Calendar.getInstance()
                 val property = Property(
+                    id = propertyId ?: 0,
                     type = type,
                     price = price,
                     area = area,
@@ -135,14 +140,17 @@ class AddPropertyViewModel(
                 )
 
                 viewModelScope.launch {
-                    val id = propertyRepository.upsertProperty(property)
+                    var idProperty = propertyRepository.upsertProperty(property).toInt()
 
+                    idProperty = propertyId ?: idProperty
+
+                    propertyRepository.deletePicturesOfPropertyById(idProperty)
                     for (pic in pictureList) {
                         val pictureOfProperty = PictureOfProperty(
                             isMain = pic.isMain,
                             uri = pic.uri,
                             name = pic.name,
-                            propertyId = id.toInt()
+                            propertyId = idProperty
                         )
                         propertyRepository.upsertPictureOfProperty(pictureOfProperty)
                     }
@@ -150,6 +158,7 @@ class AddPropertyViewModel(
 
                 _state.update {
                     it.copy(
+                        id = 0,
                         type = "",
                         price = 0,
                         area = 0,
@@ -252,10 +261,6 @@ class AddPropertyViewModel(
                     )
                 }
             }
-
-//            is AddPropertyEvent.GetPropertyDetail -> {
-//
-//            }
 
             is AddPropertyEvent.SetInterestPoints -> TODO()
 

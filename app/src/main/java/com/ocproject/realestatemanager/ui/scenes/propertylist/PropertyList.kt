@@ -71,10 +71,10 @@ fun ListPropertiesScreen(
 ) {
     Scaffold(
         topBar = {
-//            PropertyListTopBar(
-//                modifier = Modifier.fillMaxWidth(),
-//                onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen(null)
-//            )
+            PropertyListTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen
+            )
         },
         floatingActionButton = {
             FloatingActionButton(

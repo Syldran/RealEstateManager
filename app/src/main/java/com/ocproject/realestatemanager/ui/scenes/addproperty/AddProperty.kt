@@ -31,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -126,7 +127,10 @@ fun AddPropertyScreen(
 ) {
 
     val context = LocalContext.current
-    val result = remember { mutableStateListOf<PictureOfProperty>() }
+    var result = remember { mutableStateListOf<PictureOfProperty>() }
+    if (viewModel.propertyId != null && viewModel.propertyId != 0) {
+        result = state.picturesList.toMutableStateList()
+    }
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickMultipleVisualMedia(),
@@ -442,7 +446,13 @@ fun autocompleteFetch(
     val placesClient = Places.createClient(context)
     val token = AutocompleteSessionToken.newInstance()
     val placeFields =
-        listOf(Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS, Place.Field.TYPES)
+        listOf(
+            Place.Field.NAME,
+            Place.Field.LAT_LNG,
+            Place.Field.ADDRESS,
+            Place.Field.ADDRESS_COMPONENTS,
+            Place.Field.TYPES
+        )
     val request =
         FetchPlaceRequest.builder(query, placeFields)
             .setSessionToken(token)

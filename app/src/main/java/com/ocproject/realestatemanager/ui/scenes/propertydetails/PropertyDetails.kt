@@ -55,7 +55,7 @@ fun PropertyDetail(
 @Composable
 fun PropertyDetailsScreen(
     state: PropertyDetailsState,
-    onNavigateToAddPropertyScreen: (propertyId: Int) -> Unit,
+    onNavigateToAddPropertyScreen: (propertyId: Int?) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -101,7 +101,10 @@ fun PropertyDetailsScreen(
                 )
             }
         }
-        Box(contentAlignment = Alignment.BottomCenter) {
+        Box(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            contentAlignment = Alignment.Center
+        ) {
             Button(
                 onClick = {
                     onNavigateToAddPropertyScreen(state.id)
@@ -127,7 +130,6 @@ fun PropertyDetailsScreen(
                 )
             )
         ) {
-
             Marker(
                 state = MarkerState(position = latLng),
                 title = "Marker",

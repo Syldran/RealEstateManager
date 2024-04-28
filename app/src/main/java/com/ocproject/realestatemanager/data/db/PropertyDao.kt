@@ -2,8 +2,6 @@ package com.ocproject.realestatemanager.data.db
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.ocproject.realestatemanager.models.PropertyWithPictures
@@ -19,10 +17,12 @@ interface PropertyDao {
     suspend fun upsertProperty(property: Property) : Long
 
     @Upsert
-    suspend fun upsertPictureofProperty(pictureOfProperty: PictureOfProperty)
+    suspend fun upsertPictureOfProperty(pictureOfProperty: PictureOfProperty)
 
     @Delete
     suspend fun deleteProperty(property: Property)
+    @Query("DELETE FROM PictureOfProperty WHERE propertyId = :propertyId")
+    suspend fun deletePicturesOfPropertyById(propertyId: Int)
 
     @Query("select * from PictureOfProperty WHERE propertyId = :selectedId")
     fun getPicturesOfProperty(selectedId: Int): Flow<List<PictureOfProperty>>

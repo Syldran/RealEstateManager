@@ -26,8 +26,8 @@ fun NavGraphBuilder.addPropertyDetailsScreen(navController: NavController) {
         PropertyDetail(
             viewModel = getViewModel(parameters = { parametersOf(id) }),
             onNavigateToAddPropertyScreen = {
-                navController.navigate(Screen.AddProperty.route)
-            }
+                navController.navigate(Screen.AddProperty.withArgs(it?:0))
+            },
         )
     }
 }
