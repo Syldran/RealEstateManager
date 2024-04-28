@@ -141,8 +141,10 @@ class AddPropertyViewModel(
 
                 viewModelScope.launch {
                     var idProperty = propertyRepository.upsertProperty(property).toInt()
+                    if(propertyId!=null && propertyId!=0){
+                        idProperty = propertyId
+                    }
 
-                    idProperty = propertyId ?: idProperty
 
                     propertyRepository.deletePicturesOfPropertyById(idProperty)
                     for (pic in pictureList) {
