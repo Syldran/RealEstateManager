@@ -24,11 +24,17 @@ interface PropertyDao {
     @Query("DELETE FROM PictureOfProperty WHERE propertyId = :propertyId")
     suspend fun deletePicturesOfPropertyById(propertyId: Int)
 
-    @Query("select * from PictureOfProperty WHERE propertyId = :selectedId")
-    fun getPicturesOfProperty(selectedId: Int): Flow<List<PictureOfProperty>>
+//    @Query("select * from PictureOfProperty WHERE propertyId = :selectedId")
+//    suspend fun getPicturesOfProperty(selectedId: Int): Flow<List<PictureOfProperty>>
+
+    @Query("SELECT * FROM property")
+    fun getProperties() : Flow<List<PropertyWithPictures>>
 
     @Query("SELECT * FROM property ORDER by price ASC")
-    fun getPropertiesOrderedByPrice() : Flow<List<PropertyWithPictures>>
+    fun getPropertiesOrderedByPriceAsc() : Flow<List<PropertyWithPictures>>
+
+    @Query("SELECT * FROM property ORDER by price DESC")
+    fun getPropertiesOrderedByPriceDesc() : Flow<List<PropertyWithPictures>>
 
     @Query("SELECT * FROM property WHERE id = :selectedId")
     suspend fun getPropertyDetails(selectedId: Int) : PropertyWithPictures

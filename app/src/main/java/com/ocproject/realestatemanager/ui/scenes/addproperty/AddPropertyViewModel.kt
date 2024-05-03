@@ -17,7 +17,6 @@ import java.util.Calendar
 
 @KoinViewModel
 class AddPropertyViewModel(
-//    @InjectedParam
     val propertyId: Int?,
     private val propertyRepository: PropertyRepository,
 ) : ViewModel() {
@@ -29,6 +28,7 @@ class AddPropertyViewModel(
     }
 
     private fun getProperty() {
+        // if update operation, property editing
         if (propertyId != null && propertyId != 0) {
             viewModelScope.launch {
                 val propertyDetails = propertyRepository.getProperty(propertyId)
@@ -60,11 +60,11 @@ class AddPropertyViewModel(
     }
 
     fun setPropertyFromPlace(place: Place) {
-        var listaddressComponents = place.addressComponents?.asList()?.toList()
+        var listAddressComponents = place.addressComponents?.asList()?.toList()
         var address: String = ""
         var country: String = ""
         var code: String = ""
-        listaddressComponents?.forEach {
+        listAddressComponents?.forEach {
             Log.d("TAG", "setAddressFromPlace: ${it.types}")
             Log.d("TAG", "setAddressFromPlace: ${it.name}")
             when (it.types.toString()) {
@@ -90,7 +90,6 @@ class AddPropertyViewModel(
             }
             code += country
         }
-        Log.d("TAG", "setAddressFromPlace: $address $code")
         onEvent(AddPropertyEvent.SetAddress(address))
         onEvent(AddPropertyEvent.SetState(code))
         onEvent(AddPropertyEvent.SetLat(place.latLng?.latitude.toString()))
@@ -141,6 +140,7 @@ class AddPropertyViewModel(
 
                 viewModelScope.launch {
                     var idProperty = propertyRepository.upsertProperty(property).toInt()
+                    // check if update (propertyId not null & upsert return -1) or insert situation ( propertyId null & upsert return id).
                     if(propertyId!=null && propertyId!=0){
                         idProperty = propertyId
                     }

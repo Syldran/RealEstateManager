@@ -19,10 +19,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.ocproject.realestatemanager.ui.scenes.propertylist.PropertyListEvent
+import com.ocproject.realestatemanager.ui.scenes.propertylist.PropertyListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropertyListTopBar(
+    onOpenFilter: (filterState: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToAddPropertyScreen: (propertyId: Int?) -> Unit,
 ) {
@@ -30,6 +33,7 @@ fun PropertyListTopBar(
     var menuExpanded by remember {
         mutableStateOf(false)
     }
+
     CenterAlignedTopAppBar(
         colors =
         TopAppBarDefaults.topAppBarColors(
@@ -58,6 +62,7 @@ fun PropertyListTopBar(
                         Text("Add Property")
                     },
                     onClick = {
+                        menuExpanded=false
                         Toast.makeText(context, "Add Property", Toast.LENGTH_LONG).show()
                         onNavigateToAddPropertyScreen(null)
                     },
@@ -68,13 +73,15 @@ fun PropertyListTopBar(
                     },
                     onClick = {
                         Toast.makeText(context, "Display Criteria", Toast.LENGTH_LONG).show()
+                        onOpenFilter(true)
+                        menuExpanded=false
                     },
                 )
                 DropdownMenuItem(
                     text = {
                         Text("About")
                     },
-                    onClick = { /* TODO */ },
+                    onClick = {  menuExpanded=false },
                 )
             }
         },

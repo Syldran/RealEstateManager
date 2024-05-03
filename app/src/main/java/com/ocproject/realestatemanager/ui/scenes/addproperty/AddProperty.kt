@@ -146,8 +146,8 @@ fun AddPropertyScreen(
                     }
                     result.clear()
                     var index = 0
-                    val mainPicture: PictureOfProperty = state.mainPic
-                        ?: PictureOfProperty(
+                    val mainPicture = /*state.mainPic
+                        ?:*/ PictureOfProperty(
                             uri = uris[0].toString(),
                             id = 0,
                             isMain = true,
@@ -374,7 +374,7 @@ fun AutocompletePredictionList(
                             .background(Color.White)
                             .height(296.dp)
                     ) {
-                        items(state.updatedPredictions) { prediction ->
+                        items(items = state.updatedPredictions, key = {prediction -> prediction.placeId}) { prediction ->
                             Text(
                                 text = "${prediction.getFullText(null)}",
                                 modifier = Modifier

@@ -36,6 +36,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.ocproject.realestatemanager.BuildConfig
 import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.compose.viewModel
 
@@ -116,25 +117,29 @@ fun PropertyDetailsScreen(
                 )
             }
         }
-        GoogleMap(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(320.dp),
-//                .verticalScroll(rememberScrollState()),
-            cameraPositionState = cameraPositionState,
-//                            keep map static
-            properties = MapProperties(
-                latLngBoundsForCameraTarget = LatLngBounds(
-                    latLng,
-                    latLng
-                )
-            )
-        ) {
-            Marker(
-                state = MarkerState(position = latLng),
-                title = "Marker",
-                snippet = "Marker",
-            )
-        }
+        AsyncImage(model = ImageRequest.Builder(LocalContext.current)
+            //check to add num signature & marker
+            .data("https://maps.googleapis.com/maps/api/staticmap?center=${latLng.latitude},${latLng.longitude}&zoom=12&size=800x800&key=${BuildConfig.PLACES_API_KEY}"
+        ).build(), contentDescription = "" )
+//        GoogleMap(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(320.dp),
+////                .verticalScroll(rememberScrollState()),
+//            cameraPositionState = cameraPositionState,
+////                            keep map static
+//            properties = MapProperties(
+//                latLngBoundsForCameraTarget = LatLngBounds(
+//                    latLng,
+//                    latLng
+//                )
+//            )
+//        ) {
+//            Marker(
+//                state = MarkerState(position = latLng),
+//                title = "Marker",
+//                snippet = "Marker",
+//            )
+//        }
     }
 }

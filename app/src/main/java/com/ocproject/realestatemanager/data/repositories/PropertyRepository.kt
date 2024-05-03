@@ -25,11 +25,17 @@ class PropertyRepository(
     suspend fun deletePicturesOfPropertyById(propertyId: Int) {
         dao.deletePicturesOfPropertyById(propertyId)
     }
-
-    fun getPropertyListOrderedByPrice(): Flow<List<PropertyWithPictures>> {
-        return dao.getPropertiesOrderedByPrice()
+    fun getPropertyList(): Flow<List<PropertyWithPictures>> {
+        return dao.getProperties()
     }
 
+    fun getPropertyListOrderedByPriceAsc(): Flow<List<PropertyWithPictures>> {
+        return dao.getPropertiesOrderedByPriceAsc()
+    }
+
+    fun getPropertyListOrderedByPriceDesc(): Flow<List<PropertyWithPictures>> {
+        return dao.getPropertiesOrderedByPriceDesc()
+    }
     suspend fun getProperty(id: Int): PropertyWithPictures {
         return dao.getPropertyDetails(id)
     }
