@@ -127,9 +127,10 @@ fun AddPropertyScreen(
 ) {
 
     val context = LocalContext.current
+    // TODO: add a max nbr of pictures for a property
     var result = remember { mutableStateListOf<PictureOfProperty>() }
     if (viewModel.propertyId != null && viewModel.propertyId != 0) {
-        result = state.picturesList.toMutableStateList()
+        result = state.picturesList?.toMutableStateList() ?: emptyList<PictureOfProperty>().toMutableStateList()
     }
     val launcher =
         rememberLauncherForActivityResult(
@@ -148,7 +149,7 @@ fun AddPropertyScreen(
                     var index = 0
                     val mainPicture = /*state.mainPic
                         ?:*/ PictureOfProperty(
-                            uri = uris[0].toString(),
+                            uri =if(uris.isNotEmpty()) uris[0].toString() else "",
                             id = 0,
                             isMain = true,
                             propertyId = 1
@@ -303,7 +304,7 @@ fun AddPropertyScreen(
                                 Timber
                                     .tag("TAG")
                                     .d("AddPropertyScreen: HERE id " + state.mainPic?.id + ", propertyId " + state.mainPic?.propertyId + ", isMain " + state.mainPic?.isMain + ", uri " + state.mainPic?.uri)
-                                state.picturesList.forEach {
+                                state.picturesList?.forEach {
                                     Timber
                                         .tag("TAG")
                                         .d("AddPropertyScreen: THERE id " + it.id + ", propertyId " + it.propertyId + ", isMain " + it.isMain + ", uri " + it.uri)
@@ -321,7 +322,7 @@ fun AddPropertyScreen(
                 contentAlignment = Alignment.BottomCenter
             ) {
                 Button(onClick = {
-                    onSetPictureList(state.picturesList)
+                    onSetPictureList(state.picturesList?: emptyList())
                     onSaveClick()
                 }) {
                     Text(text = "Save")

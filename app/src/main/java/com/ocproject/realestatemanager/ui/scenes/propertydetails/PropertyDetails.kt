@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,15 +31,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.ocproject.realestatemanager.BuildConfig
 import org.koin.androidx.compose.koinViewModel
-import org.koin.androidx.compose.viewModel
 
 @Composable
 fun PropertyDetail(
@@ -71,7 +66,7 @@ fun PropertyDetailsScreen(
                 latLng, 10f
             )
         )
-        Text(text = "Property type : ${state.id}")
+        Text(text = "Property id : ${state.id}")
         Text(text = "Property type : ${state.type}")
         Text(text = "Property price : ${state.price}")
         Text(text = "Property area : ${state.area}")
@@ -86,7 +81,7 @@ fun PropertyDetailsScreen(
         Text(text = "Property lng : ${state.lng}")
 
         Row(modifier = Modifier) {
-            state.picturesList.forEach() {
+            state.picturesList?.forEach() {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current).data(it.uri).build(),
                     contentDescription = null,
@@ -110,17 +105,20 @@ fun PropertyDetailsScreen(
                 onClick = {
                     onNavigateToAddPropertyScreen(state.id)
                 }
-            ){
+            ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit Property"
                 )
             }
         }
-        AsyncImage(model = ImageRequest.Builder(LocalContext.current)
-            //check to add num signature & marker
-            .data("https://maps.googleapis.com/maps/api/staticmap?center=${latLng.latitude},${latLng.longitude}&zoom=12&size=800x800&key=${BuildConfig.PLACES_API_KEY}"
-        ).build(), contentDescription = "" )
+        AsyncImage(
+            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxSize(),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(
+                    "https://maps.googleapis.com/maps/api/staticmap?center=${latLng.latitude},${latLng.longitude}&markers=color:red|${latLng.latitude},${latLng.longitude}&zoom=14&size=500x500&scale=2&key=${BuildConfig.PLACES_API_KEY}"
+                ).build(), contentDescription = ""
+        )
 //        GoogleMap(
 //            modifier = Modifier
 //                .fillMaxWidth()

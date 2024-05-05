@@ -12,5 +12,5 @@ data class PropertyWithPictures(
         entityColumn = "propertyId",
         entity = PictureOfProperty::class
     )
-    val pictureList: List<PictureOfProperty>
+    val pictureList: List<PictureOfProperty>?
 )

@@ -10,7 +10,7 @@ data class PropertyDetailsState(
     val area: Int = 0,
     val numberOfRooms: Int = 0,
     val description: String = "",
-    val picturesList: List<PictureOfProperty> = emptyList(), // to create
+    val picturesList: List<PictureOfProperty>? = emptyList(), // to create
     val address: String = "",
     val interestPoints: List<InterestPoint> = emptyList(), // to create
     val state: String = "",

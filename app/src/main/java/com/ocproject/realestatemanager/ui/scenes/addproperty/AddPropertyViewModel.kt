@@ -33,7 +33,7 @@ class AddPropertyViewModel(
             viewModelScope.launch {
                 val propertyDetails = propertyRepository.getProperty(propertyId)
                 var mainPicture: PictureOfProperty? = null
-                propertyDetails.pictureList.forEach {
+                propertyDetails.pictureList?.forEach {
                     if (it.isMain) mainPicture = it
                 }
                 _state.update {
@@ -141,21 +141,24 @@ class AddPropertyViewModel(
                 viewModelScope.launch {
                     var idProperty = propertyRepository.upsertProperty(property).toInt()
                     // check if update (propertyId not null & upsert return -1) or insert situation ( propertyId null & upsert return id).
-                    if(propertyId!=null && propertyId!=0){
+                    if (propertyId != null && propertyId != 0) {
                         idProperty = propertyId
                     }
 
 
                     propertyRepository.deletePicturesOfPropertyById(idProperty)
-                    for (pic in pictureList) {
-                        val pictureOfProperty = PictureOfProperty(
-                            isMain = pic.isMain,
-                            uri = pic.uri,
-                            name = pic.name,
-                            propertyId = idProperty
-                        )
-                        propertyRepository.upsertPictureOfProperty(pictureOfProperty)
+                    if (pictureList != null) {
+                        for (pic in pictureList) {
+                            val pictureOfProperty = PictureOfProperty(
+                                isMain = pic.isMain,
+                                uri = pic.uri,
+                                name = pic.name,
+                                propertyId = idProperty
+                            )
+                            propertyRepository.upsertPictureOfProperty(pictureOfProperty)
+                        }
                     }
+
                 }
 
                 _state.update {
@@ -267,11 +270,15 @@ class AddPropertyViewModel(
             is AddPropertyEvent.SetInterestPoints -> TODO()
 
             is AddPropertyEvent.SetPictureList -> {
-                _state.update {
-                    it.copy(
-                        mainPic = event.pictureList[0],
-                        picturesList = event.pictureList
-                    )
+                if (event.pictureList.isNotEmpty()) {
+                    _state.update {
+
+
+                        it.copy(
+                            mainPic = event.pictureList[0],
+                            picturesList = event.pictureList
+                        )
+                    }
                 }
             }
 
@@ -282,7 +289,7 @@ class AddPropertyViewModel(
                     )
                 }
                 viewModelScope.launch {
-                    _state.value.picturesList.forEach {
+                    _state.value.picturesList?.forEach {
                         it.isMain = it.uri == _state.value.mainPic?.uri
                     }
                 }

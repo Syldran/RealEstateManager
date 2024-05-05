@@ -22,7 +22,6 @@
         <activity
             android:name=".ui.scenes.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Realestatemanager">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Add: "PLACES_API_KEY=YOUR_ACTUAL_API_KEY" to file secrets.properties in project root folder (create file if not there)-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${PLACES_API_KEY}" />

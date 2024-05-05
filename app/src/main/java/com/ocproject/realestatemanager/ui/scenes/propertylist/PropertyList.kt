@@ -16,18 +16,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.ocproject.realestatemanager.ui.scenes.propertylist.components.AlertDialogExample
-import com.ocproject.realestatemanager.ui.scenes.propertylist.components.DialogWithImage
+import com.ocproject.realestatemanager.R
+import com.ocproject.realestatemanager.ui.scenes.propertylist.components.BottomSheetFilter
 import com.ocproject.realestatemanager.ui.scenes.propertylist.components.PropertyListTopBar
 import com.ocproject.realestatemanager.ui.theme.RealestatemanagerTheme
 import com.openclassrooms.realestatemanager.models.Property
@@ -57,12 +58,11 @@ fun PropertyList(
         state = state,
         onSortProperties = {
             viewModel.onEvent(PropertyListEvent.SortProperties(it))
-            viewModel
         },
         onDelete = {
             viewModel.onEvent(PropertyListEvent.DeleteProperty(it))
         },
-        onFilterDialog = {
+        onFilter = {
             viewModel.onEvent(PropertyListEvent.OpenFilter(it))
         },
         onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen,
@@ -70,19 +70,20 @@ fun PropertyList(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListPropertiesScreen(
     state: PropertyListState,
     onDelete: (property: Property) -> Unit,
     onSortProperties: (sortType: SortType) -> Unit,
-    onFilterDialog: (filterState: Boolean) -> Unit,
+    onFilter: (filterState: Boolean) -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Int?) -> Unit,
     onNavigateToDetailsPropertyScreen: (propertyId: Int) -> Unit,
 ) {
     Scaffold(
         topBar = {
             PropertyListTopBar(
-                onFilterDialog,
+                onFilter,
                 modifier = Modifier.fillMaxWidth(),
                 onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen
             )
@@ -102,6 +103,8 @@ fun ListPropertiesScreen(
         },
 
         ) { padding ->
+        val sheetState = rememberModalBottomSheetState()
+        val scope = rememberCoroutineScope()
 
         LazyColumn(
             contentPadding = padding,
@@ -156,16 +159,13 @@ fun ListPropertiesScreen(
                         ) {
                             Row(modifier = Modifier.weight(0.25f)) {
                                 //default img to add to ressources
-                                var uriMain: String =
-                                    "content://com.android.providers.media.documents/document/image%3A37"
-                                property.pictureList.forEach {
+                                var uriMain:String? = null
+                                property.pictureList?.forEach {
                                     if (it.isMain) uriMain = it.uri
                                 }
-//                                val picture = property.pictureList.takeWhile { it.isMain }.firstOrNull()
-//                                Log.d("HERE", "ListPropertiesScreen: ${property.pictureList.takeWhile { it.isMain }.firstOrNull()?.id}")
                                 AsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
-                                        .data(uriMain).build(),
+                                        .data(uriMain?: R.drawable.baseline_image).build(),
                                     contentDescription = null,
                                     contentScale = ContentScale.FillHeight,
                                     modifier = Modifier
@@ -176,6 +176,7 @@ fun ListPropertiesScreen(
                                             color = Color.Black
                                         )
                                         .height(64.dp)
+                                        .align(CenterVertically)
                                 )
                             }
                             Column(
@@ -210,37 +211,16 @@ fun ListPropertiesScreen(
                 }
             }
         }
-        when {
 
+        when {
             state.openFilterState -> {
-                DialogWithImage(
-                    onDismissRequest = { onFilterDialog(false) },
-                    onConfirmation = { onFilterDialog(false) })
+                BottomSheetFilter(
+                    onDismissRequest = { onFilter(false) },
+                    sheetState = sheetState,
+                    scope = scope
+                )
             }
 
-        }
-    }
-}
-
-@Composable
-fun DialogExamples() {
-    // ...
-    val openAlertDialog = remember { mutableStateOf(false) }
-
-    // ...
-    when {
-        // ...
-        openAlertDialog.value -> {
-            AlertDialogExample(
-                onDismissRequest = { openAlertDialog.value = false },
-                onConfirmation = {
-                    openAlertDialog.value = false
-                    println("Confirmation registered") // Add logic here to handle confirmation.
-                },
-                dialogTitle = "Alert dialog example",
-                dialogText = "This is an example of an alert dialog with buttons.",
-                icon = Icons.Default.Info
-            )
         }
     }
 }
@@ -253,7 +233,7 @@ private fun PropertiesPreview() {
             state = PropertyListState(),
             onDelete = {},
             onSortProperties = {},
-            onFilterDialog = {},
+            onFilter = {},
             onNavigateToAddPropertyScreen = {},
             onNavigateToDetailsPropertyScreen = {}
         )

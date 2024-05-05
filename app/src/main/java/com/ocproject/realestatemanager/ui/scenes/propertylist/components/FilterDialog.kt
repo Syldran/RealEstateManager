@@ -1,6 +1,5 @@
 package com.ocproject.realestatemanager.ui.scenes.propertylist.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,89 +8,48 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.ocproject.realestatemanager.ui.scenes.propertylist.PropertyListState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-//
-//@Composable
-//fun DialogExamples(state: PropertyListState) {
-//    // ...
-////    val openAlertDialog = remember { mutableStateOf(true) }
-//
-//    // ...
-//    when {
-//        // ...
-//        state.openFilterState -> {
-//            AlertDialogExample(
-//                onDismissRequest = { state.copy(openFilterState = false) },
-//                onConfirmation = {
-//                    state.copy(openFilterState = false)
-//                    println("Confirmation registered") // Add logic here to handle confirmation.
-//                },
-//                dialogTitle = "Alert dialog example",
-//                dialogText = "This is an example of an alert dialog with buttons.",
-//                icon = Icons.Default.Info
-//            )
-//        }
-//    }
-//}
-
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertDialogExample(
+fun BottomSheetFilter(
     onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    dialogTitle: String,
-    dialogText: String,
-    icon: ImageVector,
+//    onConfirmation: () -> Unit,
+    sheetState: SheetState,
+    scope: CoroutineScope,
 ) {
-    AlertDialog(
-        icon = {
-            Icon(icon, contentDescription = "Example Icon")
-        },
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text("Confirm")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
+    ModalBottomSheet(
+        onDismissRequest = { onDismissRequest() },
+        sheetState = sheetState,
+    ) {
+
+        Button(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = {
+            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                if (!sheetState.isVisible) {
                     onDismissRequest()
                 }
-            ) {
-                Text("Dismiss")
             }
+        }) {
+            Text("Hide bottom sheet")
         }
-    )
+
+    }
 }
 
 @Composable

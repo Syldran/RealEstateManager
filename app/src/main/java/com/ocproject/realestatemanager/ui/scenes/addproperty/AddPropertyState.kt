@@ -22,7 +22,7 @@ data class AddPropertyState(
     val lng: Double = 0.0,
 
     val isAddingProperty: Boolean = false,
-    val picturesList: List<PictureOfProperty> = emptyList(),
+    val picturesList: List<PictureOfProperty>? = emptyList(),
     val mainPic: PictureOfProperty ?= null,
     val updatedPredictions : List<AutocompletePrediction> = emptyList(),
     val changeText: String = "",

@@ -25,22 +25,7 @@ android {
             useSupportLibrary = true
         }
     }
-//    defaultConfig {
-//        //load the values from .properties file
-//        val keystoreFile = project.rootProject.file("local.properties")
-//        val properties = Properties()
-//        properties.load(keystoreFile.inputStream())
-//
-//        //return empty key in case something goes wrong
-//        val apiKey = properties.getProperty("PLACES_API_KEY")
-//
-//        buildConfigField("String", "PLACES_API_KEY", apiKey) ?: ""
-//
-//        //inject the key dynamically into the manifest
-//        manifestPlaceholders["PLACES_API_KEY"] = apiKey
-//
-//
-//    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -82,7 +67,7 @@ android {
 secrets{
     // Optionally specify a different file name containing your secrets.
     // The plugin defaults to "local.properties"
-    propertiesFileName = "local.properties"
+    propertiesFileName = "secrets.properties"
 
     // A properties file containing default secret values. This file can be
     // checked in version control.
