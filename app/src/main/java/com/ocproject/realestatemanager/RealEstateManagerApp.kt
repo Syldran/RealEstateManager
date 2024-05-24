@@ -1,20 +1,34 @@
 package com.ocproject.realestatemanager
 
-import android.app.Application
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.GlobalContext.startKoin
-import org.koin.core.logger.Level
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import com.ocproject.realestatemanager.presentation.navigation.Screen
+import com.ocproject.realestatemanager.presentation.scene.addproperty.addPropertyScreen
+import com.ocproject.realestatemanager.presentation.scene.detailproperty.addPropertyDetailsScreen
+import com.ocproject.realestatemanager.presentation.scene.propertylist.addPropertyListScreen
+import com.ocproject.realestatemanager.ui.theme.RealestatemanagerTheme
+import org.koin.compose.KoinContext
 
-
-class RealEstateManagerApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        startKoin{
-            androidLogger(Level.ERROR)
-            androidContext(this@RealEstateManagerApp)
-            modules(dataModule)
-            modules(presentationModule)
+@Composable
+fun RealEstateManagerApp(
+    darkTheme: Boolean,
+    dynamicColor: Boolean,
+) {
+    RealestatemanagerTheme (
+        darkTheme = darkTheme,
+        dynamicColor = dynamicColor,
+    ){
+        val navController = rememberNavController()
+        KoinContext {
+            NavHost(
+                navController = navController,
+                startDestination = Screen.PropertyListScreen.route
+            ){
+                addPropertyListScreen(navController)
+                addPropertyScreen(navController)
+                addPropertyDetailsScreen(navController)
+            }
         }
     }
 }

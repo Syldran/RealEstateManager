@@ -9,7 +9,7 @@
 
 
     <application
-        android:name=".RealEstateManagerApp"
+        android:name=".di.RealEstateManager"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,7 +20,7 @@
         android:theme="@style/Theme.Realestatemanager"
         tools:targetApi="34">
         <activity
-            android:name=".ui.scenes.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Realestatemanager">
             <intent-filter>

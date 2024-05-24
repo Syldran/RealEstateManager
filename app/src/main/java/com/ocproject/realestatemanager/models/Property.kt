@@ -1,23 +1,21 @@
-package com.openclassrooms.realestatemanager.models
-
+package com.ocproject.realestatemanager.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+
+
 @Entity
 data class Property(
-    val type: String,
-    val price: Int,
-    val area: Int,
-    val numberOfRooms: Int,
-    val description: String,
+    val interestPoints: List<InterestPoint>?,
     val address: String,
-    val interestPoints: String,
-    val state: String,
-    val createDate: String,
-    val soldDate: String,
-    val agentId: String,
+    val town: String,
     val lat: Double,
     val lng: Double,
+    val country: String,
+    val createdDate: Long?,
+    val areaCode: Int?,
+    val surfaceArea: Int?,
+    val price: Int?,
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0L,
 )

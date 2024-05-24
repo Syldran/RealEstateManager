@@ -1,12 +1,9 @@
-import java.util.Properties
-
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jlleitschuh.gradle.ktlint") version "11.6.0"
-//    alias(libs.plugins.ktlint)
-    id("com.google.devtools.ksp")
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.secrets.gradle)
 }
 
 android {
@@ -49,7 +46,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
     packaging {
         resources {
@@ -83,7 +80,6 @@ secrets{
 
 
 ktlint {
-    // configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     debug.set(true)
     android.set(true)
     outputColorName.set("RED")
@@ -97,43 +93,31 @@ ktlint {
 }
 
 dependencies {
-    implementation(libs.core.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.activity.compose)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.ui.ui)
-    implementation(libs.compose.ui.ui.graphics)
-    implementation(libs.compose.ui.ui.tooling.preview)
-    implementation(libs.compose.navigation)
-    implementation(libs.compose.material3)
-//    runtimeOnly("androidx.compose.material3:material3:1.1.2")
-    implementation(libs.compose.material3.window)
-
-
-    implementation(libs.appcompat)
-    // coil managing images
-    implementation(libs.coil)
-    implementation(libs.coil.compose)
-    implementation(libs.timber)
-    implementation(libs.constraintlayout)
-    implementation(libs.core.ktx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    androidTestImplementation(libs.mockk.android)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.compose.ui.ui.test.junit4)
-    debugImplementation(libs.compose.ui.ui.tooling)
-    debugImplementation(libs.compose.ui.ui.test.manifest)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Room, for linking with bdd
+    // Room, for bdd
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-//    annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
 
-    implementation(libs.koin.bom)
+    //injection with koin
+    implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.annotations)
     implementation(libs.koin.compose)
@@ -143,12 +127,9 @@ dependencies {
     //google maps
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
-    implementation (libs.places)
-    implementation ("com.google.android.gms:play-services-location:21.2.0")
+    implementation(libs.places)
 
-    val lifecycle_version = "2.6.0-alpha03"
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
-
+    // coil managing images
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
 }
