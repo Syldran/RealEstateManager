@@ -105,7 +105,6 @@ fun PropertyDetailScreen(
                     }
                 }
 
-
             }
             Spacer(Modifier.height(16.dp))
             FilledTonalIconButton(

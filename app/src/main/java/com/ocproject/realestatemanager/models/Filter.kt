@@ -8,6 +8,7 @@ data class Filter(
     val orderDate: Order,
     val rangePrice: Range<Int>,
     val rangeDate: Range<Long>,
+//    val interestPointList: List<InterestPoint>
 )
 
 enum class SortType {

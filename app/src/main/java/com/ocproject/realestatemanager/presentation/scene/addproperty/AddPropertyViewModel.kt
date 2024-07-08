@@ -34,7 +34,7 @@ class AddPropertyViewModel(
     var photoList: MutableState<List<PhotoProperty>?> = mutableStateOf(null)
         private set
 
-    var map : MutableState<Map<PhotoProperty, String>> = mutableStateOf(mapOf())
+//    var valueString : MutableState<String>
 
     init {
         getProperty()
@@ -65,6 +65,7 @@ class AddPropertyViewModel(
             )
         }
     }
+
 
     fun setPropertyFromPlace(place: Place) {
         var listAddressComponents = place.addressComponents?.asList()?.toList()

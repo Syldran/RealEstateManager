@@ -4,6 +4,7 @@ class UtilsKotlin {
 
 
     companion object {
+
         val integerChars = '0'..'9'
         fun isNumber(input: String): Boolean {
             var dotOccurred = 0

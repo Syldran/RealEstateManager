@@ -138,8 +138,14 @@ fun PropertyFilterSheet(
                     Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
                 }
 
-                var sliderPosition by remember { mutableStateOf(state.rangePrice.lower.toFloat()..state.rangePrice.upper.toFloat()) }
-
+                var maxPrice = state.maxPrice
+                var sliderMax: Int
+                if (maxPrice > state.rangePrice.upper) {
+                    sliderMax = maxPrice
+                } else {
+                    sliderMax = state.rangePrice.upper
+                }
+                var sliderPosition by remember { mutableStateOf(state.rangePrice.lower.toFloat()..sliderMax.toFloat()) }
                 RangeSlider(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     value = sliderPosition,
@@ -147,9 +153,16 @@ fun PropertyFilterSheet(
                     onValueChange = { range ->
                         sliderPosition = range
                     },
-                    valueRange = 0F..Int.MAX_VALUE.toFloat(),
+                    valueRange = 0F..maxPrice.toFloat(),
                     onValueChangeFinished = {
-                        onEvent(PropertyListEvent.SetRangePrice(Range<Float>(sliderPosition.start, sliderPosition.endInclusive)))
+                        onEvent(
+                            PropertyListEvent.SetRangePrice(
+                                Range<Float>(
+                                    sliderPosition.start,
+                                    sliderPosition.endInclusive
+                                )
+                            )
+                        )
                     },
                 )
                 Text(text = "min: ${state.rangePrice.lower}    max:${state.rangePrice.upper}")
@@ -213,12 +226,14 @@ fun PropertyFilterSheet(
                     )
                     Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
                 }
+                // ajouter validation de la date sur le textfield focus
                 DateRangePicker(
+//                    showModeToggle = false,
                     state = rememberDateRangePickerState(
                         initialDisplayMode = DisplayMode.Input,
                     ),
 
-                )
+                    )
 
                 HorizontalDivider(modifier = Modifier.padding(16.dp))
                 Row {
@@ -295,7 +310,7 @@ fun PropertyFilterSheet(
                         modifier = Modifier.padding(4.dp),
                         onClick = {
                             transportChecked = !transportChecked
-//                            viewModel.onEvent(AddPropertyEvent.OnTransportChecked(transportChecked))
+
                         },
                         label = {
                             Text("Transport")

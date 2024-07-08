@@ -22,7 +22,9 @@ import org.koin.android.annotation.KoinViewModel
 import java.text.DateFormat
 import java.util.Date
 
-
+//contentProvider pour expo data
+// test unit
+//
 @KoinViewModel
 class PropertyListViewModel(
     private val propertiesRepository: PropertiesRepository,
@@ -44,6 +46,7 @@ class PropertyListViewModel(
         _sortedProperties,
         _filter
     ) { state, sortedProperties, filter ->
+
         state.copy(
             properties = sortedProperties,
             sortType = filter.sortType,
@@ -55,8 +58,7 @@ class PropertyListViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), PropertyListState())
 
     init {
-//        _state.update { it.copy(isLoading = true) }
-
+        setMaxPrice()
         onEvent(
             PropertyListEvent.SortProperties(filter = _filter.value)
         )
@@ -83,6 +85,7 @@ class PropertyListViewModel(
             _properties.flowOn(Dispatchers.IO)
                 .collect { properties: List<PropertyWithPhotos> ->
                     _sortedProperties.update {
+
                         when (filter.sortType) {
                             SortType.PRICE -> {
                                 when (filter.orderPrice) {
@@ -112,6 +115,8 @@ class PropertyListViewModel(
 
                                 }
                             }
+
+
                         }
                     }
                 }
@@ -136,7 +141,6 @@ class PropertyListViewModel(
             is PropertyListEvent.SortProperties -> {
 
                 viewModelScope.launch {
-                    setMaxPrice()
                     _filter.update {
                         it.copy(
                             sortType = event.filter.sortType,

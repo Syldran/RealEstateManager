@@ -132,4 +132,9 @@ dependencies {
     // coil managing images
     implementation(libs.coil)
     implementation(libs.coil.compose)
+
+
+    testImplementation("app.cash.turbine:turbine:0.7.0")
+    testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 }

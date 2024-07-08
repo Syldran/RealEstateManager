@@ -37,6 +37,12 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <provider
+            android:name="com.ocproject.realestatemanager.data.database.PropertyContentProvider"
+            android:authorities="com.ocproject.realestatemanager.provider"
+            android:exported="true"
+            tools:ignore="Instantiatable" />
     </application>
 
 </manifest>

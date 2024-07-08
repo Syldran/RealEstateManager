@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.data.database
 
+import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
@@ -12,6 +13,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PropertiesDao {
+
+    @Query("SELECT * FROM property")
+    fun getPropertiesWithCursor(): Cursor
 
     @Upsert
     suspend fun upsertProperty(property: Property): Long
