@@ -7,6 +7,10 @@ import androidx.room.PrimaryKey
 @Entity
 data class Property(
     val interestPoints: List<InterestPoint>?,
+    val school : Boolean,
+    val shop : Boolean,
+    val transport : Boolean,
+    val park : Boolean,
     val address: String,
     val town: String,
     val lat: Double,
@@ -16,6 +20,7 @@ data class Property(
     val areaCode: Int?,
     val surfaceArea: Int?,
     val price: Int?,
+    val sold: Boolean,
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
 )

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListItem
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListTopBar
-import com.ocproject.realestatemanager_remade.properties.presentation.scene.propertylist.components.PropertyFilterSheet
+import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyFilterSheet
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

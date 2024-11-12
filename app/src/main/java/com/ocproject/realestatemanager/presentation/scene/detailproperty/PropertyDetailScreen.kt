@@ -69,6 +69,15 @@ fun PropertyDetailScreen(
             )
             Spacer(Modifier.height(16.dp))
             Row {
+                if (selectedProperty?.property?.sold == true){
+                    SuggestionChip(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        onClick = {},
+                        label = { Text("SOLD") },
+                        enabled = true,
+                    )
+                }
+
                 selectedProperty?.property?.interestPoints?.forEach {
                     when (it){
                         InterestPoint.PARK -> {

@@ -83,6 +83,11 @@ fun PreviewItem() {
             country = "France",
             surfaceArea = 110,
             interestPoints = null,
+            sold = false,
+            shop = false,
+            transport = false,
+            school = false,
+            park = false,
         ),
             null,
         )

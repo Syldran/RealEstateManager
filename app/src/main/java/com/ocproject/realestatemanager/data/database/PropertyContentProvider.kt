@@ -9,9 +9,9 @@ import android.net.Uri
 import org.koin.dsl.koinApplication
 
 class PropertyContentProvider(
-    private val dao: PropertiesDao,
+//    private val dao: PropertiesDao, impossible car pas d'instanciention
 ) : ContentProvider() {
-
+    val dao: PropertiesDao? = context?.let { PropertiesDatabase.getInstance(it).dao }
     companion object {
         // FOR DATA
         val AUTHORITY = "com.ocproject.realestatemanager.provider"
@@ -34,7 +34,7 @@ class PropertyContentProvider(
         sortOrder: String?
     ): Cursor? {
         if (uriMatcher.match(uri) == 0) {
-            val cursor = dao.getPropertiesWithCursor()
+            val cursor = dao?.getPropertiesWithCursor()
             return cursor
         }
         return null

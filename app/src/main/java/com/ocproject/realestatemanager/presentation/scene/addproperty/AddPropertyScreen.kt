@@ -57,18 +57,18 @@ fun AddPropertyScreen(
     viewModel: AddPropertyViewModel = koinViewModel(),
     onNavigateToPropertyListScreen: () -> Unit,
 ) {
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = -available.y
-                /*coroutineScope.launch {
-                    lazyGridState.scrollBy(delta)
-                }*/
-                return Offset.Zero
-            }
-
-        }
-    }
+//    val nestedScrollConnection = remember {
+//        object : NestedScrollConnection {
+//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+//                val delta = -available.y
+//                /*coroutineScope.launch {
+//                    lazyGridState.scrollBy(delta)
+//                }*/
+//                return Offset.Zero
+//            }
+//
+//        }
+//    }
     val imagePicker = ImagePicker(
         LocalContext.current as ComponentActivity
     )
@@ -79,6 +79,7 @@ fun AddPropertyScreen(
     val photoList = viewModel.photoList
     val state by viewModel.state.collectAsState()
 
+    var soldChecked by remember { mutableStateOf(false) }
     var schoolChecked by remember { mutableStateOf(false) }
     var parkChecked by remember { mutableStateOf(false) }
     var transportChecked by remember { mutableStateOf(false) }
@@ -101,6 +102,9 @@ fun AddPropertyScreen(
                 transportChecked = true
             }
         }
+    }
+    if (newProperty?.sold == true){
+        soldChecked = true
     }
 
     if (state.navToPropertyListScreen) {
@@ -246,8 +250,32 @@ fun AddPropertyScreen(
                 },
                 keyboardType = KeyboardType.Decimal
             )
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row {
+                FilterChip(
+                    modifier = Modifier.padding(4.dp),
+                    onClick = {
+                        soldChecked = !soldChecked
+                        viewModel.onEvent(AddPropertyEvent.OnSoldChecked(soldChecked))
+                    },
+                    label = {
+                        Text("SOLD!")
+                    },
+                    selected = soldChecked,
+                    leadingIcon = if (soldChecked) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = "Done icon",
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                )
+
                 FilterChip(
                     modifier = Modifier.padding(4.dp),
                     onClick = {

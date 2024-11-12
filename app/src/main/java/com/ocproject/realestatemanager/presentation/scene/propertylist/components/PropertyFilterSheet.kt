@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager_remade.properties.presentation.scene.propertylist.components
+package com.ocproject.realestatemanager.presentation.scene.propertylist.components
 
 import android.util.Range
 import androidx.compose.foundation.layout.Box
@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -24,21 +22,18 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.models.Filter
 import com.ocproject.realestatemanager.models.Order
+import com.ocproject.realestatemanager.models.SellingStatus
 import com.ocproject.realestatemanager.models.SortType
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListEvent
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListState
@@ -53,10 +48,6 @@ fun PropertyFilterSheet(
     sheetState: SheetState,
     scope: CoroutineScope,
 ) {
-    var schoolChecked by remember { mutableStateOf(false) }
-    var parkChecked by remember { mutableStateOf(false) }
-    var transportChecked by remember { mutableStateOf(false) }
-    var shopChecked by remember { mutableStateOf(false) }
 
     ModalBottomSheet(
         onDismissRequest = {
@@ -78,6 +69,88 @@ fun PropertyFilterSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Row {
+                    Text(
+                        "Selling Status"
+                    )
+                }
+                Row {
+                    Text(
+                        "Purchasable"
+                    )
+                    RadioButton(
+                        modifier = Modifier.weight(2f),
+                        selected = state.soldState == SellingStatus.PURCHASABLE,
+                        onClick = {
+                            onEvent(
+                                PropertyListEvent.SortProperties(
+                                    filter = Filter(
+                                        SortType.PRICE,
+                                        state.orderPrice,
+                                        state.orderDate,
+                                        state.rangePrice,
+                                        state.rangeDate,
+                                        SellingStatus.PURCHASABLE,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    Text(text = "Sold", Modifier.padding(end = 16.dp))
+                    RadioButton(
+                        modifier = Modifier.weight(1f),
+                        selected = state.soldState == SellingStatus.SOLD,
+                        onClick = {
+                            onEvent(
+                                PropertyListEvent.SortProperties(
+                                    filter = Filter(
+                                        state.sortType,
+                                        state.orderPrice,
+                                        state.orderDate,
+                                        state.rangePrice,
+                                        state.rangeDate,
+                                        SellingStatus.SOLD,
+//                                        state.tags,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    Text(text = "All", Modifier.padding(end = 16.dp))
+                    RadioButton(
+                        modifier = Modifier.weight(1f),
+                        selected = state.soldState == SellingStatus.ALL,
+                        onClick = {
+                            onEvent(
+                                PropertyListEvent.SortProperties(
+                                    filter = Filter(
+                                        state.sortType,
+                                        state.orderPrice,
+                                        state.orderDate,
+                                        state.rangePrice,
+                                        state.rangeDate,
+                                        SellingStatus.ALL,
+//                                        state.tags,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
+                                    )
+                                )
+                            )
+                        }
+                    )
+                }
+
+
                 Row(Modifier) {
                     // RADIO SORT TYPE PRICE
                     RadioButton(
@@ -91,7 +164,13 @@ fun PropertyFilterSheet(
                                         state.orderPrice,
                                         state.orderDate,
                                         state.rangePrice,
-                                        state.rangeDate
+                                        state.rangeDate,
+                                        SellingStatus.ALL,
+//                                        state.tags,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
                                     )
                                 )
                             )
@@ -110,7 +189,13 @@ fun PropertyFilterSheet(
                                         Order.ASC,
                                         state.orderDate,
                                         state.rangePrice,
-                                        state.rangeDate
+                                        state.rangeDate,
+                                        state.soldState,
+//                                        state.tags,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
                                     )
                                 )
                             )
@@ -129,7 +214,13 @@ fun PropertyFilterSheet(
                                         Order.DESC,
                                         state.orderDate,
                                         state.rangePrice,
-                                        state.rangeDate
+                                        state.rangeDate,
+                                        state.soldState,
+//                                        state.tags,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
                                     )
                                 )
                             )
@@ -141,9 +232,9 @@ fun PropertyFilterSheet(
                 var maxPrice = state.maxPrice
                 var sliderMax: Int
                 if (maxPrice > state.rangePrice.upper) {
-                    sliderMax = maxPrice
-                } else {
                     sliderMax = state.rangePrice.upper
+                } else {
+                    sliderMax = maxPrice
                 }
                 var sliderPosition by remember { mutableStateOf(state.rangePrice.lower.toFloat()..sliderMax.toFloat()) }
                 RangeSlider(
@@ -165,7 +256,7 @@ fun PropertyFilterSheet(
                         )
                     },
                 )
-                Text(text = "min: ${state.rangePrice.lower}    max:${state.rangePrice.upper}")
+                Text(text = "min: ${state.rangePrice.lower}    max:${sliderMax}")
                 HorizontalDivider(modifier = Modifier.padding(16.dp))
                 Row {
                     // RADIO SORT TYPE DATE
@@ -180,7 +271,13 @@ fun PropertyFilterSheet(
                                         state.orderPrice,
                                         state.orderDate,
                                         state.rangePrice,
-                                        state.rangeDate
+                                        state.rangeDate,
+                                        state.soldState,
+//                                        state.tags,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
                                     )
                                 )
                             )
@@ -199,7 +296,13 @@ fun PropertyFilterSheet(
                                         state.orderPrice,
                                         Order.ASC,
                                         state.rangePrice,
-                                        state.rangeDate
+                                        state.rangeDate,
+                                        state.soldState,
+//                                        state.tags,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
                                     )
                                 )
                             )
@@ -218,7 +321,12 @@ fun PropertyFilterSheet(
                                         state.orderPrice,
                                         Order.DESC,
                                         state.rangePrice,
-                                        state.rangeDate
+                                        state.rangeDate,
+                                        state.soldState,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.schoolState,
+                                        state.transportState,
                                     )
                                 )
                             )
@@ -226,6 +334,7 @@ fun PropertyFilterSheet(
                     )
                     Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
                 }
+                /*
                 // ajouter validation de la date sur le textfield focus
                 DateRangePicker(
 //                    showModeToggle = false,
@@ -234,20 +343,20 @@ fun PropertyFilterSheet(
                     ),
 
                     )
-
+*/
                 HorizontalDivider(modifier = Modifier.padding(16.dp))
                 Row {
                     FilterChip(
                         modifier = Modifier.padding(4.dp),
                         onClick = {
-                            schoolChecked = !schoolChecked
-//                            onEvent(AddPropertyEvent.OnSchoolChecked(schoolChecked))
+                            onEvent(PropertyListEvent.OnSchoolChecked(state.schoolState))
+
                         },
                         label = {
                             Text("School")
                         },
-                        selected = schoolChecked,
-                        leadingIcon = if (schoolChecked) {
+                        selected = state.schoolState,
+                        leadingIcon = if (state.schoolState) {
                             {
                                 Icon(
                                     imageVector = Icons.Filled.Done,
@@ -263,14 +372,14 @@ fun PropertyFilterSheet(
                     FilterChip(
                         modifier = Modifier.padding(4.dp),
                         onClick = {
-                            parkChecked = !parkChecked
-//                            viewModel.onEvent(AddPropertyEvent.OnParkChecked(parkChecked))
+                            onEvent(
+                                PropertyListEvent.OnParkChecked(state.parkState))
                         },
                         label = {
                             Text("Park")
                         },
-                        selected = parkChecked,
-                        leadingIcon = if (parkChecked) {
+                        selected = state.parkState,
+                        leadingIcon = if (state.parkState) {
                             {
                                 Icon(
                                     imageVector = Icons.Filled.Done,
@@ -286,14 +395,15 @@ fun PropertyFilterSheet(
                     FilterChip(
                         modifier = Modifier.padding(4.dp),
                         onClick = {
-                            shopChecked = !shopChecked
-//                            viewModel.onEvent(AddPropertyEvent.OnShopChecked(shopChecked))
+                            onEvent(
+                                PropertyListEvent.OnShopChecked(state.shopState)
+                            )
                         },
                         label = {
                             Text("Shop")
                         },
-                        selected = shopChecked,
-                        leadingIcon = if (shopChecked) {
+                        selected = state.shopState,
+                        leadingIcon = if (state.shopState) {
                             {
                                 Icon(
                                     imageVector = Icons.Filled.Done,
@@ -309,14 +419,29 @@ fun PropertyFilterSheet(
                     FilterChip(
                         modifier = Modifier.padding(4.dp),
                         onClick = {
-                            transportChecked = !transportChecked
-
+                            onEvent(PropertyListEvent.OnTransportChecked(state.transportState))
+//                            onEvent(
+//                                PropertyListEvent.SortProperties(
+//                                    filter = Filter(
+//                                        state.sortType,
+//                                        state.orderPrice,
+//                                        state.orderDate,
+//                                        state.rangePrice,
+//                                        state.rangeDate,
+//                                        state.soldState,
+//                                        tagPark = state.parkState,
+//                                        tagTransport = transportChecked,
+//                                        tagShop = state.shopState,
+//                                        tagSchool = state.schoolState,
+//                                    )
+//                                )
+//                            )
                         },
                         label = {
                             Text("Transport")
                         },
-                        selected = transportChecked,
-                        leadingIcon = if (transportChecked) {
+                        selected = state.transportState,
+                        leadingIcon = if (state.transportState) {
                             {
                                 Icon(
                                     imageVector = Icons.Filled.Done,
@@ -329,7 +454,6 @@ fun PropertyFilterSheet(
                         },
                     )
                 }
-
             }
             IconButton(
                 onClick = {
@@ -355,15 +479,15 @@ fun PropertyFilterSheet(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+/*@OptIn(ExperimentalMaterial3Api::class)
 @Preview
-@Composable
-fun Preview() {
-    PropertyFilterSheet(
-        state = PropertyListState(),
-        onEvent = {},
-        sheetState = SheetState(initialValue = SheetValue.Expanded, skipPartiallyExpanded = true),
-        scope = rememberCoroutineScope()
-    )
-
-}
+@Composable*/
+//fun Preview() {
+//    PropertyFilterSheet(
+//        state = PropertyListState(),
+//        onEvent = {},
+//        sheetState = SheetState(initialValue = SheetValue.Expanded, skipPartiallyExpanded = true),
+//        scope = rememberCoroutineScope()
+//    )
+//
+//}

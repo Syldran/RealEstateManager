@@ -8,8 +8,19 @@ data class Filter(
     val orderDate: Order,
     val rangePrice: Range<Int>,
     val rangeDate: Range<Long>,
-//    val interestPointList: List<InterestPoint>
+    val sellingStatus : SellingStatus,
+
+    val tagSchool: Boolean,
+    val tagTransport: Boolean,
+    val tagShop: Boolean,
+    val tagPark: Boolean,
 )
+
+enum class SellingStatus {
+    ALL,
+    PURCHASABLE,
+    SOLD,
+}
 
 enum class SortType {
     PRICE,

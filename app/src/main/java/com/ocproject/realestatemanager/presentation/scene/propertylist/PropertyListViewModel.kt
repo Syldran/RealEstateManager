@@ -8,6 +8,7 @@ import com.ocproject.realestatemanager.models.Filter
 import com.ocproject.realestatemanager.models.Order
 import com.ocproject.realestatemanager.models.Property
 import com.ocproject.realestatemanager.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.models.SellingStatus
 import com.ocproject.realestatemanager.models.SortType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,9 +23,6 @@ import org.koin.android.annotation.KoinViewModel
 import java.text.DateFormat
 import java.util.Date
 
-//contentProvider pour expo data
-// test unit
-//
 @KoinViewModel
 class PropertyListViewModel(
     private val propertiesRepository: PropertiesRepository,
@@ -36,7 +34,13 @@ class PropertyListViewModel(
     private val _filter = MutableStateFlow(
         Filter(
             SortType.PRICE, Order.ASC, Order.ASC,
-            Range<Int>(0, Int.MAX_VALUE), Range<Long>(0L, Long.MAX_VALUE)
+            Range<Int>(0, Int.MAX_VALUE), Range<Long>(0L, Long.MAX_VALUE),
+            SellingStatus.ALL,
+//            interestPointList = emptyList(),
+            tagSchool = false,
+            tagTransport = false,
+            tagShop = false,
+            tagPark = false,
         )
     )
 
@@ -54,6 +58,11 @@ class PropertyListViewModel(
             orderDate = filter.orderDate,
             rangePrice = filter.rangePrice,
             rangeDate = filter.rangeDate,
+            soldState = filter.sellingStatus,
+            shopState = filter.tagShop,
+            schoolState = filter.tagSchool,
+            parkState = filter.tagPark,
+            transportState = filter.tagTransport,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), PropertyListState())
 
@@ -85,41 +94,100 @@ class PropertyListViewModel(
             _properties.flowOn(Dispatchers.IO)
                 .collect { properties: List<PropertyWithPhotos> ->
                     _sortedProperties.update {
+                        // tags : all tags unchecked then show all
+                        // if on or more tags checked then filter with those.
+                        val filteredProperties: MutableList<PropertyWithPhotos> = mutableListOf()
 
-                        when (filter.sortType) {
-                            SortType.PRICE -> {
-                                when (filter.orderPrice) {
-                                    Order.ASC -> {
-                                        properties
-                                            .sortedBy { it.property.price }
-                                            .filter { it.property.price!! >= filter.rangePrice.lower && it.property.price <= filter.rangePrice.upper }
 
-                                    }
 
-                                    Order.DESC -> properties
-                                        .sortedByDescending { it.property.price }
-                                        .filter { it.property.price!! >= filter.rangePrice.lower && it.property.price <= filter.rangePrice.upper }
-
-                                }
+                        if (!filter.tagSchool && !filter.tagTransport && !filter.tagPark && !filter.tagShop) {
+                            filteredProperties.addAll(properties)
+                        } else {
+                            if (filter.tagPark) {
+                                filteredProperties.addAll(properties.filter { it.property.park })
                             }
 
-                            SortType.DATE -> {
-                                when (filter.orderDate) {
-                                    Order.ASC -> properties
-                                        .sortedBy { it.property.createdDate }
-                                        .filter { it.property.createdDate!! >= filter.rangeDate.lower && it.property.createdDate <= filter.rangeDate.upper }
-
-                                    Order.DESC -> properties
-                                        .sortedByDescending { it.property.createdDate }
-                                        .filter { it.property.createdDate!! >= filter.rangeDate.lower && it.property.createdDate <= filter.rangeDate.upper }
-
-                                }
+                            if (filter.tagShop) {
+                                filteredProperties.addAll(properties.filter { it.property.shop })
                             }
 
+                            if (filter.tagSchool) {
+                                filteredProperties.addAll(properties.filter { it.property.school })
+                            }
 
+                            if (filter.tagTransport) {
+                                filteredProperties.addAll(properties.filter { it.property.transport })
+                            }
+                        }
+
+
+                        when (filter.sellingStatus) {
+                            SellingStatus.SOLD -> {
+                                subFilter(filteredProperties.filter { it.property.sold }, filter)
+                            }
+
+                            SellingStatus.ALL -> {
+                                subFilter(filteredProperties, filter)
+                            }
+
+                            SellingStatus.PURCHASABLE -> {
+                                subFilter(filteredProperties.filter { !it.property.sold }, filter)
+                            }
                         }
                     }
                 }
+        }
+    }
+
+    private fun sortByPrice(
+        properties: List<PropertyWithPhotos>,
+        filter: Filter
+    ): List<PropertyWithPhotos> {
+        return when (filter.orderPrice) {
+            Order.ASC -> {
+                properties
+                    .sortedBy { it.property.price }
+                    .filter { it.property.price!! >= filter.rangePrice.lower && it.property.price <= filter.rangePrice.upper }
+            }
+
+            Order.DESC -> {
+                properties
+                    .sortedByDescending { it.property.price }
+                    .filter { it.property.price!! >= filter.rangePrice.lower && it.property.price <= filter.rangePrice.upper }
+            }
+        }
+    }
+
+    private fun sortByDate(
+        properties: List<PropertyWithPhotos>,
+        filter: Filter
+    ): List<PropertyWithPhotos> {
+        return when (filter.orderDate) {
+            Order.ASC ->
+                properties
+                    .sortedBy { it.property.createdDate }
+                    .filter { it.property.createdDate!! >= filter.rangeDate.lower && it.property.createdDate <= filter.rangeDate.upper }
+
+            Order.DESC ->
+                properties
+                    .sortedByDescending { it.property.createdDate }
+                    .filter { it.property.createdDate!! >= filter.rangeDate.lower && it.property.createdDate <= filter.rangeDate.upper }
+
+        }
+    }
+
+    private fun subFilter(
+        properties: List<PropertyWithPhotos>,
+        filter: Filter
+    ): List<PropertyWithPhotos> {
+        return when (filter.sortType) {
+            SortType.PRICE -> {
+                sortByPrice(properties, filter)
+            }
+
+            SortType.DATE -> {
+                sortByDate(properties, filter)
+            }
         }
     }
 
@@ -146,7 +214,12 @@ class PropertyListViewModel(
                             sortType = event.filter.sortType,
                             orderPrice = event.filter.orderPrice,
                             orderDate = event.filter.orderDate,
-                            rangePrice = event.filter.rangePrice
+                            rangePrice = event.filter.rangePrice,
+                            sellingStatus = event.filter.sellingStatus,
+                            tagSchool = event.filter.tagSchool,
+                            tagShop = event.filter.tagShop,
+                            tagTransport = event.filter.tagTransport,
+                            tagPark = event.filter.tagPark,
                         )
                     }
                     getPropertiesSorted(
@@ -190,9 +263,111 @@ class PropertyListViewModel(
                         orderDate = state.value.orderDate,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        sellingStatus = state.value.soldState,
+                        tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
                     )
+                )
+            }
+
+            is PropertyListEvent.OnParkChecked -> {
+                _filter.update {
+                    it.copy(
+                        tagPark = !event.value,
+                    )
+                }
+                getPropertiesSorted(
+                    Filter(
+                        sortType = state.value.sortType,
+                        orderPrice = state.value.orderPrice,
+                        orderDate = state.value.orderDate,
+                        rangePrice = state.value.rangePrice,
+                        rangeDate = state.value.rangeDate,
+                        sellingStatus = state.value.soldState,
+                        tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
+                    )
+                )
+            }
+
+
+            is PropertyListEvent.OnSchoolChecked -> {
+                _filter.update {
+                    it.copy(
+                        tagSchool = !event.value,
+                    )
+                }
+                getPropertiesSorted(
+                    filter = Filter(
+                        state.value.sortType,
+                        state.value.orderPrice,
+                        state.value.orderDate,
+                        state.value.rangePrice,
+                        state.value.rangeDate,
+                        state.value.soldState,
+                        tagPark = state.value.parkState,
+                        tagTransport = state.value.transportState,
+                        tagShop = state.value.shopState,
+                        tagSchool = state.value.schoolState,
+                    )
+                )
+            }
+
+
+            is PropertyListEvent.OnShopChecked -> {
+                _filter.update {
+                    it.copy(
+                        tagShop = !event.value,
+                    )
+                }
+                getPropertiesSorted(
+                    Filter(
+                        sortType = state.value.sortType,
+                        orderPrice = state.value.orderPrice,
+                        orderDate = state.value.orderDate,
+                        rangePrice = state.value.rangePrice,
+                        rangeDate = state.value.rangeDate,
+                        sellingStatus = state.value.soldState,
+                        tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
+                    )
+                )
+            }
+
+            is PropertyListEvent.OnTransportChecked -> {
+//                _filter.value = _filter.value.copy(
+//                    tagTransport = !event.value,
+//                )
+                _filter.update {
+                    it.copy(
+                        tagTransport = !event.value,
+                    )
+                }
+                getPropertiesSorted(
+                    Filter(
+                        sortType = state.value.sortType,
+                        orderPrice = state.value.orderPrice,
+                        orderDate = state.value.orderDate,
+                        rangePrice = state.value.rangePrice,
+                        rangeDate = state.value.rangeDate,
+                        sellingStatus = state.value.soldState,
+                        tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
+                    )
+                )
+                _state.value = _state.value.copy(
+                    transportState = !event.value
                 )
             }
         }
     }
 }
+

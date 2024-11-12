@@ -103,6 +103,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -137,4 +138,6 @@ dependencies {
     testImplementation("app.cash.turbine:turbine:0.7.0")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("org.mockito:mockito-core:5.12.0")
 }

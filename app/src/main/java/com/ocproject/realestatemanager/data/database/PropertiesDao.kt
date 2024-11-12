@@ -20,9 +20,6 @@ interface PropertiesDao {
     @Upsert
     suspend fun upsertProperty(property: Property): Long
 
-//    @Upsert
-//    suspend fun upsertPropertyWithPhoto(propertyWithPhotos: PropertyWithPhotos): Long
-
     @Delete
     suspend fun deleteProperty(property: Property)
 

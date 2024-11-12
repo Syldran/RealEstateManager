@@ -13,6 +13,7 @@ sealed interface AddPropertyEvent {
     data class OnLatChanged(val value: String): AddPropertyEvent
     data class OnLngChanged(val value: String): AddPropertyEvent
     data class OnPriceChanged(val value: String): AddPropertyEvent
+    data class OnSoldChecked(val value: Boolean): AddPropertyEvent
     data class OnSchoolChecked(val value: Boolean): AddPropertyEvent
     data class OnParkChecked(val value: Boolean): AddPropertyEvent
     data class OnShopChecked(val value: Boolean): AddPropertyEvent

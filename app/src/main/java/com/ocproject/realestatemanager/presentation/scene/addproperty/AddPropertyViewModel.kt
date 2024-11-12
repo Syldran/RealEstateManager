@@ -46,8 +46,6 @@ class AddPropertyViewModel(
             viewModelScope.launch {
                 newProperty = propertiesRepository.getProperty(propertyId).property
                 photoList.value = propertiesRepository.getProperty(propertyId).photoList
-
-
             }
         } else {
             newProperty = Property(
@@ -61,7 +59,12 @@ class AddPropertyViewModel(
                 areaCode = 123,
                 surfaceArea = 123,
                 price = 123,
-                id = 0L
+                id = 0L,
+                sold = false,
+                school = false,
+                park = false,
+                transport = false,
+                shop = false,
             )
         }
     }
@@ -199,7 +202,7 @@ class AddPropertyViewModel(
                 )
             }
 
-            is AddPropertyEvent.OnAreaCodeChanged -> {
+            is AddPropertyEvent.OnAreaCodeChanged -> { // faire méthode partagé suivant type
                 try {
                     val value: Int? = when (event.value.isEmpty()) {
                         true -> {
@@ -347,6 +350,19 @@ class AddPropertyViewModel(
                 photoList.value = list
             }
 
+            is AddPropertyEvent.OnSoldChecked -> {
+                if (event.value) {
+                    newProperty = newProperty?.copy(
+                        sold = true
+                    )
+                } else {
+                    newProperty = newProperty?.copy(
+                        sold = false
+                    )
+                }
+
+            }
+
             is AddPropertyEvent.OnParkChecked -> {
                 val list: MutableList<InterestPoint> = mutableListOf<InterestPoint>()
                 if (event.value) {
@@ -356,7 +372,8 @@ class AddPropertyViewModel(
                     }
                     list.add(InterestPoint.PARK)
                     newProperty = newProperty?.copy(
-                        interestPoints = list
+                        interestPoints = list,
+                        park = true
                     )
                 } else {
                     //remove InterestPoint
@@ -364,7 +381,8 @@ class AddPropertyViewModel(
                         list.addAll(it)
                         list.remove(InterestPoint.PARK)
                         newProperty = newProperty?.copy(
-                            interestPoints = list
+                            interestPoints = list,
+                            park = false,
                         )
                     }
                 }
@@ -379,7 +397,8 @@ class AddPropertyViewModel(
                     }
                     list.add(InterestPoint.SCHOOL)
                     newProperty = newProperty?.copy(
-                        interestPoints = list
+                        interestPoints = list,
+                        school = true,
                     )
                 } else {
                     //remove InterestPoint
@@ -387,7 +406,8 @@ class AddPropertyViewModel(
                         list.addAll(it)
                         list.remove(InterestPoint.SCHOOL)
                         newProperty = newProperty?.copy(
-                            interestPoints = list
+                            interestPoints = list,
+                            school = false,
                         )
                     }
                 }
@@ -402,7 +422,8 @@ class AddPropertyViewModel(
                     }
                     list.add(InterestPoint.SHOP)
                     newProperty = newProperty?.copy(
-                        interestPoints = list
+                        interestPoints = list,
+                        shop = true,
                     )
                 } else {
                     //remove InterestPoint
@@ -410,7 +431,8 @@ class AddPropertyViewModel(
                         list.addAll(it)
                         list.remove(InterestPoint.SHOP)
                         newProperty = newProperty?.copy(
-                            interestPoints = list
+                            interestPoints = list,
+                            shop = false
                         )
                     }
                 }
@@ -425,7 +447,8 @@ class AddPropertyViewModel(
                     }
                     list.add(InterestPoint.TRANSPORT)
                     newProperty = newProperty?.copy(
-                        interestPoints = list
+                        interestPoints = list,
+                        transport = true
                     )
                 } else {
                     //remove InterestPoint
@@ -433,7 +456,8 @@ class AddPropertyViewModel(
                         list.addAll(it)
                         list.remove(InterestPoint.TRANSPORT)
                         newProperty = newProperty?.copy(
-                            interestPoints = list
+                            interestPoints = list,
+                            transport = false,
                         )
                     }
                 }

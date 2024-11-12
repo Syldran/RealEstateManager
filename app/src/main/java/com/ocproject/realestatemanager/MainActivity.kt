@@ -13,6 +13,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+/*
 
         val projection = arrayOf( //SELECT FIELD
             MediaStore.Images.Media._ID,
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
 
             }
         }
+*/
 
 
         setContent {
