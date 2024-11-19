@@ -1,6 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist
 
 import android.util.Range
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ocproject.realestatemanager.data.repositories.PropertiesRepository
@@ -26,11 +27,11 @@ import java.util.Date
 @KoinViewModel
 class PropertyListViewModel(
     private val propertiesRepository: PropertiesRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _properties = propertiesRepository.getPropertyList()
     private val _sortedProperties = MutableStateFlow(emptyList<PropertyWithPhotos>())
-
     private val _filter = MutableStateFlow(
         Filter(
             SortType.PRICE, Order.ASC, Order.ASC,
@@ -89,6 +90,11 @@ class PropertyListViewModel(
         }
     }
 
+//    fun <T> MutableList<T>.removeDuplicates(): Boolean {
+//        val set = mutableSetOf<T>()
+//        return retainAll { set.add(it) }
+//    }
+
     private fun getPropertiesSorted(filter: Filter) {
         viewModelScope.launch {
             _properties.flowOn(Dispatchers.IO)
@@ -97,26 +103,65 @@ class PropertyListViewModel(
                         // tags : all tags unchecked then show all
                         // if on or more tags checked then filter with those.
                         val filteredProperties: MutableList<PropertyWithPhotos> = mutableListOf()
+                        var nbTag: Int = 0
+                        val filteredParkProperties: MutableList<PropertyWithPhotos> =
+                            mutableListOf()
+                        val filteredSchoolProperties: MutableList<PropertyWithPhotos> =
+                            mutableListOf()
+                        val filteredTransportProperties: MutableList<PropertyWithPhotos> =
+                            mutableListOf()
+                        val filteredShopProperties: MutableList<PropertyWithPhotos> =
+                            mutableListOf()
 
-
-
+                        // sauvegarder les états
                         if (!filter.tagSchool && !filter.tagTransport && !filter.tagPark && !filter.tagShop) {
                             filteredProperties.addAll(properties)
                         } else {
+
                             if (filter.tagPark) {
-                                filteredProperties.addAll(properties.filter { it.property.park })
+                                filteredParkProperties.addAll(properties.filter { it.property.park })
+                                ++nbTag
                             }
 
                             if (filter.tagShop) {
-                                filteredProperties.addAll(properties.filter { it.property.shop })
+
+                                filteredShopProperties.addAll(properties.filter { it.property.shop })
+                                ++nbTag
                             }
 
                             if (filter.tagSchool) {
-                                filteredProperties.addAll(properties.filter { it.property.school })
+                                filteredSchoolProperties.addAll(properties.filter { it.property.school })
+                                ++nbTag
                             }
 
                             if (filter.tagTransport) {
-                                filteredProperties.addAll(properties.filter { it.property.transport })
+                                filteredTransportProperties.addAll(properties.filter { it.property.transport })
+                                ++nbTag
+                            }
+
+                            if (nbTag > 1) {
+                                // intersect will return nothing if intersected with empty list,
+                                // so we fill these our non active filtered lists with unfiltered properties to allow intersection.
+                                if (filteredParkProperties == emptyList<PropertyWithPhotos>())
+                                    filteredParkProperties.addAll(properties)
+                                if (filteredSchoolProperties == emptyList<PropertyWithPhotos>())
+                                    filteredSchoolProperties.addAll(properties)
+                                if (filteredShopProperties == emptyList<PropertyWithPhotos>())
+                                    filteredShopProperties.addAll(properties)
+                                if (filteredTransportProperties == emptyList<PropertyWithPhotos>())
+                                    filteredTransportProperties.addAll(properties)
+
+                                filteredProperties.addAll(
+                                    filteredShopProperties.intersect(
+                                        filteredTransportProperties.intersect(
+                                            filteredSchoolProperties.intersect(
+                                                filteredParkProperties.toSet()
+                                            )
+                                        )
+                                    )
+                                )
+                            } else {
+                                filteredProperties.addAll(filteredParkProperties + filteredSchoolProperties + filteredShopProperties + filteredTransportProperties)
                             }
                         }
 

@@ -15,6 +15,5 @@ sealed interface PropertyListEvent {
     data class OnParkChecked(val value: Boolean) : PropertyListEvent
     data class OnShopChecked(val value: Boolean) : PropertyListEvent
     data class OnTransportChecked(val value: Boolean) : PropertyListEvent
-//    data class OnSetTags(val tags: List<InterestPoint>) : PropertyListEvent
 }
 

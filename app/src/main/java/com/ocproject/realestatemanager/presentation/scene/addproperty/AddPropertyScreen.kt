@@ -57,18 +57,6 @@ fun AddPropertyScreen(
     viewModel: AddPropertyViewModel = koinViewModel(),
     onNavigateToPropertyListScreen: () -> Unit,
 ) {
-//    val nestedScrollConnection = remember {
-//        object : NestedScrollConnection {
-//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-//                val delta = -available.y
-//                /*coroutineScope.launch {
-//                    lazyGridState.scrollBy(delta)
-//                }*/
-//                return Offset.Zero
-//            }
-//
-//        }
-//    }
     val imagePicker = ImagePicker(
         LocalContext.current as ComponentActivity
     )
