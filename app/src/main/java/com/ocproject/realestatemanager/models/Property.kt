@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Property(
-    val interestPoints: List<InterestPoint>?,
+    val interestPoints: List<InterestPoint>,
     val school : Boolean,
     val shop : Boolean,
     val transport : Boolean,

@@ -82,7 +82,7 @@ fun PreviewItem() {
             town = "Poisieux",
             country = "France",
             surfaceArea = 110,
-            interestPoints = null,
+            interestPoints = emptyList(),
             sold = false,
             shop = false,
             transport = false,

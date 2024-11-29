@@ -34,8 +34,6 @@ class AddPropertyViewModel(
     var photoList: MutableState<List<PhotoProperty>?> = mutableStateOf(null)
         private set
 
-//    var valueString : MutableState<String>
-
     init {
         getProperty()
     }
@@ -49,7 +47,7 @@ class AddPropertyViewModel(
             }
         } else {
             newProperty = Property(
-                interestPoints = null,
+                interestPoints = emptyList(),
                 address = "a",
                 town = "a",
                 lat = 0.0,
@@ -135,6 +133,7 @@ class AddPropertyViewModel(
                                 surfaceAreaError = null,
                                 latError = null,
                                 lngError = null,
+                                navToPropertyListScreen = false,
                             )
                         }
 
@@ -166,7 +165,6 @@ class AddPropertyViewModel(
                                     propertiesRepository.upsertPhotoProperty(photoProperty)
                                 }
                             }
-
                         }
 
 
@@ -184,6 +182,7 @@ class AddPropertyViewModel(
                                 surfaceAreaError = result.surfaceAreaError,
                                 latError = result.latError,
                                 lngError = result.lngError,
+                                navToPropertyListScreen = false,
                             )
                         }
                     }

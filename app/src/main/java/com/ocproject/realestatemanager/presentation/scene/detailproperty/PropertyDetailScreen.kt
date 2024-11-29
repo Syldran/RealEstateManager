@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -46,7 +47,8 @@ fun PropertyDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .statusBarsPadding(),
         contentAlignment = Alignment.TopStart
     ) {
         Column(
@@ -69,7 +71,7 @@ fun PropertyDetailScreen(
             )
             Spacer(Modifier.height(16.dp))
             Row {
-                if (selectedProperty?.property?.sold == true){
+                if (selectedProperty?.property?.sold == true) {
                     SuggestionChip(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         onClick = {},
@@ -79,7 +81,7 @@ fun PropertyDetailScreen(
                 }
 
                 selectedProperty?.property?.interestPoints?.forEach {
-                    when (it){
+                    when (it) {
                         InterestPoint.PARK -> {
                             SuggestionChip(
                                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -97,6 +99,7 @@ fun PropertyDetailScreen(
                                 label = { Text("School") }
                             )
                         }
+
                         InterestPoint.SHOP -> {
                             SuggestionChip(
                                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -104,6 +107,7 @@ fun PropertyDetailScreen(
                                 label = { Text("Shop") }
                             )
                         }
+
                         InterestPoint.TRANSPORT -> {
                             SuggestionChip(
                                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -154,5 +158,7 @@ fun PropertyDetailScreen(
                 contentDescription = "Close"
             )
         }
+
+
     }
 }

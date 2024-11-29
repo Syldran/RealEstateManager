@@ -1,11 +1,13 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist
 
 import android.util.Range
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ocproject.realestatemanager.data.repositories.PropertiesRepository
 import com.ocproject.realestatemanager.models.Filter
+import com.ocproject.realestatemanager.models.InterestPoint
 import com.ocproject.realestatemanager.models.Order
 import com.ocproject.realestatemanager.models.Property
 import com.ocproject.realestatemanager.models.PropertyWithPhotos
@@ -24,20 +26,23 @@ import org.koin.android.annotation.KoinViewModel
 import java.text.DateFormat
 import java.util.Date
 
+
 @KoinViewModel
 class PropertyListViewModel(
     private val propertiesRepository: PropertiesRepository,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _properties = propertiesRepository.getPropertyList()
     private val _sortedProperties = MutableStateFlow(emptyList<PropertyWithPhotos>())
+    private val selectedTags = mutableStateOf(listOf<InterestPoint>())
+//    private val selectedTags: List<InterestPoint> = emptyList()
+
+
     private val _filter = MutableStateFlow(
         Filter(
             SortType.PRICE, Order.ASC, Order.ASC,
             Range<Int>(0, Int.MAX_VALUE), Range<Long>(0L, Long.MAX_VALUE),
             SellingStatus.ALL,
-//            interestPointList = emptyList(),
             tagSchool = false,
             tagTransport = false,
             tagShop = false,
@@ -51,7 +56,6 @@ class PropertyListViewModel(
         _sortedProperties,
         _filter
     ) { state, sortedProperties, filter ->
-
         state.copy(
             properties = sortedProperties,
             sortType = filter.sortType,
@@ -95,75 +99,54 @@ class PropertyListViewModel(
 //        return retainAll { set.add(it) }
 //    }
 
+    private fun addTags(filter: Filter) {
+        val currentTags = emptyList<InterestPoint>().toMutableList()
+        if (filter.tagTransport) {
+            currentTags.add(InterestPoint.TRANSPORT)
+        } else {
+            if (currentTags.contains(InterestPoint.TRANSPORT)) {
+                currentTags.remove(InterestPoint.TRANSPORT)
+            }
+        }
+        if (filter.tagSchool) {
+            currentTags.add(InterestPoint.SCHOOL)
+        } else {
+            if (currentTags.contains(InterestPoint.SCHOOL)) {
+                currentTags.remove(InterestPoint.SCHOOL)
+            }
+        }
+        if (filter.tagShop) {
+            currentTags.add(InterestPoint.SHOP)
+        } else {
+            if (currentTags.contains(InterestPoint.SHOP)) {
+                currentTags.remove(InterestPoint.SHOP)
+            }
+        }
+        if (filter.tagPark) {
+            currentTags.add(InterestPoint.PARK)
+        } else {
+            if (currentTags.contains(InterestPoint.PARK)) {
+                currentTags.remove(InterestPoint.PARK)
+            }
+        }
+        selectedTags.value = currentTags
+    }
+
     private fun getPropertiesSorted(filter: Filter) {
+        addTags(filter)
+        //loading state to true
         viewModelScope.launch {
             _properties.flowOn(Dispatchers.IO)
                 .collect { properties: List<PropertyWithPhotos> ->
                     _sortedProperties.update {
-                        // tags : all tags unchecked then show all
-                        // if on or more tags checked then filter with those.
-                        val filteredProperties: MutableList<PropertyWithPhotos> = mutableListOf()
-                        var nbTag: Int = 0
-                        val filteredParkProperties: MutableList<PropertyWithPhotos> =
-                            mutableListOf()
-                        val filteredSchoolProperties: MutableList<PropertyWithPhotos> =
-                            mutableListOf()
-                        val filteredTransportProperties: MutableList<PropertyWithPhotos> =
-                            mutableListOf()
-                        val filteredShopProperties: MutableList<PropertyWithPhotos> =
-                            mutableListOf()
+                        val filteredProperties: MutableList<PropertyWithPhotos> = emptyList<PropertyWithPhotos>().toMutableList()
 
-                        // sauvegarder les états
-                        if (!filter.tagSchool && !filter.tagTransport && !filter.tagPark && !filter.tagShop) {
-                            filteredProperties.addAll(properties)
-                        } else {
-
-                            if (filter.tagPark) {
-                                filteredParkProperties.addAll(properties.filter { it.property.park })
-                                ++nbTag
+                        filteredProperties.addAll(
+                            properties.filter { property ->
+                                selectedTags.value.isEmpty() ||
+                                        selectedTags.value.all { it in property.property.interestPoints }
                             }
-
-                            if (filter.tagShop) {
-
-                                filteredShopProperties.addAll(properties.filter { it.property.shop })
-                                ++nbTag
-                            }
-
-                            if (filter.tagSchool) {
-                                filteredSchoolProperties.addAll(properties.filter { it.property.school })
-                                ++nbTag
-                            }
-
-                            if (filter.tagTransport) {
-                                filteredTransportProperties.addAll(properties.filter { it.property.transport })
-                                ++nbTag
-                            }
-
-                            if (nbTag > 1) {
-                                // intersect will return nothing if intersected with empty list,
-                                // so we fill these our non active filtered lists with unfiltered properties to allow intersection.
-                                if (filteredParkProperties == emptyList<PropertyWithPhotos>())
-                                    filteredParkProperties.addAll(properties)
-                                if (filteredSchoolProperties == emptyList<PropertyWithPhotos>())
-                                    filteredSchoolProperties.addAll(properties)
-                                if (filteredShopProperties == emptyList<PropertyWithPhotos>())
-                                    filteredShopProperties.addAll(properties)
-                                if (filteredTransportProperties == emptyList<PropertyWithPhotos>())
-                                    filteredTransportProperties.addAll(properties)
-
-                                filteredProperties.addAll(
-                                    filteredShopProperties.intersect(
-                                        filteredTransportProperties.intersect(
-                                            filteredSchoolProperties.intersect(
-                                                filteredParkProperties.toSet()
-                                            )
-                                        )
-                                    )
-                                )
-                            } else {
-                                filteredProperties.addAll(filteredParkProperties + filteredSchoolProperties + filteredShopProperties + filteredTransportProperties)
-                            }
-                        }
+                        )
 
 
                         when (filter.sellingStatus) {
@@ -181,6 +164,7 @@ class PropertyListViewModel(
                         }
                     }
                 }
+            // loading to false
         }
     }
 

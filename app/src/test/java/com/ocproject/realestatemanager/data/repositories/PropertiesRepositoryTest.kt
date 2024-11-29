@@ -16,7 +16,11 @@ import org.mockito.Mockito.mock
 
 class PropertiesRepositoryTest {
     val property = Property(
-        null,
+        emptyList(),
+        false,
+        false,
+        false,
+        false,
         "quelque part",
         "NowhereCity",
         120.5,
@@ -30,36 +34,45 @@ class PropertiesRepositoryTest {
     )
 //    private val propertiesDao: PropertiesDao = mock()
 
-//    @Before
+    //    @Before
 //    fun setUp() {
 //        //mocker dao
 //
 //    }
-@Test
-fun insert_Property() = runTest {
-    val repo = PropertiesRepository(FakePropertiesDao())
-    val property = Property(
-        null,
-        "quelque part",
-        "NowhereCity",
-        120.5,
-        50.30,
-        "Faraway",
-        null,
-        18290,
-        150,
-        150000,
-        sold = false,
-    )
-    val propertyWithPhotos = PropertyWithPhotos(property, null)
-    repo.upsertProperty(property)
-    assertEquals(propertyWithPhotos, repo.getPropertyList().first().first())
-}
+    @Test
+    fun insert_Property() = runTest {
+        val repo = PropertiesRepository(FakePropertiesDao())
+        val property = Property(
+            emptyList(),
+            false,
+            false,
+            false,
+            false,
+            "quelque part",
+            "NowhereCity",
+            120.5,
+            50.30,
+            "Faraway",
+            null,
+            18290,
+            150,
+            150000,
+            sold = false,
+        )
+        val propertyWithPhotos = PropertyWithPhotos(property, null)
+        repo.upsertProperty(property)
+        assertEquals(propertyWithPhotos, repo.getPropertyList().first().first())
+    }
+
     @Test
     fun delete_Property() = runTest {
         val repo = PropertiesRepository(FakePropertiesDao())
         val property = Property(
-            null,
+            emptyList(),
+            false,
+            false,
+            false,
+            false,
             "quelque part",
             "NowhereCity",
             120.5,

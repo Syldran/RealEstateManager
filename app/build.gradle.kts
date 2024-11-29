@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.ocproject.realestatemanager"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ocproject.realestatemanager"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -135,9 +135,9 @@ dependencies {
     implementation(libs.coil.compose)
 
 
-    testImplementation("app.cash.turbine:turbine:0.7.0")
-    testImplementation("com.google.truth:truth:1.1.3")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
-    testImplementation("io.mockk:mockk:1.13.12")
-    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation("app.cash.turbine:turbine:1.2.0")
+    testImplementation("com.google.truth:truth:1.4.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("org.mockito:mockito-core:5.14.2")
 }

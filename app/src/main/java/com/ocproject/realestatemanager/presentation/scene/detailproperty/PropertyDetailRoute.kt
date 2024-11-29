@@ -25,7 +25,7 @@ fun NavGraphBuilder.addPropertyDetailsScreen(navController: NavController) {
                 navController.navigate(Screen.AddPropertyScreen.withArgs(it ?: 0))
             },
             onNavigateToPropertyListScreen = {
-                navController.navigate(Screen.PropertyListScreen.route)
+                navController.popBackStack()
             }
         )
     }

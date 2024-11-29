@@ -33,7 +33,6 @@ fun AutocompleteSearch(viewModel: AddPropertyViewModel) {
             Activity.RESULT_OK -> {
                 it.data?.let { intent ->
                     val place = Autocomplete.getPlaceFromIntent(intent)
-                    Log.i("AddLocation", "Place: ${place.id}, ${place.addressComponents}")
                     viewModel.setPropertyFromPlace(place)
                 }
             }
