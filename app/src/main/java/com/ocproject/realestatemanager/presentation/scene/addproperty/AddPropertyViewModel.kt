@@ -297,105 +297,82 @@ class AddPropertyViewModel(
         newProperty = newProperty?.copy(
             sold = event.sold
         )
-       /* val list: MutableList<InterestPoint> = mutableListOf<InterestPoint>()
+        var list: List<InterestPoint> = emptyList()
+        //if newProperty interestPoints aren't null we set temp list to it's current state.
+        newProperty?.interestPoints?.let {
+            list = it
+        }
+
         when (event.park) {
             true -> {
-                //add InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
-                }
-                list.add(InterestPoint.PARK)
-                newProperty = newProperty?.copy(
-                    interestPoints = list,
-                )
+                // We check if tag PARK was previously inactive.
+                // If it wasn't we add its new active state via temp list.
+               if(!list.contains(InterestPoint.PARK)){
+                   list += InterestPoint.PARK
+               }
+
             }
 
             false -> {
-                //remove InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
-                    list.remove(InterestPoint.PARK)
-                    newProperty = newProperty?.copy(
-                        interestPoints = list,
-                    )
+                // We check if tag Park was previously active.
+                // If it was we remove it's active state to the inactive one via temp list.
+                    if (list.contains(InterestPoint.PARK)){
+                        list -= InterestPoint.PARK
                 }
             }
         }
 
-        when (event.school) {
-            true -> {
-                //add InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
-                }
-                list.add(InterestPoint.SCHOOL)
-                newProperty = newProperty?.copy(
-                    interestPoints = list,
-                )
-            }
-
-            false -> {
-                //remove InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
-                    list.remove(InterestPoint.SCHOOL)
-                    newProperty = newProperty?.copy(
-                        interestPoints = list,
-                    )
-                }
-            }
-        }
-
+        // same as above with shop tag / InterestPoint.Shop
         when (event.shop) {
             true -> {
-                //add InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
+                if(!list.contains(InterestPoint.SHOP)){
+                    list += InterestPoint.SHOP
                 }
-                list.add(InterestPoint.SHOP)
-                newProperty = newProperty?.copy(
-                    interestPoints = list,
-                )
+
             }
 
             false -> {
-                //remove InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
-                    list.remove(InterestPoint.SHOP)
-                    newProperty = newProperty?.copy(
-                        interestPoints = list,
-                    )
+                if (list.contains(InterestPoint.SHOP)){
+                    list -= InterestPoint.SHOP
                 }
             }
         }
 
+        // same for school tag
+        when (event.school) {
+            true -> {
+                if(!list.contains(InterestPoint.SCHOOL)){
+                    list += InterestPoint.SCHOOL
+                }
+
+            }
+
+            false -> {
+                if (list.contains(InterestPoint.SCHOOL)){
+                    list -= InterestPoint.SCHOOL
+                }
+            }
+        }
+
+        // same for transport tag
         when (event.transport) {
             true -> {
-                //add InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
+                if(!list.contains(InterestPoint.TRANSPORT)){
+                    list += InterestPoint.TRANSPORT
                 }
-                list.add(InterestPoint.TRANSPORT)
-                newProperty = newProperty?.copy(
-                    interestPoints = list,
-                )
+
             }
 
             false -> {
-                //remove InterestPoint
-                newProperty?.interestPoints?.let {
-                    list.addAll(it)
-                    list.remove(InterestPoint.TRANSPORT)
-                    newProperty = newProperty?.copy(
-                        interestPoints = list,
-                    )
+                if (list.contains(InterestPoint.TRANSPORT)){
+                    list -= InterestPoint.TRANSPORT
                 }
             }
         }
 
+        // Update newProperty interestPoints state with new values from temp list
         newProperty = newProperty?.copy(
             interestPoints = list
-        )*/
+        )
     }
 }

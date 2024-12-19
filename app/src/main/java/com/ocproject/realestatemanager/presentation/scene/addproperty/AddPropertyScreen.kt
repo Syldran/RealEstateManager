@@ -266,7 +266,7 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         schoolChecked = !schoolChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(school = schoolChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
 
                     },
                     label = {
@@ -290,7 +290,7 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         parkChecked = !parkChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
                     },
                     label = {
                         Text("Park")
@@ -313,7 +313,8 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         shopChecked = !shopChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(shop = shopChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
+
                     },
                     label = {
                         Text("Shop")
@@ -336,7 +337,7 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         transportChecked = !transportChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(transport = transportChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
                     },
                     label = {
                         Text("Transport")
