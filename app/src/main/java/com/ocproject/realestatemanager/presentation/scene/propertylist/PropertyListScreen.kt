@@ -63,40 +63,6 @@ fun PropertyListScreen(
             }
         }
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = it,
-        ) {
-            item {
-                Text(
-                    text = "List of properties (${state.properties.size})",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    fontWeight = FontWeight.Bold
-                )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-            }
-
-            items(
-                items = state.properties,
-                key = { propertyWithPhotos ->
-                    propertyWithPhotos.property.id
-                }) { propertyWithPhotos ->
-                PropertyListItem(
-                    viewModel = viewModel,
-                    propertyWithPhotos = propertyWithPhotos,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onNavigateToPropertyDetailScreen(propertyWithPhotos.property.id)
-                        }
-                        .padding(start = 16.dp, end = 16.dp),
-                    onEvent = viewModel::onEvent
-                )
-            }
-        }
-
         when {
             state.isFilterSheetOpen -> {
                 PropertyFilterSheet(
@@ -106,19 +72,8 @@ fun PropertyListScreen(
                     scope = rememberCoroutineScope(),
                 )
             }
-        }
 
-        if (state.isLoadingProgressBar){
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                CircularProgressIndicator()
-            }
-        }
-
-        when {
-            state.isError -> {
+            state.isLoadingProgressBar -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -126,7 +81,57 @@ fun PropertyListScreen(
                     CircularProgressIndicator(color = Color.Red)
                 }
             }
+
+            state.isError -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(text = "ERROR Data", color = Color.Red)
+
+                }
+            }
+
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = it,
+                ) {
+
+
+                    item {
+                        Text(
+                            text = "List of properties (${state.properties.size})",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            fontWeight = FontWeight.Bold
+                        )
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                    }
+
+                    items(
+                        items = state.properties,
+                        key = { propertyWithPhotos ->
+                            propertyWithPhotos.property.id
+                        }) { propertyWithPhotos ->
+                        PropertyListItem(
+                            viewModel = viewModel,
+                            propertyWithPhotos = propertyWithPhotos,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onNavigateToPropertyDetailScreen(propertyWithPhotos.property.id)
+                                }
+                                .padding(start = 16.dp, end = 16.dp),
+                            onEvent = viewModel::onEvent
+                        )
+                    }
+                }
+            }
         }
+
+
     }
 }
 

@@ -12,20 +12,16 @@ import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
 import com.ocproject.realestatemanager.domain.models.SellingStatus
 import com.ocproject.realestatemanager.domain.models.SortType
-import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
 import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
@@ -36,14 +32,12 @@ import java.util.Date
 @KoinViewModel
 class PropertyListViewModel(
     @InjectedParam
-    private val propertyRepository: PropertiesRepository,
     private val getPropertyListUseCase: GetPropertyListUseCase,
     private val deletePropertyUseCase: DeletePropertyUseCase,
 ) : ViewModel() {
 
 
     private val _sortedProperties = MutableStateFlow(emptyList<PropertyWithPhotos>())
-    private var _propertiesBis = propertyRepository.getPropertyListBis()
     private var _properties = emptyList<PropertyWithPhotos>()
     private val selectedTags = mutableStateOf(listOf<InterestPoint>())
 //    private val selectedTags: List<InterestPoint> = emptyList()
@@ -138,9 +132,9 @@ class PropertyListViewModel(
     }
 
     private fun getPropertyList() {
-        viewModelScope.launch {
-            getPropertyListUseCase().flowOn(Dispatchers.IO).collect { propertiesDataState ->
-                val articles = propertiesDataState
+
+            getPropertyListUseCase().onEach { propertiesDataState ->
+
                 when (propertiesDataState) {
 
                     is DataState.Error -> {
@@ -154,7 +148,6 @@ class PropertyListViewModel(
                     is DataState.Loading -> {
                         _state.update {
                             it.copy(
-                                isError = false,
                                 isLoadingProgressBar = propertiesDataState.isLoading
                             )
                         }
@@ -164,24 +157,28 @@ class PropertyListViewModel(
                         _state.update {
                             it.copy(
                                 isError = false,
-//                                properties = propertiesDataState.data
                             )
                         }
-                        _properties = propertiesDataState.data
+                        _properties += propertiesDataState.data
+                        _sortedProperties.update {
+                            propertiesDataState.data
+                        }
                     }
 
                 }
-            }
-        }
+
+            }.launchIn(viewModelScope)
+
     }
 
     private fun getPropertiesSorted(filter: Filter) {
 
         addTags(filter)
         viewModelScope.launch {
+            val filteredProperties: MutableList<PropertyWithPhotos> =
+                emptyList<PropertyWithPhotos>().toMutableList()
             _sortedProperties.update {
-                val filteredProperties: MutableList<PropertyWithPhotos> =
-                    emptyList<PropertyWithPhotos>().toMutableList()
+
                 filteredProperties.addAll(
                     _properties.filter { property ->
                         selectedTags.value.isEmpty() ||
@@ -202,71 +199,14 @@ class PropertyListViewModel(
                     }
                 }
             }
-
-          /*  _propertiesBis.flowOn(Dispatchers.IO)
-                .collect { properties ->
-                    _sortedProperties.update {
-                        val filteredProperties: MutableList<PropertyWithPhotos> =
-                            emptyList<PropertyWithPhotos>().toMutableList()
-                        filteredProperties.addAll(
-                            properties.filter { property ->
-                                selectedTags.value.isEmpty() ||
-                                        selectedTags.value.all { it in property.property.interestPoints }
-                            }
-                        )
-
-                        when (filter.sellingStatus) {
-                            SellingStatus.SOLD -> {
-                                subFilter(filteredProperties.filter { it.property.sold }, filter)
-                            }
-
-                            SellingStatus.ALL -> {
-                                subFilter(filteredProperties, filter)
-                            }
-
-                            SellingStatus.PURCHASABLE -> {
-                                subFilter(filteredProperties.filter { !it.property.sold }, filter)
-                            }
-                        }
-                    }
-                }*/
+            _state.update {
+                it.copy(
+                    properties = filteredProperties
+                )
+            }
         }
     }
 
-    /*private fun getPropertiesSorted(filter: Filter) {
-        addTags(filter)
-        viewModelScope.launch {
-            _properties.flowOn(Dispatchers.IO)
-                .collect { properties: List<PropertyWithPhotos> ->
-                    _sortedProperties.update {
-                        val filteredProperties: MutableList<PropertyWithPhotos> =
-                            emptyList<PropertyWithPhotos>().toMutableList()
-
-                        filteredProperties.addAll(
-                            properties.filter { property ->
-                                selectedTags.value.isEmpty() ||
-                                        selectedTags.value.all { it in property.property.interestPoints }
-                            }
-                        )
-
-
-                        when (filter.sellingStatus) {
-                            SellingStatus.SOLD -> {
-                                subFilter(filteredProperties.filter { it.property.sold }, filter)
-                            }
-
-                            SellingStatus.ALL -> {
-                                subFilter(filteredProperties, filter)
-                            }
-
-                            SellingStatus.PURCHASABLE -> {
-                                subFilter(filteredProperties.filter { !it.property.sold }, filter)
-                            }
-                        }
-                    }
-                }
-        }
-    }*/
 
     private fun sortByPrice(
         properties: List<PropertyWithPhotos>,

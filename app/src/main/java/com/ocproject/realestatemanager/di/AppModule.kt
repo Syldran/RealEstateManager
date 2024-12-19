@@ -64,7 +64,6 @@ val appModule = org.koin.dsl.module {
 
     viewModel {
         PropertyListViewModel(
-            propertyRepository = get(),
             getPropertyListUseCase = get(),
             deletePropertyUseCase = get(),
         )
