@@ -1,12 +1,10 @@
 package com.ocproject.realestatemanager.data.database
 
 import android.content.ContentProvider
-import android.content.ContentUris
 import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
-import org.koin.dsl.koinApplication
 
 class PropertyContentProvider(
 //    private val dao: PropertiesDao, impossible car pas d'instanciention

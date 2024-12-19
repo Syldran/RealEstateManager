@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.utils
+package com.ocproject.realestatemanager.core.utils
 
 class UtilsKotlin {
 

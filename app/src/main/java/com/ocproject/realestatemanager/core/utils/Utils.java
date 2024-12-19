@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.utils;
+package com.ocproject.realestatemanager.core.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

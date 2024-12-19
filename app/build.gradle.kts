@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.secrets.gradle)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -111,6 +112,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.timber)
 
     // Room, for bdd
     implementation(libs.room.runtime)

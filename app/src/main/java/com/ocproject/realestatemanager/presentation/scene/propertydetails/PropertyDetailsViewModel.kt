@@ -1,12 +1,12 @@
-package com.ocproject.realestatemanager.presentation.scene.detailproperty
+package com.ocproject.realestatemanager.presentation.scene.propertydetails
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ocproject.realestatemanager.data.repositories.PropertiesRepository
-import com.ocproject.realestatemanager.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
@@ -15,9 +15,8 @@ import org.koin.core.annotation.InjectedParam
 class PropertyDetailsViewModel(
     @InjectedParam
     private val propertyId: Long?,
-    private val propertyRepository: PropertiesRepository,
+    private val getPropertyDetailsUseCase: GetPropertyDetailsUseCase,
 ) : ViewModel() {
-
 
     var selectedProperty: PropertyWithPhotos? by mutableStateOf(null)
         private set
@@ -29,9 +28,8 @@ class PropertyDetailsViewModel(
     private fun getProperty() {
         viewModelScope.launch {
             if(propertyId != null && propertyId != 0L){
-                selectedProperty = propertyRepository.getProperty(propertyId)
+                selectedProperty = getPropertyDetailsUseCase(propertyId)
             }
-
         }
     }
 }

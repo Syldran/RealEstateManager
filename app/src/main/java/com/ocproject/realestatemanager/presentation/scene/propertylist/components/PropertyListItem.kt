@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ocproject.realestatemanager.models.Property
-import com.ocproject.realestatemanager.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.Property
+import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListEvent
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListViewModel
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
@@ -84,10 +84,6 @@ fun PreviewItem() {
             surfaceArea = 110,
             interestPoints = emptyList(),
             sold = false,
-            shop = false,
-            transport = false,
-            school = false,
-            park = false,
         ),
             null,
         )

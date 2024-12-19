@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.presentation.scene.detailproperty
+package com.ocproject.realestatemanager.presentation.scene.propertydetails
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
-import com.ocproject.realestatemanager.models.InterestPoint
+import com.ocproject.realestatemanager.domain.models.InterestPoint
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
 import org.koin.androidx.compose.koinViewModel
 

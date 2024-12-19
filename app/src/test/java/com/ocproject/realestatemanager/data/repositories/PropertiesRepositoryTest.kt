@@ -1,6 +1,5 @@
 package com.ocproject.realestatemanager.data.repositories
 
-import com.ocproject.realestatemanager.data.database.PropertiesDao
 import com.ocproject.realestatemanager.models.Property
 import com.ocproject.realestatemanager.models.PropertyWithPhotos
 import kotlinx.coroutines.flow.first
@@ -8,7 +7,6 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 //import org.mockito.Mockito.mock
 
@@ -41,7 +39,7 @@ class PropertiesRepositoryTest {
 //    }
     @Test
     fun insert_Property() = runTest {
-        val repo = PropertiesRepository(FakePropertiesDao())
+        val repo = LocalPropertiesRepository(FakePropertiesDao())
         val property = Property(
             emptyList(),
             false,
@@ -66,7 +64,7 @@ class PropertiesRepositoryTest {
 
     @Test
     fun delete_Property() = runTest {
-        val repo = PropertiesRepository(FakePropertiesDao())
+        val repo = LocalPropertiesRepository(FakePropertiesDao())
         val property = Property(
             emptyList(),
             false,

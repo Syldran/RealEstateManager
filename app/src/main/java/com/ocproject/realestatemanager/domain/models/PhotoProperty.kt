@@ -1,5 +1,6 @@
-package com.ocproject.realestatemanager.models
+package com.ocproject.realestatemanager.domain.models
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -18,6 +19,7 @@ data class PhotoProperty(
     val isMain: Boolean = false,
     val name: String = "",
     val photoBytes: ByteArray,
+    @ColumnInfo(index = true)
     val propertyId: Long,
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

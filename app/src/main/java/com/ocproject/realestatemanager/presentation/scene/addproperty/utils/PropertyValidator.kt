@@ -1,6 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty.utils
 
-import com.ocproject.realestatemanager.models.Property
+import com.ocproject.realestatemanager.domain.models.Property
 
 
 object PropertyValidator {

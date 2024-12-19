@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.presentation.scene.detailproperty
+package com.ocproject.realestatemanager.presentation.scene.propertydetails
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder

@@ -1,22 +1,30 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
-import com.ocproject.realestatemanager.models.PhotoProperty
+import com.ocproject.realestatemanager.domain.models.PhotoProperty
 
 sealed interface AddPropertyEvent {
-    class OnPhotoPicked(val listByteArray: List<ByteArray>?): AddPropertyEvent
+    class OnPhotoPicked(val listByteArray: List<ByteArray>?) : AddPropertyEvent
     data object SaveProperty : AddPropertyEvent
-    data class OnTownChanged(val value: String) : AddPropertyEvent
-    data class OnAddressChanged(val value: String) : AddPropertyEvent
-    data class OnCountryChanged(val value: String) : AddPropertyEvent
-    data class OnAreaCodeChanged(val value: String): AddPropertyEvent
-    data class OnSurfaceAreaChanged(val value: String): AddPropertyEvent
-    data class OnLatChanged(val value: String): AddPropertyEvent
-    data class OnLngChanged(val value: String): AddPropertyEvent
-    data class OnPriceChanged(val value: String): AddPropertyEvent
-    data class OnSoldChecked(val value: Boolean): AddPropertyEvent
-    data class OnSchoolChecked(val value: Boolean): AddPropertyEvent
-    data class OnParkChecked(val value: Boolean): AddPropertyEvent
-    data class OnShopChecked(val value: Boolean): AddPropertyEvent
-    data class OnTransportChecked(val value: Boolean): AddPropertyEvent
-    data class OnPhotoNameChanged(val photoProperty: PhotoProperty, val value: String): AddPropertyEvent
+    data class OnChangeNavigationStatus(val value : Boolean) : AddPropertyEvent
+    data class UpdateForm(
+        val town: String? = null,
+        val address: String? = null,
+        val country: String? = null,
+        val areaCode: String? = null,
+        val surfaceArea: String? = null,
+        val price: String? = null,
+        val latitude: String? = null,
+        val longitude: String? = null,
+    ) : AddPropertyEvent
+
+    data class UpdateTags(
+        val school: Boolean = false,
+        val shop: Boolean = false,
+        val park: Boolean = false,
+        val transport: Boolean = false,
+        val sold: Boolean = false,
+    ) : AddPropertyEvent
+
+    data class OnPhotoNameChanged(val photoProperty: PhotoProperty, val value: String) :
+        AddPropertyEvent
 }

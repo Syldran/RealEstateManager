@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -39,15 +38,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.ocproject.realestatemanager.models.InterestPoint
-import com.ocproject.realestatemanager.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.InterestPoint
+import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.AutocompleteSearch
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PhotosComposable
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
@@ -99,6 +94,7 @@ fun AddPropertyScreen(
 
     if (state.navToPropertyListScreen) {
         onNavigateToPropertyListScreen()
+        viewModel.onEvent(AddPropertyEvent.OnChangeNavigationStatus(true))
     }
 
 
@@ -161,83 +157,84 @@ fun AddPropertyScreen(
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
                 value = newProperty?.address ?: "",
-                placeholder = "Address",
                 error = state.addressError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnAddressChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(address = it))
                 },
-                keyboardType = KeyboardType.Text
+                keyboardType = KeyboardType.Text,
+                labelValue = "Address",
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
                 value = newProperty?.town ?: "",
-                placeholder = "Town",
                 error = state.townError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnTownChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(town = it))
+
                 },
-                keyboardType = KeyboardType.Text
+                keyboardType = KeyboardType.Text,
+                labelValue = "Town"
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (newProperty?.areaCode == null) "" else newProperty.areaCode.toString(),
-                placeholder = "Area Code",
+                value = if (newProperty?.areaCode == null || newProperty.areaCode == 0) "" else newProperty.areaCode.toString(),
                 error = state.areaCodeError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnAreaCodeChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(areaCode = it))
                 },
                 keyboardType = KeyboardType.Number,
+                labelValue = "Area Code"
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
                 value = newProperty?.country ?: "",
-                placeholder = "Country",
                 error = state.countryError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnCountryChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(country = it))
                 },
-                keyboardType = KeyboardType.Text
+                keyboardType = KeyboardType.Text,
+                labelValue = "Country"
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (newProperty?.price == null) "" else newProperty.price.toString(),
-                placeholder = "Price",
+                value = if (newProperty?.price == null || newProperty.price == 0) "" else newProperty.price.toString(),
                 error = state.priceError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnPriceChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(price = it))
                 },
-                keyboardType = KeyboardType.Number
+                keyboardType = KeyboardType.Number,
+                labelValue = "Price"
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             PropertyTextField(
-                value = if (newProperty?.surfaceArea == null) "" else newProperty.surfaceArea.toString(),
-                placeholder = "Surface Area",
+                value = if (newProperty?.surfaceArea == null || newProperty.surfaceArea == 0) "" else newProperty.surfaceArea.toString(),
                 error = state.surfaceAreaError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnSurfaceAreaChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(surfaceArea = it))
                 },
-                keyboardType = KeyboardType.Number
+                keyboardType = KeyboardType.Number,
+                labelValue = "Surface Area"
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
                 value = if (newProperty?.lat == null || newProperty.lat == 0.0) "" else newProperty.lat.toString(),
-                placeholder = "Latitude",
                 error = state.latError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnLatChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(latitude = it))
                 },
-                keyboardType = KeyboardType.Decimal
+                keyboardType = KeyboardType.Decimal,
+                labelValue = "Latitude"
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
                 value = if (newProperty?.lng == null || newProperty.lng == 0.0) "" else newProperty.lng.toString(),
-                placeholder = "Longitude",
                 error = state.lngError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.OnLngChanged(it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(longitude = it))
                 },
-                keyboardType = KeyboardType.Decimal
+                keyboardType = KeyboardType.Decimal,
+                labelValue = "Longitude"
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -246,7 +243,7 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         soldChecked = !soldChecked
-                        viewModel.onEvent(AddPropertyEvent.OnSoldChecked(soldChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = soldChecked))
                     },
                     label = {
                         Text("SOLD!")
@@ -269,7 +266,8 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         schoolChecked = !schoolChecked
-                        viewModel.onEvent(AddPropertyEvent.OnSchoolChecked(schoolChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(school = schoolChecked))
+
                     },
                     label = {
                         Text("School")
@@ -292,7 +290,7 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         parkChecked = !parkChecked
-                        viewModel.onEvent(AddPropertyEvent.OnParkChecked(parkChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked))
                     },
                     label = {
                         Text("Park")
@@ -315,7 +313,7 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         shopChecked = !shopChecked
-                        viewModel.onEvent(AddPropertyEvent.OnShopChecked(shopChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(shop = shopChecked))
                     },
                     label = {
                         Text("Shop")
@@ -338,7 +336,7 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         transportChecked = !transportChecked
-                        viewModel.onEvent(AddPropertyEvent.OnTransportChecked(transportChecked))
+                        viewModel.onEvent(AddPropertyEvent.UpdateTags(transport = transportChecked))
                     },
                     label = {
                         Text("Transport")

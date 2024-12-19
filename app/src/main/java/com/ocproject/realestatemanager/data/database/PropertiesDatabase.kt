@@ -5,8 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.ocproject.realestatemanager.models.PhotoProperty
-import com.ocproject.realestatemanager.models.Property
+import com.ocproject.realestatemanager.domain.models.PhotoProperty
+import com.ocproject.realestatemanager.domain.models.Property
 
 
 @Database(

@@ -15,17 +15,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PropertyTextField(
     value: String,
-    placeholder: String,
     error: String?,
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType,
+    labelValue: String,
 ) {
     Column(modifier) {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChanged,
-            placeholder = { Text(text = placeholder) },
+            label = { Text(text = labelValue) },
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType)

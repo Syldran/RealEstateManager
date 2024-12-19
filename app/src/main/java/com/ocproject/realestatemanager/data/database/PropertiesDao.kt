@@ -6,9 +6,9 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.ocproject.realestatemanager.models.PhotoProperty
-import com.ocproject.realestatemanager.models.Property
-import com.ocproject.realestatemanager.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.PhotoProperty
+import com.ocproject.realestatemanager.domain.models.Property
+import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,7 +31,11 @@ interface PropertiesDao {
 
     @Transaction
     @Query("SELECT * FROM Property")
-    fun getPropertyList(): Flow<List<PropertyWithPhotos>>
+    suspend fun getPropertyList(): List<PropertyWithPhotos>
+
+    @Transaction
+    @Query("SELECT * FROM Property")
+    fun getPropertyListBis(): Flow<List<PropertyWithPhotos>>
 
     @Transaction
     @Query("SELECT * FROM Property WHERE id = :selectedId")

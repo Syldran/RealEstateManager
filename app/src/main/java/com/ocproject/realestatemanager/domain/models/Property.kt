@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.models
+package com.ocproject.realestatemanager.domain.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -7,10 +7,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class Property(
     val interestPoints: List<InterestPoint>,
-    val school : Boolean,
-    val shop : Boolean,
-    val transport : Boolean,
-    val park : Boolean,
     val address: String,
     val town: String,
     val lat: Double,

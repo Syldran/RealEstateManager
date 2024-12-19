@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.ui;
+package com.ocproject.realestatemanager.core.ui;
 
 import android.os.Bundle;
 

@@ -1,7 +1,7 @@
 package com.ocproject.realestatemanager.data.database
 
 import androidx.room.TypeConverter
-import com.ocproject.realestatemanager.models.InterestPoint
+import com.ocproject.realestatemanager.domain.models.InterestPoint
 
 class Converters {
     @TypeConverter

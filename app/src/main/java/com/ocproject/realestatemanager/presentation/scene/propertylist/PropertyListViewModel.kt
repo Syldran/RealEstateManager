@@ -2,38 +2,49 @@ package com.ocproject.realestatemanager.presentation.scene.propertylist
 
 import android.util.Range
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ocproject.realestatemanager.data.repositories.PropertiesRepository
-import com.ocproject.realestatemanager.models.Filter
-import com.ocproject.realestatemanager.models.InterestPoint
-import com.ocproject.realestatemanager.models.Order
-import com.ocproject.realestatemanager.models.Property
-import com.ocproject.realestatemanager.models.PropertyWithPhotos
-import com.ocproject.realestatemanager.models.SellingStatus
-import com.ocproject.realestatemanager.models.SortType
+import com.ocproject.realestatemanager.core.DataState
+import com.ocproject.realestatemanager.domain.models.Filter
+import com.ocproject.realestatemanager.domain.models.InterestPoint
+import com.ocproject.realestatemanager.domain.models.Order
+import com.ocproject.realestatemanager.domain.models.Property
+import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.SellingStatus
+import com.ocproject.realestatemanager.domain.models.SortType
+import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
+import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
+import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
 import java.text.DateFormat
 import java.util.Date
 
 
 @KoinViewModel
 class PropertyListViewModel(
-    private val propertiesRepository: PropertiesRepository,
+    @InjectedParam
+    private val propertyRepository: PropertiesRepository,
+    private val getPropertyListUseCase: GetPropertyListUseCase,
+    private val deletePropertyUseCase: DeletePropertyUseCase,
 ) : ViewModel() {
 
-    private val _properties = propertiesRepository.getPropertyList()
+
     private val _sortedProperties = MutableStateFlow(emptyList<PropertyWithPhotos>())
+    private var _propertiesBis = propertyRepository.getPropertyListBis()
+    private var _properties = emptyList<PropertyWithPhotos>()
     private val selectedTags = mutableStateOf(listOf<InterestPoint>())
 //    private val selectedTags: List<InterestPoint> = emptyList()
 
@@ -72,32 +83,26 @@ class PropertyListViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), PropertyListState())
 
     init {
-        setMaxPrice()
-        onEvent(
-            PropertyListEvent.SortProperties(filter = _filter.value)
-        )
+        getPropertyList()
+        getPropertiesSorted(_filter.value)
     }
 
     private fun setMaxPrice() {
         viewModelScope.launch {
-            _properties.flowOn(Dispatchers.IO)
-                .collect { properties: List<PropertyWithPhotos> ->
-                    val maxProperty = properties.maxByOrNull { propertyWithPhoto ->
-                        propertyWithPhoto.property.price!!
-                    }
-                    _state.update { propertyListState ->
-                        propertyListState.copy(
-                            maxPrice = (maxProperty?.property?.price) ?: Int.MAX_VALUE
-                        )
-                    }
-                }
+
+
+            val maxProperty = _state.value.properties.maxByOrNull { propertyWithPhoto ->
+                propertyWithPhoto.property.price!!
+            }
+
+            _state.update { propertyListState ->
+                propertyListState.copy(
+                    maxPrice = (maxProperty?.property?.price) ?: Int.MAX_VALUE
+                )
+            }
         }
     }
 
-//    fun <T> MutableList<T>.removeDuplicates(): Boolean {
-//        val set = mutableSetOf<T>()
-//        return retainAll { set.add(it) }
-//    }
 
     private fun addTags(filter: Filter) {
         val currentTags = emptyList<InterestPoint>().toMutableList()
@@ -132,14 +137,110 @@ class PropertyListViewModel(
         selectedTags.value = currentTags
     }
 
+    private fun getPropertyList() {
+        viewModelScope.launch {
+            getPropertyListUseCase().flowOn(Dispatchers.IO).collect { propertiesDataState ->
+                val articles = propertiesDataState
+                when (propertiesDataState) {
+
+                    is DataState.Error -> {
+                        _state.update {
+                            it.copy(
+                                isError = true,
+                            )
+                        }
+                    }
+
+                    is DataState.Loading -> {
+                        _state.update {
+                            it.copy(
+                                isError = false,
+                                isLoadingProgressBar = propertiesDataState.isLoading
+                            )
+                        }
+                    }
+
+                    is DataState.Success -> {
+                        _state.update {
+                            it.copy(
+                                isError = false,
+//                                properties = propertiesDataState.data
+                            )
+                        }
+                        _properties = propertiesDataState.data
+                    }
+
+                }
+            }
+        }
+    }
+
     private fun getPropertiesSorted(filter: Filter) {
+
         addTags(filter)
-        //loading state to true
+        viewModelScope.launch {
+            _sortedProperties.update {
+                val filteredProperties: MutableList<PropertyWithPhotos> =
+                    emptyList<PropertyWithPhotos>().toMutableList()
+                filteredProperties.addAll(
+                    _properties.filter { property ->
+                        selectedTags.value.isEmpty() ||
+                                selectedTags.value.all { it in property.property.interestPoints }
+                    }
+                )
+                when (filter.sellingStatus) {
+                    SellingStatus.SOLD -> {
+                        subFilter(filteredProperties.filter { it.property.sold }, filter)
+                    }
+
+                    SellingStatus.ALL -> {
+                        subFilter(filteredProperties, filter)
+                    }
+
+                    SellingStatus.PURCHASABLE -> {
+                        subFilter(filteredProperties.filter { !it.property.sold }, filter)
+                    }
+                }
+            }
+
+          /*  _propertiesBis.flowOn(Dispatchers.IO)
+                .collect { properties ->
+                    _sortedProperties.update {
+                        val filteredProperties: MutableList<PropertyWithPhotos> =
+                            emptyList<PropertyWithPhotos>().toMutableList()
+                        filteredProperties.addAll(
+                            properties.filter { property ->
+                                selectedTags.value.isEmpty() ||
+                                        selectedTags.value.all { it in property.property.interestPoints }
+                            }
+                        )
+
+                        when (filter.sellingStatus) {
+                            SellingStatus.SOLD -> {
+                                subFilter(filteredProperties.filter { it.property.sold }, filter)
+                            }
+
+                            SellingStatus.ALL -> {
+                                subFilter(filteredProperties, filter)
+                            }
+
+                            SellingStatus.PURCHASABLE -> {
+                                subFilter(filteredProperties.filter { !it.property.sold }, filter)
+                            }
+                        }
+                    }
+                }*/
+        }
+    }
+
+    /*private fun getPropertiesSorted(filter: Filter) {
+        addTags(filter)
         viewModelScope.launch {
             _properties.flowOn(Dispatchers.IO)
                 .collect { properties: List<PropertyWithPhotos> ->
                     _sortedProperties.update {
-                        val filteredProperties: MutableList<PropertyWithPhotos> = emptyList<PropertyWithPhotos>().toMutableList()
+                        val filteredProperties: MutableList<PropertyWithPhotos> =
+                            emptyList<PropertyWithPhotos>().toMutableList()
 
                         filteredProperties.addAll(
                             properties.filter { property ->
@@ -164,9 +265,8 @@ class PropertyListViewModel(
                         }
                     }
                 }
-            // loading to false
         }
-    }
+    }*/
 
     private fun sortByPrice(
         properties: List<PropertyWithPhotos>,
@@ -231,8 +331,10 @@ class PropertyListViewModel(
         when (event) {
             is PropertyListEvent.DeleteProperty -> {
                 viewModelScope.launch {
-                    propertiesRepository.deleteProperty(event.property)
+                    deletePropertyUseCase(event.property)
                 }
+                getPropertyList()
+                getPropertiesSorted(_filter.value)
             }
 
             is PropertyListEvent.SortProperties -> {
@@ -274,7 +376,6 @@ class PropertyListViewModel(
                     )
                 }
             }
-
 
             is PropertyListEvent.SetRangePrice -> {
                 _filter.update {
@@ -323,7 +424,6 @@ class PropertyListViewModel(
                 )
             }
 
-
             is PropertyListEvent.OnSchoolChecked -> {
                 _filter.update {
                     it.copy(
@@ -345,7 +445,6 @@ class PropertyListViewModel(
                     )
                 )
             }
-
 
             is PropertyListEvent.OnShopChecked -> {
                 _filter.update {

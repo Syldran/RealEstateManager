@@ -1,10 +1,10 @@
-package com.ocproject.realestatemanager.ui;
+package com.ocproject.realestatemanager.core.ui;
 
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.ocproject.realestatemanager.R;
-import com.ocproject.realestatemanager.utils.Utils;
+import com.ocproject.realestatemanager.core.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
 

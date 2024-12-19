@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ocproject.realestatemanager.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
 import com.ocproject.realestatemanager.presentation.utils.rememberBitmapFromBytes
 
 @Composable
