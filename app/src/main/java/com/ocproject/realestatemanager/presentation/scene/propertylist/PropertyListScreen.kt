@@ -63,9 +63,44 @@ fun PropertyListScreen(
             }
         }
     ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = it,
+        ) {
+
+
+            item {
+                Text(
+                    text = "List of properties (${state.properties.size})",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    fontWeight = FontWeight.Bold
+                )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            }
+
+            items(
+                items = state.properties,
+                key = { propertyWithPhotos ->
+                    propertyWithPhotos.property.id
+                }) { propertyWithPhotos ->
+                PropertyListItem(
+                    viewModel = viewModel,
+                    propertyWithPhotos = propertyWithPhotos,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onNavigateToPropertyDetailScreen(propertyWithPhotos.property.id)
+                        }
+                        .padding(start = 16.dp, end = 16.dp),
+                    onEvent = viewModel::onEvent
+                )
+            }
+        }
         when {
             state.isFilterSheetOpen -> {
-                PropertyFilterSheet(
+                    PropertyFilterSheet(
                     state = state,
                     onEvent = viewModel::onEvent,
                     sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -89,44 +124,6 @@ fun PropertyListScreen(
                 ){
                     Text(text = "ERROR Data", color = Color.Red)
 
-                }
-            }
-
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = it,
-                ) {
-
-
-                    item {
-                        Text(
-                            text = "List of properties (${state.properties.size})",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            fontWeight = FontWeight.Bold
-                        )
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                    }
-
-                    items(
-                        items = state.properties,
-                        key = { propertyWithPhotos ->
-                            propertyWithPhotos.property.id
-                        }) { propertyWithPhotos ->
-                        PropertyListItem(
-                            viewModel = viewModel,
-                            propertyWithPhotos = propertyWithPhotos,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onNavigateToPropertyDetailScreen(propertyWithPhotos.property.id)
-                                }
-                                .padding(start = 16.dp, end = 16.dp),
-                            onEvent = viewModel::onEvent
-                        )
-                    }
                 }
             }
         }

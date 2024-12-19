@@ -77,15 +77,12 @@ class PropertyListViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), PropertyListState())
 
     init {
-        getPropertyList()
-        getPropertiesSorted(_filter.value)
+        getPropertyList(_filter.value)
     }
 
     private fun setMaxPrice() {
         viewModelScope.launch {
-
-
-            val maxProperty = _state.value.properties.maxByOrNull { propertyWithPhoto ->
+            val maxProperty = _properties.maxByOrNull { propertyWithPhoto ->
                 propertyWithPhoto.property.price!!
             }
 
@@ -131,48 +128,45 @@ class PropertyListViewModel(
         selectedTags.value = currentTags
     }
 
-    private fun getPropertyList() {
-
-            getPropertyListUseCase().onEach { propertiesDataState ->
-
-                when (propertiesDataState) {
-
-                    is DataState.Error -> {
-                        _state.update {
-                            it.copy(
-                                isError = true,
-                            )
-                        }
+    private fun getPropertyList(filter: Filter) {
+        getPropertyListUseCase().onEach { propertiesDataState ->
+            when (propertiesDataState) {
+                is DataState.Error -> {
+                    _state.update {
+                        it.copy(
+                            isError = true,
+                        )
                     }
-
-                    is DataState.Loading -> {
-                        _state.update {
-                            it.copy(
-                                isLoadingProgressBar = propertiesDataState.isLoading
-                            )
-                        }
-                    }
-
-                    is DataState.Success -> {
-                        _state.update {
-                            it.copy(
-                                isError = false,
-                            )
-                        }
-                        _properties += propertiesDataState.data
-                        _sortedProperties.update {
-                            propertiesDataState.data
-                        }
-                    }
-
                 }
 
-            }.launchIn(viewModelScope)
+                is DataState.Loading -> {
+                    _state.update {
+                        it.copy(
+                            isLoadingProgressBar = propertiesDataState.isLoading
+                        )
+                    }
+                }
+
+                is DataState.Success -> {
+                    _state.update {
+                        it.copy(
+                            isError = false,
+                            properties = propertiesDataState.data
+                        )
+                    }
+                    _properties = propertiesDataState.data
+                    _sortedProperties.update {
+                        propertiesDataState.data
+                    }
+                    setMaxPrice()
+                    getPropertiesSorted(filter)
+                }
+            }
+        }.launchIn(viewModelScope)
 
     }
 
     private fun getPropertiesSorted(filter: Filter) {
-
         addTags(filter)
         viewModelScope.launch {
             val filteredProperties: MutableList<PropertyWithPhotos> =
@@ -198,11 +192,7 @@ class PropertyListViewModel(
                         subFilter(filteredProperties.filter { !it.property.sold }, filter)
                     }
                 }
-            }
-            _state.update {
-                it.copy(
-                    properties = filteredProperties
-                )
+
             }
         }
     }
@@ -273,8 +263,7 @@ class PropertyListViewModel(
                 viewModelScope.launch {
                     deletePropertyUseCase(event.property)
                 }
-                getPropertyList()
-                getPropertiesSorted(_filter.value)
+                getPropertyList(_filter.value)
             }
 
             is PropertyListEvent.SortProperties -> {
@@ -293,9 +282,7 @@ class PropertyListViewModel(
                             tagPark = event.filter.tagPark,
                         )
                     }
-                    getPropertiesSorted(
-                        _filter.value
-                    )
+                    getPropertyList(_filter.value)
                 }
             }
 
@@ -348,7 +335,7 @@ class PropertyListViewModel(
                         tagPark = !event.value,
                     )
                 }
-                getPropertiesSorted(
+                getPropertyList(
                     Filter(
                         sortType = state.value.sortType,
                         orderPrice = state.value.orderPrice,
@@ -370,7 +357,7 @@ class PropertyListViewModel(
                         tagSchool = !event.value,
                     )
                 }
-                getPropertiesSorted(
+                getPropertyList(
                     filter = Filter(
                         state.value.sortType,
                         state.value.orderPrice,
@@ -392,7 +379,7 @@ class PropertyListViewModel(
                         tagShop = !event.value,
                     )
                 }
-                getPropertiesSorted(
+                getPropertyList(
                     Filter(
                         sortType = state.value.sortType,
                         orderPrice = state.value.orderPrice,
@@ -409,15 +396,12 @@ class PropertyListViewModel(
             }
 
             is PropertyListEvent.OnTransportChecked -> {
-//                _filter.value = _filter.value.copy(
-//                    tagTransport = !event.value,
-//                )
                 _filter.update {
                     it.copy(
                         tagTransport = !event.value,
                     )
                 }
-                getPropertiesSorted(
+                getPropertyList(
                     Filter(
                         sortType = state.value.sortType,
                         orderPrice = state.value.orderPrice,

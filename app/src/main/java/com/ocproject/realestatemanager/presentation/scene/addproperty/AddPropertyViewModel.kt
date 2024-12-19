@@ -297,7 +297,7 @@ class AddPropertyViewModel(
         newProperty = newProperty?.copy(
             sold = event.sold
         )
-        val list: MutableList<InterestPoint> = mutableListOf<InterestPoint>()
+       /* val list: MutableList<InterestPoint> = mutableListOf<InterestPoint>()
         when (event.park) {
             true -> {
                 //add InterestPoint
@@ -396,6 +396,6 @@ class AddPropertyViewModel(
 
         newProperty = newProperty?.copy(
             interestPoints = list
-        )
+        )*/
     }
 }
