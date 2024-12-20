@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
 
@@ -35,7 +35,7 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropert
 @Composable
 fun PhotosComposable(
     viewModel: AddPropertyViewModel,
-    propertyWithPhotos: PropertyWithPhotos?,
+    propertyWithPhotos: Property?,
     modifier: Modifier = Modifier,
     iconSize: Dp = 25.dp
 ) {
@@ -82,7 +82,7 @@ fun PhotosComposable(
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
-                contentDescription = propertyWithPhotos?.property?.address,
+                contentDescription = propertyWithPhotos?.address,
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )

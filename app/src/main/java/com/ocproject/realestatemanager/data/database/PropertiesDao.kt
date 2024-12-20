@@ -6,39 +6,35 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.ocproject.realestatemanager.domain.models.PhotoProperty
-import com.ocproject.realestatemanager.domain.models.Property
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.data.entities.PhotoPropertyEntity
+import com.ocproject.realestatemanager.data.entities.PropertyEntity
+import com.ocproject.realestatemanager.data.entities.PropertyWithPhotosEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PropertiesDao {
 
-    @Query("SELECT * FROM property")
+    @Query("SELECT * FROM PropertyEntity")
     fun getPropertiesWithCursor(): Cursor
 
     @Upsert
-    suspend fun upsertProperty(property: Property): Long
+    suspend fun upsertProperty(property: PropertyEntity): Long
 
     @Delete
-    suspend fun deleteProperty(property: Property)
+    suspend fun deleteProperty(property: PropertyEntity)
 
     @Upsert
-    suspend fun upsertPhoto(photoProperty: PhotoProperty)
+    suspend fun upsertPhoto(photoProperty: PhotoPropertyEntity)
 
-    @Query("DELETE FROM PhotoProperty WHERE propertyId = :propertyId")
+    @Query("DELETE FROM PhotoPropertyEntity WHERE propertyId = :propertyId")
     suspend fun deletePicturesOfPropertyById(propertyId: Long)
 
     @Transaction
-    @Query("SELECT * FROM Property")
-    suspend fun getPropertyList(): List<PropertyWithPhotos>
+    @Query("SELECT * FROM PropertyEntity")
+    suspend fun getPropertyList(): List<PropertyWithPhotosEntity>
 
     @Transaction
-    @Query("SELECT * FROM Property")
-    fun getPropertyListBis(): Flow<List<PropertyWithPhotos>>
-
-    @Transaction
-    @Query("SELECT * FROM Property WHERE id = :selectedId")
-    suspend fun getPropertyDetail(selectedId: Long): PropertyWithPhotos
+    @Query("SELECT * FROM PropertyEntity WHERE id = :selectedId")
+    suspend fun getPropertyDetail(selectedId: Long): PropertyWithPhotosEntity
 
 }

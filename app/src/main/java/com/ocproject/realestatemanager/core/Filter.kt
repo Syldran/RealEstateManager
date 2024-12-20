@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.domain.models
+package com.ocproject.realestatemanager.core
 
 import android.util.Range
 

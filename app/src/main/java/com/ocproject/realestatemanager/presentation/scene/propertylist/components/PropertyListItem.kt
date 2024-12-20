@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ocproject.realestatemanager.domain.models.Property
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListEvent
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListViewModel
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
@@ -30,7 +29,7 @@ import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPho
 @Composable
 fun PropertyListItem(
     viewModel: PropertyListViewModel,
-    propertyWithPhotos: PropertyWithPhotos,
+    propertyWithPhotos: Property,
     modifier: Modifier = Modifier,
     onEvent: (PropertyListEvent) -> Unit,
 ) {
@@ -46,12 +45,12 @@ fun PropertyListItem(
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = "id: ${propertyWithPhotos.property.id}, $: ${propertyWithPhotos.property.price}, date: ${viewModel.datePresentation(propertyWithPhotos.property)}",
+            text = "id: ${propertyWithPhotos.id}, $: ${propertyWithPhotos.price}, date: ${viewModel.datePresentation(propertyWithPhotos)}",
             modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(
-            onClick = { onEvent(PropertyListEvent.DeleteProperty(propertyWithPhotos.property)) },
+            onClick = { onEvent(PropertyListEvent.DeleteProperty(propertyWithPhotos)) },
 //            modifier = Modifier.align(Alignment.End)
         ) {
             Icon(
@@ -71,7 +70,7 @@ fun PreviewItem() {
        viewModel = viewModel<PropertyListViewModel>(),
        onEvent = {},
        modifier = Modifier.background(color = MaterialTheme.colorScheme.surface),
-        propertyWithPhotos = PropertyWithPhotos( Property(
+        propertyWithPhotos = Property(
             id = 500L,
             price = 150000,
             createdDate = Calendar.getInstance().timeInMillis,
@@ -83,9 +82,8 @@ fun PreviewItem() {
             country = "France",
             surfaceArea = 110,
             interestPoints = emptyList(),
+            photoList = emptyList(),
             sold = false,
-        ),
-            null,
         )
     )
 }

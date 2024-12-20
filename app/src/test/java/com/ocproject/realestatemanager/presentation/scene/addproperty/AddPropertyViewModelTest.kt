@@ -3,6 +3,7 @@ package com.ocproject.realestatemanager.presentation.scene.addproperty
 import com.ocproject.realestatemanager.data.repositories.LocalPropertiesRepository
 
 import org.junit.Before
+import org.junit.Test
 import org.mockito.Mockito.mock
 
 class AddPropertyViewModelTest {
@@ -15,10 +16,19 @@ class AddPropertyViewModelTest {
         viewModel = AddPropertyViewModel(1, propertiesRepository)
     }
 
-  /*  @Test
-    fun onEventGetProperty(){
+    @Test
+    fun isPropertyListLoading(){
+        //simuler cas loading
+
         // test avec id property null et avec un id de property en bdd
     }
+    @Test
+    fun isPropertyListError(){}
+
+    @Test
+    fun isPropertyListSuccess(){}
+
+    /*
     @Test
     fun onEventOnAddressChanged() {
 

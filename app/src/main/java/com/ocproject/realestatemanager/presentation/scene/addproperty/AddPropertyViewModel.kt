@@ -7,11 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.places.api.model.Place
-import com.ocproject.realestatemanager.domain.models.InterestPoint
+import com.ocproject.realestatemanager.core.InterestPoint
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
-import com.ocproject.realestatemanager.domain.usecases.SavePhotoProperty
 import com.ocproject.realestatemanager.domain.usecases.SavePropertyUseCase
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.DecimalFormatter
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.IntFormatter
@@ -30,7 +29,6 @@ class AddPropertyViewModel(
     private val propertyId: Long?,
     private val getPropertyDetailsUseCase: GetPropertyDetailsUseCase,
     private val savePropertyUseCase: SavePropertyUseCase,
-    private val savePhotoProperty: SavePhotoProperty,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
@@ -46,15 +44,13 @@ class AddPropertyViewModel(
     }
 
     private fun getProperty() {
-
         if (propertyId != null && propertyId != 0L) {
             viewModelScope.launch {
-                val testProperty = getPropertyDetailsUseCase(propertyId)
-                newProperty = getPropertyDetailsUseCase(propertyId).property
-                photoList.value = getPropertyDetailsUseCase(propertyId).photoList
+                newProperty = getPropertyDetailsUseCase(propertyId)
             }
         } else {
             newProperty = Property(
+                photoList = emptyList(),
                 interestPoints = emptyList(),
                 address = "a",
                 town = "a",
@@ -101,12 +97,6 @@ class AddPropertyViewModel(
                 }
             }
         }
-        /*    onEvent(AddPropertyEvent.OnAddressChanged(address))
-            onEvent(AddPropertyEvent.OnTownChanged(town))
-            onEvent(AddPropertyEvent.OnCountryChanged(country))
-            onEvent(AddPropertyEvent.OnAreaCodeChanged(code))
-            onEvent(AddPropertyEvent.OnLatChanged(place.latLng?.latitude.toString()))
-            onEvent(AddPropertyEvent.OnLngChanged(place.latLng?.longitude.toString()))*/
 
         onEvent(
             AddPropertyEvent.UpdateForm(
@@ -132,7 +122,6 @@ class AddPropertyViewModel(
                     isMain = event.photoProperty.isMain,
                     photoBytes = event.photoProperty.photoBytes,
                     name = event.value,
-                    propertyId = event.photoProperty.propertyId
                 )
                 val list: MutableList<PhotoProperty> = photoList.value?.toMutableList()!!
                 list.forEach {
@@ -156,7 +145,6 @@ class AddPropertyViewModel(
                             isMain = cpt == 0,
                             photoBytes = it,
                             name = "",
-                            propertyId = 0L,
                         )
                     )
 
@@ -223,9 +211,23 @@ class AddPropertyViewModel(
                 }
 
                 viewModelScope.launch {
+                    if (photoList.value != null) {
+                        property.copy(
+                            photoList = photoList.value
+                        )
+//                        for (photo in photoList.value!!) {
+//                            val photoProperty = PhotoProperty(
+//                                isMain = photo.isMain,
+//                                photoBytes = photo.photoBytes,
+//                                name = photo.name,
+//                            )
+//                            savePhotoProperty(photoProperty)
+//
+//                        }
+                    }
                     var idProperty: Long
                     if (property.createdDate == null) {
-                        idProperty = savePropertyUseCase.invoke(
+                        idProperty = savePropertyUseCase(
                             property.copy(
                                 createdDate = Calendar.getInstance().timeInMillis
                             )
@@ -236,20 +238,10 @@ class AddPropertyViewModel(
 
                     if (propertyId != null && propertyId != 0L) {
                         idProperty = propertyId
-                        //                                propertiesRepository.deletePicturesOfPropertyById(idProperty)
+
                     }
 
-                    if (photoList.value != null) {
-                        for (photo in photoList.value!!) {
-                            val photoProperty = PhotoProperty(
-                                isMain = photo.isMain,
-                                photoBytes = photo.photoBytes,
-                                name = photo.name,
-                                propertyId = idProperty
-                            )
-                            savePhotoProperty(photoProperty)
-                        }
-                    }
+
                 }
 
 
@@ -310,7 +302,6 @@ class AddPropertyViewModel(
                if(!list.contains(InterestPoint.PARK)){
                    list += InterestPoint.PARK
                }
-
             }
 
             false -> {

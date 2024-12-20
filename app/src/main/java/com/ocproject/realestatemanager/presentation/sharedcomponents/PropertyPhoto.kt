@@ -17,25 +17,25 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.utils.rememberBitmapFromBytes
 
 @Composable
 fun PropertyPhoto(
-    propertyWithPhotos: PropertyWithPhotos?,
+    propertyWithPhotos: Property?,
     modifier: Modifier = Modifier,
     iconSize: Dp = 25.dp
 ) {
     val bitmap: ImageBitmap?
     if (propertyWithPhotos?.photoList.isNullOrEmpty()){
         bitmap = null
-    } else bitmap = rememberBitmapFromBytes(byteArray = propertyWithPhotos?.photoList?.get(0)?.photoBytes)
+    } else bitmap = rememberBitmapFromBytes(byteArray = propertyWithPhotos.photoList[0].photoBytes)
 
     val photoModifier = modifier.clip(RoundedCornerShape(35))
     if (bitmap != null) {
         Image(
             bitmap = bitmap,
-            contentDescription = propertyWithPhotos?.property?.address,
+            contentDescription = propertyWithPhotos?.address,
             modifier = photoModifier,
             contentScale = ContentScale.Crop
         )
@@ -46,7 +46,7 @@ fun PropertyPhoto(
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
-                contentDescription = propertyWithPhotos?.property?.address,
+                contentDescription = propertyWithPhotos?.address,
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )

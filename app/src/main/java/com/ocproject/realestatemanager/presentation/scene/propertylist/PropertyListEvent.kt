@@ -1,7 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist
 
 import android.util.Range
-import com.ocproject.realestatemanager.domain.models.Filter
+import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.domain.models.Property
 
 

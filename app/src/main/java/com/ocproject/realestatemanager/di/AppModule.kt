@@ -4,7 +4,6 @@ package com.ocproject.realestatemanager.di
 import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
-import com.ocproject.realestatemanager.domain.usecases.SavePhotoProperty
 import com.ocproject.realestatemanager.domain.usecases.SavePropertyUseCase
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
 import com.ocproject.realestatemanager.presentation.scene.propertydetails.PropertyDetailsViewModel
@@ -26,11 +25,11 @@ val appModule = org.koin.dsl.module {
         )
     }
 
-    factory<SavePhotoProperty> {
-        SavePhotoProperty(
-            propertiesRepository = get()
-        )
-    }
+//    factory<SavePhotoProperty> {
+//        SavePhotoProperty(
+//            propertiesRepository = get()
+//        )
+//    }
 
     factory<GetPropertyDetailsUseCase> {
         GetPropertyDetailsUseCase(
@@ -51,7 +50,7 @@ val appModule = org.koin.dsl.module {
             propertyId = get(),
             getPropertyDetailsUseCase = get(),
             savePropertyUseCase = get(),
-            savePhotoProperty = get()
+//            savePhotoProperty = get()
         )
     }
 

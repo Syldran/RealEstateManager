@@ -41,8 +41,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.ocproject.realestatemanager.domain.models.InterestPoint
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.core.InterestPoint
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.AutocompleteSearch
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PhotosComposable
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
@@ -135,9 +135,20 @@ fun AddPropertyScreen(
             } else {
 
                 PhotosComposable(
-                    propertyWithPhotos = PropertyWithPhotos(
-                        newProperty!!,
-                        photoList.value
+                    propertyWithPhotos = Property(
+                        photoList = photoList.value,
+                        interestPoints = newProperty?.interestPoints ?: emptyList(),
+                        address = newProperty?.address ?: "",
+                        town = newProperty?.town ?: "",
+                        lat = newProperty?.lat ?: 0.0,
+                        lng = newProperty?.lng ?: 0.0,
+                        country = newProperty?.country ?: "",
+                        createdDate = newProperty?.createdDate,
+                        areaCode = newProperty?.areaCode,
+                        surfaceArea = newProperty?. surfaceArea,
+                        price = newProperty?.price,
+                        sold = newProperty?.sold == true,
+                        id = newProperty?.id!!,
                     ),
                     modifier = Modifier
                         .size(150.dp)

@@ -82,8 +82,8 @@ fun PropertyListScreen(
 
             items(
                 items = state.properties,
-                key = { propertyWithPhotos ->
-                    propertyWithPhotos.property.id
+                key = { property ->
+                    property.id
                 }) { propertyWithPhotos ->
                 PropertyListItem(
                     viewModel = viewModel,
@@ -91,7 +91,7 @@ fun PropertyListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            onNavigateToPropertyDetailScreen(propertyWithPhotos.property.id)
+                            onNavigateToPropertyDetailScreen(propertyWithPhotos.id)
                         }
                         .padding(start = 16.dp, end = 16.dp),
                     onEvent = viewModel::onEvent

@@ -1,11 +1,11 @@
-package com.ocproject.realestatemanager.domain.models
+package com.ocproject.realestatemanager.data.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.ocproject.realestatemanager.core.InterestPoint
 
 
-data class Property(
-    val photoList: List<PhotoProperty>?,
+@Entity
+data class PropertyEntity(
     val interestPoints: List<InterestPoint>,
     val address: String,
     val town: String,
@@ -17,5 +17,6 @@ data class Property(
     val surfaceArea: Int?,
     val price: Int?,
     val sold: Boolean,
-    val id: Long,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
 )

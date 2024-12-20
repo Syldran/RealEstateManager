@@ -5,12 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.ocproject.realestatemanager.data.entities.PhotoPropertyEntity
+import com.ocproject.realestatemanager.data.entities.PropertyEntity
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 
 
 @Database(
-    entities = [Property::class, PhotoProperty::class],
+    entities = [PropertyEntity::class, PhotoPropertyEntity::class],
     version = 1,
     exportSchema = false
 )

@@ -5,15 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ocproject.realestatemanager.core.DataState
-import com.ocproject.realestatemanager.domain.models.Filter
-import com.ocproject.realestatemanager.domain.models.InterestPoint
-import com.ocproject.realestatemanager.domain.models.Order
+import com.ocproject.realestatemanager.core.Filter
+import com.ocproject.realestatemanager.core.InterestPoint
+import com.ocproject.realestatemanager.core.Order
 import com.ocproject.realestatemanager.domain.models.Property
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
-import com.ocproject.realestatemanager.domain.models.SellingStatus
-import com.ocproject.realestatemanager.domain.models.SortType
+import com.ocproject.realestatemanager.core.SellingStatus
+import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
+import com.squareup.okhttp.Dispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,8 +37,8 @@ class PropertyListViewModel(
 ) : ViewModel() {
 
 
-    private val _sortedProperties = MutableStateFlow(emptyList<PropertyWithPhotos>())
-    private var _properties = emptyList<PropertyWithPhotos>()
+    private val _sortedProperties = MutableStateFlow(emptyList<Property>())
+    private var _properties = emptyList<Property>()
     private val selectedTags = mutableStateOf(listOf<InterestPoint>())
 //    private val selectedTags: List<InterestPoint> = emptyList()
 
@@ -83,12 +83,12 @@ class PropertyListViewModel(
     private fun setMaxPrice() {
         viewModelScope.launch {
             val maxProperty = _properties.maxByOrNull { propertyWithPhoto ->
-                propertyWithPhoto.property.price!!
+                propertyWithPhoto.price!!
             }
 
             _state.update { propertyListState ->
                 propertyListState.copy(
-                    maxPrice = (maxProperty?.property?.price) ?: Int.MAX_VALUE
+                    maxPrice = (maxProperty?.price) ?: Int.MAX_VALUE
                 )
             }
         }
@@ -129,6 +129,7 @@ class PropertyListViewModel(
     }
 
     private fun getPropertyList(filter: Filter) {
+
         getPropertyListUseCase().onEach { propertiesDataState ->
             when (propertiesDataState) {
                 is DataState.Error -> {
@@ -151,13 +152,9 @@ class PropertyListViewModel(
                     _state.update {
                         it.copy(
                             isError = false,
-                            properties = propertiesDataState.data
                         )
                     }
                     _properties = propertiesDataState.data
-                    _sortedProperties.update {
-                        propertiesDataState.data
-                    }
                     setMaxPrice()
                     getPropertiesSorted(filter)
                 }
@@ -169,19 +166,19 @@ class PropertyListViewModel(
     private fun getPropertiesSorted(filter: Filter) {
         addTags(filter)
         viewModelScope.launch {
-            val filteredProperties: MutableList<PropertyWithPhotos> =
-                emptyList<PropertyWithPhotos>().toMutableList()
+            val filteredProperties: MutableList<Property> =
+                emptyList<Property>().toMutableList()
             _sortedProperties.update {
 
                 filteredProperties.addAll(
                     _properties.filter { property ->
                         selectedTags.value.isEmpty() ||
-                                selectedTags.value.all { it in property.property.interestPoints }
+                                selectedTags.value.all { it in property.interestPoints }
                     }
                 )
                 when (filter.sellingStatus) {
                     SellingStatus.SOLD -> {
-                        subFilter(filteredProperties.filter { it.property.sold }, filter)
+                        subFilter(filteredProperties.filter { it.sold }, filter)
                     }
 
                     SellingStatus.ALL -> {
@@ -189,7 +186,7 @@ class PropertyListViewModel(
                     }
 
                     SellingStatus.PURCHASABLE -> {
-                        subFilter(filteredProperties.filter { !it.property.sold }, filter)
+                        subFilter(filteredProperties.filter { !it.sold }, filter)
                     }
                 }
 
@@ -199,46 +196,46 @@ class PropertyListViewModel(
 
 
     private fun sortByPrice(
-        properties: List<PropertyWithPhotos>,
+        properties: List<Property>,
         filter: Filter
-    ): List<PropertyWithPhotos> {
+    ): List<Property> {
         return when (filter.orderPrice) {
             Order.ASC -> {
                 properties
-                    .sortedBy { it.property.price }
-                    .filter { it.property.price!! >= filter.rangePrice.lower && it.property.price <= filter.rangePrice.upper }
+                    .sortedBy { it.price }
+                    .filter { it.price!! >= filter.rangePrice.lower && it.price <= filter.rangePrice.upper }
             }
 
             Order.DESC -> {
                 properties
-                    .sortedByDescending { it.property.price }
-                    .filter { it.property.price!! >= filter.rangePrice.lower && it.property.price <= filter.rangePrice.upper }
+                    .sortedByDescending { it.price }
+                    .filter { it.price!! >= filter.rangePrice.lower && it.price <= filter.rangePrice.upper }
             }
         }
     }
 
     private fun sortByDate(
-        properties: List<PropertyWithPhotos>,
+        properties: List<Property>,
         filter: Filter
-    ): List<PropertyWithPhotos> {
+    ): List<Property> {
         return when (filter.orderDate) {
             Order.ASC ->
                 properties
-                    .sortedBy { it.property.createdDate }
-                    .filter { it.property.createdDate!! >= filter.rangeDate.lower && it.property.createdDate <= filter.rangeDate.upper }
+                    .sortedBy { it.createdDate }
+                    .filter { it.createdDate!! >= filter.rangeDate.lower && it.createdDate <= filter.rangeDate.upper }
 
             Order.DESC ->
                 properties
-                    .sortedByDescending { it.property.createdDate }
-                    .filter { it.property.createdDate!! >= filter.rangeDate.lower && it.property.createdDate <= filter.rangeDate.upper }
+                    .sortedByDescending { it.createdDate }
+                    .filter { it.createdDate!! >= filter.rangeDate.lower && it.createdDate <= filter.rangeDate.upper }
 
         }
     }
 
     private fun subFilter(
-        properties: List<PropertyWithPhotos>,
+        properties: List<Property>,
         filter: Filter
-    ): List<PropertyWithPhotos> {
+    ): List<Property> {
         return when (filter.sortType) {
             SortType.PRICE -> {
                 sortByPrice(properties, filter)
@@ -263,7 +260,7 @@ class PropertyListViewModel(
                 viewModelScope.launch {
                     deletePropertyUseCase(event.property)
                 }
-                getPropertyList(_filter.value)
+//                getPropertyList(_filter.value)
             }
 
             is PropertyListEvent.SortProperties -> {

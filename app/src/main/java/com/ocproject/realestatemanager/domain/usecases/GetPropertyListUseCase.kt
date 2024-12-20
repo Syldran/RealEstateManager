@@ -1,7 +1,7 @@
 package com.ocproject.realestatemanager.domain.usecases
 
 import com.ocproject.realestatemanager.core.DataState
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,7 +11,7 @@ import java.lang.Exception
 class GetPropertyListUseCase(
     private val propertiesRepository: PropertiesRepository
 ) {
-    operator fun invoke(): Flow<DataState<List<PropertyWithPhotos>>> {
+    operator fun invoke(): Flow<DataState<List<Property>>> {
         return flow {
             emit(DataState.Loading(true))
             try {

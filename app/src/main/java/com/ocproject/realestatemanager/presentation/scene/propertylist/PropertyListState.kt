@@ -1,13 +1,13 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist
 
 import android.util.Range
-import com.ocproject.realestatemanager.domain.models.Order
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
-import com.ocproject.realestatemanager.domain.models.SellingStatus
-import com.ocproject.realestatemanager.domain.models.SortType
+import com.ocproject.realestatemanager.core.Order
+import com.ocproject.realestatemanager.core.SellingStatus
+import com.ocproject.realestatemanager.core.SortType
+import com.ocproject.realestatemanager.domain.models.Property
 
 data class PropertyListState(
-    val properties: List<PropertyWithPhotos> = emptyList(),
+    val properties: List<Property> = emptyList(),
     val isLoadingProgressBar: Boolean = false,
     val isError: Boolean = false,
     val isFilterSheetOpen: Boolean = false,

@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ocproject.realestatemanager.domain.models.PropertyWithPhotos
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -18,7 +18,7 @@ class PropertyDetailsViewModel(
     private val getPropertyDetailsUseCase: GetPropertyDetailsUseCase,
 ) : ViewModel() {
 
-    var selectedProperty: PropertyWithPhotos? by mutableStateOf(null)
+    var selectedProperty: Property? by mutableStateOf(null)
         private set
 
     init {

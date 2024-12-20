@@ -31,10 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ocproject.realestatemanager.domain.models.Filter
-import com.ocproject.realestatemanager.domain.models.Order
-import com.ocproject.realestatemanager.domain.models.SellingStatus
-import com.ocproject.realestatemanager.domain.models.SortType
+import com.ocproject.realestatemanager.core.Filter
+import com.ocproject.realestatemanager.core.Order
+import com.ocproject.realestatemanager.core.SellingStatus
+import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListEvent
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListState
 import kotlinx.coroutines.CoroutineScope

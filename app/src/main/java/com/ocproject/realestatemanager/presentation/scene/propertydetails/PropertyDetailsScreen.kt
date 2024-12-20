@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
-import com.ocproject.realestatemanager.domain.models.InterestPoint
+import com.ocproject.realestatemanager.core.InterestPoint
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
 import org.koin.androidx.compose.koinViewModel
 
@@ -63,7 +63,7 @@ fun PropertyDetailScreen(
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                text = "${selectedProperty?.property?.address} ${selectedProperty?.property?.town}",
+                text = "${selectedProperty?.address} ${selectedProperty?.town}",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 fontWeight = FontWeight.Bold,
@@ -71,7 +71,7 @@ fun PropertyDetailScreen(
             )
             Spacer(Modifier.height(16.dp))
             Row {
-                if (selectedProperty?.property?.sold == true) {
+                if (selectedProperty?.sold == true) {
                     SuggestionChip(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         onClick = {},
@@ -80,7 +80,7 @@ fun PropertyDetailScreen(
                     )
                 }
 
-                selectedProperty?.property?.interestPoints?.forEach {
+                selectedProperty?.interestPoints?.forEach {
                     when (it) {
                         InterestPoint.PARK -> {
                             SuggestionChip(
@@ -121,7 +121,7 @@ fun PropertyDetailScreen(
             }
             Spacer(Modifier.height(16.dp))
             FilledTonalIconButton(
-                onClick = { onNavigateToAddPropertyScreen(selectedProperty?.property?.id) },
+                onClick = { onNavigateToAddPropertyScreen(selectedProperty?.id) },
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -132,9 +132,9 @@ fun PropertyDetailScreen(
                     contentDescription = "Edit contact"
                 )
             }
-            Text(text = selectedProperty?.property?.address ?: "")
+            Text(text = selectedProperty?.address ?: "")
             Spacer(Modifier.height(16.dp))
-            Text(text = selectedProperty?.property?.town ?: "")
+            Text(text = selectedProperty?.town ?: "")
             Spacer(Modifier.height(16.dp))
 
             AsyncImage(
@@ -143,7 +143,7 @@ fun PropertyDetailScreen(
                     .fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(
-                        "https://maps.googleapis.com/maps/api/staticmap?center=${selectedProperty?.property?.lat},${selectedProperty?.property?.lng}&markers=color:red|${selectedProperty?.property?.lat},${selectedProperty?.property?.lng}&zoom=14&size=500x500&scale=2&key=${BuildConfig.PLACES_API_KEY}"
+                        "https://maps.googleapis.com/maps/api/staticmap?center=${selectedProperty?.lat},${selectedProperty?.lng}&markers=color:red|${selectedProperty?.lat},${selectedProperty?.lng}&zoom=14&size=500x500&scale=2&key=${BuildConfig.PLACES_API_KEY}"
                     ).build(), contentDescription = ""
             )
         }
@@ -158,7 +158,5 @@ fun PropertyDetailScreen(
                 contentDescription = "Close"
             )
         }
-
-
     }
 }
