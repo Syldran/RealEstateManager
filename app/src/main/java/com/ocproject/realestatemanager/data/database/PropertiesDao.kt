@@ -9,7 +9,6 @@ import androidx.room.Upsert
 import com.ocproject.realestatemanager.data.entities.PhotoPropertyEntity
 import com.ocproject.realestatemanager.data.entities.PropertyEntity
 import com.ocproject.realestatemanager.data.entities.PropertyWithPhotosEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PropertiesDao {

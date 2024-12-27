@@ -260,7 +260,7 @@ class PropertyListViewModel(
                 viewModelScope.launch {
                     deletePropertyUseCase(event.property)
                 }
-//                getPropertyList(_filter.value)
+                getPropertyList(_filter.value)
             }
 
             is PropertyListEvent.SortProperties -> {

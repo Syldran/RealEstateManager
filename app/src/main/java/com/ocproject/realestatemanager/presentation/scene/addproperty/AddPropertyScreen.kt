@@ -88,7 +88,7 @@ fun AddPropertyScreen(
             }
         }
     }
-    if (newProperty?.sold == true){
+    if (newProperty?.sold == true) {
         soldChecked = true
     }
 
@@ -101,7 +101,8 @@ fun AddPropertyScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()).statusBarsPadding(),
+            .verticalScroll(rememberScrollState())
+            .statusBarsPadding(),
         contentAlignment = Alignment.TopStart
     ) {
 
@@ -110,58 +111,28 @@ fun AddPropertyScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(60.dp))
-            if (photoList.value == null) {
-                Box(modifier = Modifier
-                    .size(150.dp)
-                    .clip(RoundedCornerShape(40))
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
-                    .clickable {
-                        imagePicker.pickMultiImage()
-                    }
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        shape = RoundedCornerShape(40)
-                    ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = "Add Photo",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-            } else {
 
-                PhotosComposable(
-                    propertyWithPhotos = Property(
-                        photoList = photoList.value,
-                        interestPoints = newProperty?.interestPoints ?: emptyList(),
-                        address = newProperty?.address ?: "",
-                        town = newProperty?.town ?: "",
-                        lat = newProperty?.lat ?: 0.0,
-                        lng = newProperty?.lng ?: 0.0,
-                        country = newProperty?.country ?: "",
-                        createdDate = newProperty?.createdDate,
-                        areaCode = newProperty?.areaCode,
-                        surfaceArea = newProperty?. surfaceArea,
-                        price = newProperty?.price,
-                        sold = newProperty?.sold == true,
-                        id = newProperty?.id!!,
-                    ),
-                    modifier = Modifier
-                        .size(150.dp)
-                        .clickable { imagePicker.pickMultiImage() },
-                    viewModel = viewModel
-                )
-//                PropertyPhoto(
-//                    propertyWithPhotos = PropertyWithPhotos(newProperty, photoList.value),
-//                    modifier = Modifier
-//                        .size(150.dp)
-//                        .clickable { imagePicker.pickMultiImage() }
-//                )
-            }
+            PhotosComposable(
+                propertyWithPhotos = Property(
+                    photoList = photoList.value,
+                    interestPoints = newProperty?.interestPoints ?: emptyList(),
+                    address = newProperty?.address ?: "",
+                    town = newProperty?.town ?: "",
+                    lat = newProperty?.lat ?: 0.0,
+                    lng = newProperty?.lng ?: 0.0,
+                    country = newProperty?.country ?: "",
+                    createdDate = newProperty?.createdDate,
+                    areaCode = newProperty?.areaCode,
+                    surfaceArea = newProperty?.surfaceArea,
+                    price = newProperty?.price,
+                    sold = newProperty?.sold == true,
+                    id = newProperty?.id!!,
+                ),
+                modifier = Modifier
+                    .clickable { imagePicker.pickMultiImage() },
+                viewModel = viewModel
+            )
+
 
             Spacer(modifier = Modifier.height(16.dp))
             AutocompleteSearch(viewModel)
@@ -277,7 +248,14 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         schoolChecked = !schoolChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
+                        viewModel.onEvent(
+                            AddPropertyEvent.UpdateTags(
+                                park = parkChecked,
+                                school = schoolChecked,
+                                shop = shopChecked,
+                                transport = transportChecked
+                            )
+                        )
 
                     },
                     label = {
@@ -301,7 +279,14 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         parkChecked = !parkChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
+                        viewModel.onEvent(
+                            AddPropertyEvent.UpdateTags(
+                                park = parkChecked,
+                                school = schoolChecked,
+                                shop = shopChecked,
+                                transport = transportChecked
+                            )
+                        )
                     },
                     label = {
                         Text("Park")
@@ -324,7 +309,14 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         shopChecked = !shopChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
+                        viewModel.onEvent(
+                            AddPropertyEvent.UpdateTags(
+                                park = parkChecked,
+                                school = schoolChecked,
+                                shop = shopChecked,
+                                transport = transportChecked
+                            )
+                        )
 
                     },
                     label = {
@@ -348,7 +340,14 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         transportChecked = !transportChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(park = parkChecked, school = schoolChecked, shop = shopChecked, transport = transportChecked))
+                        viewModel.onEvent(
+                            AddPropertyEvent.UpdateTags(
+                                park = parkChecked,
+                                school = schoolChecked,
+                                shop = shopChecked,
+                                transport = transportChecked
+                            )
+                        )
                     },
                     label = {
                         Text("Transport")

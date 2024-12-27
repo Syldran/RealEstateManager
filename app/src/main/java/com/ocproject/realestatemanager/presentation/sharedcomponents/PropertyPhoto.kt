@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,10 +27,9 @@ fun PropertyPhoto(
     modifier: Modifier = Modifier,
     iconSize: Dp = 25.dp
 ) {
-    val bitmap: ImageBitmap?
-    if (propertyWithPhotos?.photoList.isNullOrEmpty()){
-        bitmap = null
-    } else bitmap = rememberBitmapFromBytes(byteArray = propertyWithPhotos.photoList[0].photoBytes)
+    val bitmap = if (propertyWithPhotos?.photoList.isNullOrEmpty()){
+        null
+    } else rememberBitmapFromBytes(byteArray = propertyWithPhotos.photoList[0].photoBytes)
 
     val photoModifier = modifier.clip(RoundedCornerShape(35))
     if (bitmap != null) {
@@ -45,7 +45,7 @@ fun PropertyPhoto(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = Icons.Default.Person,
+                imageVector = Icons.Default.Home,
                 contentDescription = propertyWithPhotos?.address,
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer

@@ -12,12 +12,14 @@ class LocalPropertiesRepository(
     private val dao: PropertiesDao,
 ) : PropertiesRepository {
     override suspend fun upsertProperty(property: Property): Long {
-        val propertyToAdd = property.toPropertyEntity()
+        var propertyToAdd = dao.upsertProperty(property.toPropertyEntity())
+        // upsert return -1 for replacing existing data
+        if (propertyToAdd < 0L) propertyToAdd = property.id
         val photosToAdd = property.photoList
         photosToAdd?.forEach {
-            dao.upsertPhoto(it.toPhotoPropertyEntity(property.id))
+            dao.upsertPhoto(it.toPhotoPropertyEntity(propertyToAdd))
         }
-        return dao.upsertProperty(propertyToAdd)
+        return propertyToAdd
     }
 
     override suspend fun deleteProperty(property: Property) {

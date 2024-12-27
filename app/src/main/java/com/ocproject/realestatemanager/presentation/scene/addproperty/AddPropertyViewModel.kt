@@ -153,20 +153,6 @@ class AddPropertyViewModel(
                 photoList.value = list
             }
 
-            /*is AddPropertyEvent.OnSoldChecked -> {
-                if (event.value) {
-                    newProperty = newProperty?.copy(
-                        sold = true
-                    )
-                } else {
-                    newProperty = newProperty?.copy(
-                        sold = false
-                    )
-                }
-
-            }
-            }*/
-
             else -> {}
         }
 
@@ -211,37 +197,22 @@ class AddPropertyViewModel(
                 }
 
                 viewModelScope.launch {
-                    if (photoList.value != null) {
-                        property.copy(
-                            photoList = photoList.value
-                        )
-//                        for (photo in photoList.value!!) {
-//                            val photoProperty = PhotoProperty(
-//                                isMain = photo.isMain,
-//                                photoBytes = photo.photoBytes,
-//                                name = photo.name,
-//                            )
-//                            savePhotoProperty(photoProperty)
-//
-//                        }
-                    }
-                    var idProperty: Long
-                    if (property.createdDate == null) {
-                        idProperty = savePropertyUseCase(
+                    var idProperty: Long = if (property.createdDate == null) {
+                        savePropertyUseCase(
                             property.copy(
+                                photoList = photoList.value,
                                 createdDate = Calendar.getInstance().timeInMillis
                             )
                         )
                     } else {
-                        idProperty = savePropertyUseCase(property)
+                        savePropertyUseCase(property)
+                        // add modified date ?
                     }
 
-                    if (propertyId != null && propertyId != 0L) {
-                        idProperty = propertyId
-
-                    }
-
-
+//                    if (propertyId != null && propertyId != 0L) {
+//                        idProperty = propertyId
+//
+//                    }
                 }
 
 

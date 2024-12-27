@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.propertydetails
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
 import com.ocproject.realestatemanager.core.InterestPoint
+import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PhotosDetailsComposable
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
 import org.koin.androidx.compose.koinViewModel
 
@@ -51,15 +53,16 @@ fun PropertyDetailScreen(
             .statusBarsPadding(),
         contentAlignment = Alignment.TopStart
     ) {
+
+
+
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(60.dp))
-            PropertyPhoto(
-                propertyWithPhotos = selectedProperty,
-                iconSize = 50.dp,
-                modifier = Modifier.size(150.dp),
+            PhotosDetailsComposable(
+                propertyWithPhotos = selectedProperty
             )
             Spacer(Modifier.height(16.dp))
             Text(
@@ -76,7 +79,6 @@ fun PropertyDetailScreen(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         onClick = {},
                         label = { Text("SOLD") },
-                        enabled = true,
                     )
                 }
 
@@ -87,7 +89,6 @@ fun PropertyDetailScreen(
                                 modifier = Modifier.padding(horizontal = 8.dp),
                                 onClick = {},
                                 label = { Text("Park") },
-                                enabled = true,
                             )
                         }
 
@@ -96,7 +97,7 @@ fun PropertyDetailScreen(
                             SuggestionChip(
                                 modifier = Modifier.padding(horizontal = 8.dp),
                                 onClick = {},
-                                label = { Text("School") }
+                                label = { Text("School") },
                             )
                         }
 
@@ -104,15 +105,15 @@ fun PropertyDetailScreen(
                             SuggestionChip(
                                 modifier = Modifier.padding(horizontal = 8.dp),
                                 onClick = { },
-                                label = { Text("Shop") }
+                                label = { Text("Shop") },
                             )
                         }
 
                         InterestPoint.TRANSPORT -> {
                             SuggestionChip(
                                 modifier = Modifier.padding(horizontal = 8.dp),
-                                onClick = { },
-                                label = { Text("Transport") }
+                                onClick = {},
+                                label = { Text("Transport") },
                             )
                         }
                     }
