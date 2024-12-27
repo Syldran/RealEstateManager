@@ -26,7 +26,7 @@ interface PropertiesDao {
     suspend fun upsertPhoto(photoProperty: PhotoPropertyEntity)
 
     @Query("DELETE FROM PhotoPropertyEntity WHERE propertyId = :propertyId")
-    suspend fun deletePicturesOfPropertyById(propertyId: Long)
+    suspend fun deletePicturesOfPropertyByIdProperty(propertyId: Long)
 
     @Transaction
     @Query("SELECT * FROM PropertyEntity")

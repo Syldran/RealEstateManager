@@ -27,7 +27,7 @@ class PropertyDetailsViewModel(
 
     private fun getProperty() {
         viewModelScope.launch {
-            if(propertyId != null && propertyId != 0L){
+            if(propertyId != null && propertyId >= 0L){
                 selectedProperty = getPropertyDetailsUseCase(propertyId)
             }
         }

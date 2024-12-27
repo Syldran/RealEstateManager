@@ -1,8 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
@@ -37,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -69,7 +64,7 @@ fun AddPropertyScreen(
     var parkChecked by remember { mutableStateOf(false) }
     var transportChecked by remember { mutableStateOf(false) }
     var shopChecked by remember { mutableStateOf(false) }
-    newProperty?.interestPoints?.forEach {
+    newProperty.interestPoints.forEach {
         when (it) {
             InterestPoint.PARK -> {
                 parkChecked = true
@@ -88,7 +83,7 @@ fun AddPropertyScreen(
             }
         }
     }
-    if (newProperty?.sold == true) {
+    if (newProperty.sold == true) {
         soldChecked = true
     }
 
@@ -112,33 +107,21 @@ fun AddPropertyScreen(
         ) {
             Spacer(modifier = Modifier.height(60.dp))
 
+
             PhotosComposable(
-                propertyWithPhotos = Property(
-                    photoList = photoList.value,
-                    interestPoints = newProperty?.interestPoints ?: emptyList(),
-                    address = newProperty?.address ?: "",
-                    town = newProperty?.town ?: "",
-                    lat = newProperty?.lat ?: 0.0,
-                    lng = newProperty?.lng ?: 0.0,
-                    country = newProperty?.country ?: "",
-                    createdDate = newProperty?.createdDate,
-                    areaCode = newProperty?.areaCode,
-                    surfaceArea = newProperty?.surfaceArea,
-                    price = newProperty?.price,
-                    sold = newProperty?.sold == true,
-                    id = newProperty?.id!!,
-                ),
+                property = newProperty.copy(photoList = photoList.value),
                 modifier = Modifier
                     .clickable { imagePicker.pickMultiImage() },
                 viewModel = viewModel
             )
 
 
+
             Spacer(modifier = Modifier.height(16.dp))
             AutocompleteSearch(viewModel)
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = newProperty?.address ?: "",
+                value = newProperty.address,
                 error = state.addressError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(address = it))
@@ -159,7 +142,7 @@ fun AddPropertyScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (newProperty?.areaCode == null || newProperty.areaCode == 0) "" else newProperty.areaCode.toString(),
+                value = if (newProperty.areaCode == null || newProperty.areaCode == 0) "" else newProperty.areaCode.toString(),
                 error = state.areaCodeError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(areaCode = it))
@@ -179,7 +162,7 @@ fun AddPropertyScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (newProperty?.price == null || newProperty.price == 0) "" else newProperty.price.toString(),
+                value = if (newProperty.price == null || newProperty.price == 0) "" else newProperty.price.toString(),
                 error = state.priceError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(price = it))
@@ -190,7 +173,7 @@ fun AddPropertyScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             PropertyTextField(
-                value = if (newProperty?.surfaceArea == null || newProperty.surfaceArea == 0) "" else newProperty.surfaceArea.toString(),
+                value = if (newProperty.surfaceArea == null || newProperty.surfaceArea == 0) "" else newProperty.surfaceArea.toString(),
                 error = state.surfaceAreaError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(surfaceArea = it))
@@ -200,7 +183,7 @@ fun AddPropertyScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (newProperty?.lat == null || newProperty.lat == 0.0) "" else newProperty.lat.toString(),
+                value = if (newProperty.lat == 0.0) "" else newProperty.lat.toString(),
                 error = state.latError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(latitude = it))
@@ -210,7 +193,7 @@ fun AddPropertyScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (newProperty?.lng == null || newProperty.lng == 0.0) "" else newProperty.lng.toString(),
+                value = if (newProperty.lng == 0.0) "" else newProperty.lng.toString(),
                 error = state.lngError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(longitude = it))

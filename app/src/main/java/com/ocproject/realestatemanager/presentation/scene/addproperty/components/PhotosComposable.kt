@@ -38,27 +38,27 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropert
 @Composable
 fun PhotosComposable(
     viewModel: AddPropertyViewModel,
-    propertyWithPhotos: Property?,
+    property: Property,
     modifier: Modifier = Modifier,
     iconSize: Dp = 25.dp
 ) {
 
     val photoModifier = modifier.size(150.dp)
 //        .clip(RoundedCornerShape(35))
-    if (propertyWithPhotos?.photoList != null) {
+    if (!property.photoList.isNullOrEmpty()) {
         LazyVerticalGrid(
             modifier = Modifier
                 .heightIn(max = 1000.dp)
                 .padding(horizontal = 8.dp),
             horizontalArrangement =
-                if(propertyWithPhotos.photoList.size == 1) Arrangement.spacedBy(8000.dp)
+                if(property.photoList.size == 1) Arrangement.spacedBy(8000.dp)
                 else Arrangement.spacedBy(8.dp)
             ,
             columns = GridCells.Adaptive(minSize = 128.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             userScrollEnabled = false,
         ) {
-            items(propertyWithPhotos.photoList) { photo: PhotoProperty ->
+            items(property.photoList) { photo: PhotoProperty ->
                 Column{
                     Image(
                         bitmap = BitmapFactory.decodeByteArray(
@@ -72,7 +72,7 @@ fun PhotosComposable(
                     )
                     TextField(
                         modifier = Modifier.width(150.dp).align(Alignment.CenterHorizontally),
-                        value =  propertyWithPhotos.photoList[propertyWithPhotos.photoList.indexOf(photo)].name,
+                        value =  property.photoList[property.photoList.indexOf(photo)].name,
                         onValueChange = {
                             viewModel.onEvent(AddPropertyEvent.OnPhotoNameChanged(photoProperty = photo, value = it))
                         }
@@ -100,16 +100,5 @@ fun PhotosComposable(
                 modifier = Modifier.size(40.dp)
             )
         }
-      /*  Box(
-            modifier = photoModifier.background(MaterialTheme.colorScheme.secondaryContainer),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = propertyWithPhotos?.address,
-                modifier = Modifier.size(iconSize),
-                tint = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-        }*/
     }
 }

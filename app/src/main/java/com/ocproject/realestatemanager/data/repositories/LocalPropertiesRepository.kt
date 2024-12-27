@@ -15,6 +15,7 @@ class LocalPropertiesRepository(
         var propertyToAdd = dao.upsertProperty(property.toPropertyEntity())
         // upsert return -1 for replacing existing data
         if (propertyToAdd < 0L) propertyToAdd = property.id
+        dao.deletePicturesOfPropertyByIdProperty(property.id)
         val photosToAdd = property.photoList
         photosToAdd?.forEach {
             dao.upsertPhoto(it.toPhotoPropertyEntity(propertyToAdd))

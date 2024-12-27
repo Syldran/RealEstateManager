@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
+import timber.log.Timber
 import java.util.Calendar
 
 @KoinViewModel
@@ -33,21 +35,39 @@ class AddPropertyViewModel(
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
-    var newProperty: Property? by mutableStateOf(null)
+    var newProperty: Property by mutableStateOf(Property(
+        photoList = emptyList(),
+        interestPoints = emptyList(),
+        address = "",
+        town = "",
+        lat = 0.0,
+        lng = 0.0,
+        country = "",
+        createdDate = null,
+        areaCode = null,
+        surfaceArea = null,
+        price = null,
+        id = 0L,
+        sold = false,
+    ))
         private set
-
     var photoList: MutableState<List<PhotoProperty>?> = mutableStateOf(null)
         private set
 
+
     init {
+
         getProperty()
+        Timber.tag("property").d("${newProperty.id} ")
     }
 
     private fun getProperty() {
         if (propertyId != null && propertyId != 0L) {
             viewModelScope.launch {
                 newProperty = getPropertyDetailsUseCase(propertyId)
+                photoList.value = newProperty.photoList
             }
+
         } else {
             newProperty = Property(
                 photoList = emptyList(),
@@ -205,14 +225,14 @@ class AddPropertyViewModel(
                             )
                         )
                     } else {
-                        savePropertyUseCase(property)
-                        // add modified date ?
-                    }
+                        savePropertyUseCase(
+                            property.copy(
+                                photoList = photoList.value,
+                                // add modified date ?
+                            )
+                        )
 
-//                    if (propertyId != null && propertyId != 0L) {
-//                        idProperty = propertyId
-//
-//                    }
+                    }
                 }
 
 
@@ -240,29 +260,29 @@ class AddPropertyViewModel(
     private fun updateForm(event: AddPropertyEvent.UpdateForm) {
         var decimalFormatter = DecimalFormatter()
         var intFormatter = IntFormatter()
-        newProperty = newProperty?.copy(
-            address = event.address ?: newProperty!!.address,
-            town = event.town ?: newProperty!!.town,
-            country = event.country ?: newProperty!!.country,
+        newProperty = newProperty.copy(
+            address = event.address ?: newProperty.address,
+            town = event.town ?: newProperty.town,
+            country = event.country ?: newProperty.country,
             areaCode = event.areaCode?.let { intFormatter.cleanup(it) }?.toInt()
-                ?: newProperty!!.areaCode,
+                ?: newProperty.areaCode,
             lat = event.latitude?.let { decimalFormatter.cleanup(it) }?.toDouble()
-                ?: newProperty!!.lat,
+                ?: newProperty.lat,
             lng = event.longitude?.let { decimalFormatter.cleanup(it) }?.toDouble()
-                ?: newProperty!!.lng,
-            price = event.price?.let { intFormatter.cleanup(it) }?.toInt() ?: newProperty!!.price,
+                ?: newProperty.lng,
+            price = event.price?.let { intFormatter.cleanup(it) }?.toInt() ?: newProperty.price,
             surfaceArea = event.surfaceArea?.let { intFormatter.cleanup(it) }?.toInt()
-                ?: newProperty!!.surfaceArea,
+                ?: newProperty.surfaceArea,
         )
     }
 
     private fun updateTags(event: AddPropertyEvent.UpdateTags) {
-        newProperty = newProperty?.copy(
+        newProperty = newProperty.copy(
             sold = event.sold
         )
         var list: List<InterestPoint> = emptyList()
         //if newProperty interestPoints aren't null we set temp list to it's current state.
-        newProperty?.interestPoints?.let {
+        newProperty.interestPoints.let {
             list = it
         }
 
@@ -270,16 +290,16 @@ class AddPropertyViewModel(
             true -> {
                 // We check if tag PARK was previously inactive.
                 // If it wasn't we add its new active state via temp list.
-               if(!list.contains(InterestPoint.PARK)){
-                   list += InterestPoint.PARK
-               }
+                if (!list.contains(InterestPoint.PARK)) {
+                    list += InterestPoint.PARK
+                }
             }
 
             false -> {
                 // We check if tag Park was previously active.
                 // If it was we remove it's active state to the inactive one via temp list.
-                    if (list.contains(InterestPoint.PARK)){
-                        list -= InterestPoint.PARK
+                if (list.contains(InterestPoint.PARK)) {
+                    list -= InterestPoint.PARK
                 }
             }
         }
@@ -287,14 +307,14 @@ class AddPropertyViewModel(
         // same as above with shop tag / InterestPoint.Shop
         when (event.shop) {
             true -> {
-                if(!list.contains(InterestPoint.SHOP)){
+                if (!list.contains(InterestPoint.SHOP)) {
                     list += InterestPoint.SHOP
                 }
 
             }
 
             false -> {
-                if (list.contains(InterestPoint.SHOP)){
+                if (list.contains(InterestPoint.SHOP)) {
                     list -= InterestPoint.SHOP
                 }
             }
@@ -303,14 +323,14 @@ class AddPropertyViewModel(
         // same for school tag
         when (event.school) {
             true -> {
-                if(!list.contains(InterestPoint.SCHOOL)){
+                if (!list.contains(InterestPoint.SCHOOL)) {
                     list += InterestPoint.SCHOOL
                 }
 
             }
 
             false -> {
-                if (list.contains(InterestPoint.SCHOOL)){
+                if (list.contains(InterestPoint.SCHOOL)) {
                     list -= InterestPoint.SCHOOL
                 }
             }
@@ -319,21 +339,21 @@ class AddPropertyViewModel(
         // same for transport tag
         when (event.transport) {
             true -> {
-                if(!list.contains(InterestPoint.TRANSPORT)){
+                if (!list.contains(InterestPoint.TRANSPORT)) {
                     list += InterestPoint.TRANSPORT
                 }
 
             }
 
             false -> {
-                if (list.contains(InterestPoint.TRANSPORT)){
+                if (list.contains(InterestPoint.TRANSPORT)) {
                     list -= InterestPoint.TRANSPORT
                 }
             }
         }
 
         // Update newProperty interestPoints state with new values from temp list
-        newProperty = newProperty?.copy(
+        newProperty = newProperty.copy(
             interestPoints = list
         )
     }
