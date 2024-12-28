@@ -128,7 +128,7 @@ class PropertyListViewModel(
         selectedTags.value = currentTags
     }
 
-    private fun getPropertyList(filter: Filter) {
+    fun getPropertyList(filter: Filter) {
 
         getPropertyListUseCase().onEach { propertiesDataState ->
             when (propertiesDataState) {

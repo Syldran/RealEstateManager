@@ -12,21 +12,11 @@ class AddPropertyViewModelTest {
     private lateinit var viewModel: AddPropertyViewModel
     @Before
     fun setUp() {
-        propertiesRepository = mock()
-        viewModel = AddPropertyViewModel(1, propertiesRepository)
+//        propertiesRepository = mock()
+//        viewModel = AddPropertyViewModel(1, propertiesRepository)
     }
 
-    @Test
-    fun isPropertyListLoading(){
-        //simuler cas loading
 
-        // test avec id property null et avec un id de property en bdd
-    }
-    @Test
-    fun isPropertyListError(){}
-
-    @Test
-    fun isPropertyListSuccess(){}
 
     /*
     @Test

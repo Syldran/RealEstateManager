@@ -2,9 +2,6 @@
 agp = "8.7.3"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.12.01"
@@ -21,24 +18,26 @@ ktlint = "11.6.0"
 secrets = "2.0.1"
 constraintlayout = "2.2.0"
 junitKtx = "1.2.1"
-kotlinxCoroutinesTest = "1.9.0"
-
-junitJupiter = "5.8.2"
 timber = "5.0.1"
-uiTestJunit4Android = "1.7.6"
-kotestAssertionsCore = "5.9.1"
-kotestRunnerJunit5 = "5.9.0"
-kotlinReflect = "2.0.0"
+
+
+junit = "4.13.2"
+truth = "1.4.4"
+testCore = "1.6.1"
+coreTesting = "2.2.0"
 mockk = "1.13.13"
-mockkAndroid = "1.12.0"
 uiTestManifest = "1.7.6"
-turbine = "1.2.0"
+
+extJunit = "1.2.1"
+testCoreKtx = "1.6.1"
+testRunner = "1.6.2"
+kotlinxCoroutinesTest = "1.9.0"
+espressoCore = "3.6.1"
+mockwebserver = "4.12.0"
+mockkAndroid = "1.13.13"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-#androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -47,27 +46,29 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-#androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 
 #Testing
-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
-androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
-androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling"}
-kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotestAssertionsCore" }
-kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotestRunnerJunit5" }
-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlinReflect" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+junit = { module = "junit:junit", version.ref = "junit" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+androidx-core = { module = "androidx.test:core", version.ref = "testCore" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "extJunit" }
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+core-ktx = { module = "androidx.test:core-ktx", version.ref = "testCoreKtx" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "testRunner" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
+
 
 
 #Room
@@ -103,5 +104,22 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 secrets-gradle = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 
 [bundles]
-unittest = ["junit-jupiter", "kotest-assertions-core", "mockk", "kotlinx-coroutines-test", "kotest-runner-junit5"]
-androidtest = ["androidx-junit", "androidx-ui-test-junit4", "mockk-android", "androidx-ui-test-junit4-android"]
+unittest = [
+    "junit",
+    "truth",
+    "androidx-core",
+    "androidx-core-testing",
+    "kotlinx-coroutines-test",
+    "mockk",
+    "mockwebserver",
+]
+androidtest = [
+    "androidx-junit",
+    "androidx-ui-test-junit4",
+    "core-ktx",
+    "androidx-runner",
+    "kotlinx-coroutines-test",
+    "androidx-espresso-core",
+    "mockwebserver",
+    "mockk-android",
+]

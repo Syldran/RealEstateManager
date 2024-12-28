@@ -105,15 +105,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.junit.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.timber)
+
+    testImplementation(libs.bundles.unittest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.bundles.androidtest)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    implementation(libs.timber)
 
     // Room, for bdd
     implementation(libs.room.runtime)
@@ -138,9 +136,5 @@ dependencies {
     implementation(libs.coil.compose)
 
 
-    testImplementation("app.cash.turbine:turbine:1.2.0")
-    testImplementation("com.google.truth:truth:1.4.4")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
-    testImplementation("io.mockk:mockk:1.13.13")
-    testImplementation("org.mockito:mockito-core:5.14.2")
+
 }
