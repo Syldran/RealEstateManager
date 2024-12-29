@@ -1,6 +1,7 @@
 package com.ocproject.realestatemanager.core
 
-import android.util.Range
+import com.ocproject.realestatemanager.core.utils.Range
+
 
 data class Filter(
     val sortType: SortType,

@@ -11,6 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class DeletePropertyUseCaseTest {
+    // same property is already in repository
     val property = Property(
         photoList = emptyList(),
         interestPoints = emptyList(),

@@ -37,7 +37,7 @@ class GetPropertyListUseCaseTest {
 
     @Test
     fun `get properties from list, list of properties`() = runTest {
-        // 3 properties in repo
+        // 3 properties in repository
         fakePropertyRepository.shouldHaveFilledList(true)
 
         val properties = getPropertyList.invoke()

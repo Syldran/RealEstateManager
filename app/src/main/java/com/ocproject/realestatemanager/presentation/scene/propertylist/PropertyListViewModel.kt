@@ -1,6 +1,5 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist
 
-import android.util.Range
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,9 +10,9 @@ import com.ocproject.realestatemanager.core.Order
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.core.SellingStatus
 import com.ocproject.realestatemanager.core.SortType
+import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
-import com.squareup.okhttp.Dispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -263,7 +262,7 @@ class PropertyListViewModel(
                 getPropertyList(_filter.value)
             }
 
-            is PropertyListEvent.SortProperties -> {
+            is PropertyListEvent.GetProperties -> {
 
                 viewModelScope.launch {
                     _filter.update {

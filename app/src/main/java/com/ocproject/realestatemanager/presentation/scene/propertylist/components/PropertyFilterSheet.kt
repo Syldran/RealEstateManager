@@ -1,6 +1,5 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist.components
 
-import android.util.Range
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +34,7 @@ import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.core.Order
 import com.ocproject.realestatemanager.core.SellingStatus
 import com.ocproject.realestatemanager.core.SortType
+import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListEvent
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListState
 import kotlinx.coroutines.CoroutineScope
@@ -83,7 +83,7 @@ fun PropertyFilterSheet(
                         selected = state.soldState == SellingStatus.PURCHASABLE,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         SortType.PRICE,
                                         state.orderPrice,
@@ -106,7 +106,7 @@ fun PropertyFilterSheet(
                         selected = state.soldState == SellingStatus.SOLD,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         state.sortType,
                                         state.orderPrice,
@@ -130,7 +130,7 @@ fun PropertyFilterSheet(
                         selected = state.soldState == SellingStatus.ALL,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         state.sortType,
                                         state.orderPrice,
@@ -158,7 +158,7 @@ fun PropertyFilterSheet(
                         selected = state.sortType == SortType.PRICE,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         SortType.PRICE,
                                         state.orderPrice,
@@ -183,7 +183,7 @@ fun PropertyFilterSheet(
                         selected = state.orderPrice == Order.ASC,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         state.sortType,
                                         Order.ASC,
@@ -208,7 +208,7 @@ fun PropertyFilterSheet(
                         selected = state.orderPrice == Order.DESC,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         state.sortType,
                                         Order.DESC,
@@ -265,7 +265,7 @@ fun PropertyFilterSheet(
                         selected = state.sortType == SortType.DATE,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         SortType.DATE,
                                         state.orderPrice,
@@ -290,7 +290,7 @@ fun PropertyFilterSheet(
                         selected = state.orderDate == Order.ASC,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         state.sortType,
                                         state.orderPrice,
@@ -315,7 +315,7 @@ fun PropertyFilterSheet(
                         selected = state.orderDate == Order.DESC,
                         onClick = {
                             onEvent(
-                                PropertyListEvent.SortProperties(
+                                PropertyListEvent.GetProperties(
                                     filter = Filter(
                                         state.sortType,
                                         state.orderPrice,

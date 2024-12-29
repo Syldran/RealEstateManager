@@ -27,8 +27,15 @@ class PropertiesRepositoryTest {
         id = 1L,
     )
 
-
     @Test
+    fun add_Property() = runTest {
+        val repo = LocalPropertiesRepository(FakePropertiesDao())
+        val propertyWithPhotos = PropertyWithPhotosEntity(property.toPropertyEntity(), null)
+        repo.upsertProperty(property)
+        assertEquals(propertyWithPhotos.property, repo.getPropertyList().first().toPropertyEntity())
+    }
+
+        @Test
     fun delete_Property() = runTest {
         val repo = LocalPropertiesRepository(FakePropertiesDao())
         val propertyWithPhotos = PropertyWithPhotosEntity(property.toPropertyEntity(), null)
