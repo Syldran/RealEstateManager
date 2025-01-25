@@ -36,7 +36,7 @@ class PropertyListViewModel(
 ) : ViewModel() {
 
 
-    private val _sortedProperties = MutableStateFlow(emptyList<Property>())
+     val sortedProperties = MutableStateFlow(emptyList<Property>())
     private var _properties = emptyList<Property>()
     private val selectedTags = mutableStateOf(listOf<InterestPoint>())
 //    private val selectedTags: List<InterestPoint> = emptyList()
@@ -57,7 +57,7 @@ class PropertyListViewModel(
     private val _state = MutableStateFlow(PropertyListState())
     val state: StateFlow<PropertyListState> = combine(
         _state,
-        _sortedProperties,
+        sortedProperties,
         _filter
     ) { state, sortedProperties, filter ->
         state.copy(
@@ -162,12 +162,12 @@ class PropertyListViewModel(
 
     }
 
-    private fun getPropertiesSorted(filter: Filter) {
+    /*private */fun getPropertiesSorted(filter: Filter) {
         addTags(filter)
         viewModelScope.launch {
             val filteredProperties: MutableList<Property> =
                 emptyList<Property>().toMutableList()
-            _sortedProperties.update {
+            sortedProperties.update {
 
                 filteredProperties.addAll(
                     _properties.filter { property ->

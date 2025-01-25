@@ -35,22 +35,25 @@ class AddPropertyViewModel(
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
-    var newProperty: Property by mutableStateOf(Property(
-        photoList = emptyList(),
-        interestPoints = emptyList(),
-        address = "",
-        town = "",
-        lat = 0.0,
-        lng = 0.0,
-        country = "",
-        createdDate = null,
-        areaCode = null,
-        surfaceArea = null,
-        price = null,
-        id = 0L,
-        sold = false,
-    ))
+    var newProperty: Property by mutableStateOf(
+        Property(
+            photoList = emptyList(),
+            interestPoints = emptyList(),
+            address = "",
+            town = "",
+            lat = 0.0,
+            lng = 0.0,
+            country = "",
+            createdDate = null,
+            areaCode = null,
+            surfaceArea = null,
+            price = null,
+            id = 0L,
+            sold = false,
+        )
+    )
         private set
+
     var photoList: MutableState<List<PhotoProperty>?> = mutableStateOf(null)
         private set
 
@@ -61,7 +64,7 @@ class AddPropertyViewModel(
         Timber.tag("property").d("${newProperty.id} ")
     }
 
-    private fun getProperty() {
+    fun getProperty() {
         if (propertyId != null && propertyId != 0L) {
             viewModelScope.launch {
                 newProperty = getPropertyDetailsUseCase(propertyId)
@@ -188,7 +191,7 @@ class AddPropertyViewModel(
     }
 
     private fun saveProperty() {
-        newProperty?.let { property ->
+        newProperty.let { property ->
             val result = PropertyValidator.validateProperty(property)
             val errors = listOfNotNull(
                 result.addressError,
@@ -228,7 +231,6 @@ class AddPropertyViewModel(
                         savePropertyUseCase(
                             property.copy(
                                 photoList = photoList.value,
-                                // add modified date ?
                             )
                         )
 
