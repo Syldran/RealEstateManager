@@ -136,7 +136,7 @@ class AddPropertyViewModel(
     fun onEvent(event: AddPropertyEvent) {
         when (event) {
 
-            AddPropertyEvent.SaveProperty -> saveProperty()
+            AddPropertyEvent.SaveProperty -> saveProperty(newProperty)
             is AddPropertyEvent.UpdateForm -> updateForm(event)
             is AddPropertyEvent.UpdateTags -> updateTags(event)
             is AddPropertyEvent.OnPhotoNameChanged -> {
@@ -190,8 +190,8 @@ class AddPropertyViewModel(
         }
     }
 
-    private fun saveProperty() {
-        newProperty.let { property ->
+    fun saveProperty(property: Property) {
+        property.let { property ->
             val result = PropertyValidator.validateProperty(property)
             val errors = listOfNotNull(
                 result.addressError,
@@ -259,7 +259,7 @@ class AddPropertyViewModel(
         }
     }
 
-    private fun updateForm(event: AddPropertyEvent.UpdateForm) {
+    fun updateForm(event: AddPropertyEvent.UpdateForm) {
         var decimalFormatter = DecimalFormatter()
         var intFormatter = IntFormatter()
         newProperty = newProperty.copy(
@@ -278,7 +278,7 @@ class AddPropertyViewModel(
         )
     }
 
-    private fun updateTags(event: AddPropertyEvent.UpdateTags) {
+    fun updateTags(event: AddPropertyEvent.UpdateTags) {
         newProperty = newProperty.copy(
             sold = event.sold
         )
@@ -355,7 +355,7 @@ class AddPropertyViewModel(
         }
 
         // Update newProperty interestPoints state with new values from temp list
-        newProperty = newProperty.copy(
+        newProperty.copy(
             interestPoints = list
         )
     }
