@@ -35,6 +35,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
 import com.ocproject.realestatemanager.core.InterestPoint
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PhotosDetailsComposable
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
 import org.koin.androidx.compose.koinViewModel
@@ -42,6 +43,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PropertyDetailScreen(
     viewModel: PropertyDetailsViewModel = koinViewModel(),
+    propertyId: Long,
+    navigateBack: () -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
     onNavigateToPropertyListScreen: () -> Unit,
 ) {
@@ -150,9 +153,10 @@ fun PropertyDetailScreen(
         }
 
         IconButton(
-            onClick = {
-                onNavigateToPropertyListScreen()
-            }
+            onClick = navigateBack
+//            {
+//                onNavigateToPropertyListScreen()
+//            }
         ) {
             Icon(
                 imageVector = Icons.Rounded.Close,

@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListItem
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListTopBar
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyFilterSheet
@@ -85,14 +86,15 @@ fun PropertyListScreen(
                 items = state.properties,
                 key = { property ->
                     property.id
-                }) { propertyWithPhotos ->
+                }) { property ->
                 PropertyListItem(
                     viewModel = viewModel,
-                    propertyWithPhotos = propertyWithPhotos,
+                    propertyWithPhotos = property,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            onNavigateToPropertyDetailScreen(propertyWithPhotos.id)
+                            onClick(property.id)
+//                            onNavigateToPropertyDetailScreen(propertyWithPhotos.id)
                         }
                         .padding(start = 16.dp, end = 16.dp),
                     onEvent = viewModel::onEvent

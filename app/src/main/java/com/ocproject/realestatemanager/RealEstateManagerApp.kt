@@ -1,4 +1,5 @@
 package com.ocproject.realestatemanager
+
 import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +33,8 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.addPropert
 import com.ocproject.realestatemanager.presentation.scene.propertydetails.addPropertyDetailsScreen
 import com.ocproject.realestatemanager.presentation.scene.propertylist.addPropertyListScreen
 import com.ocproject.realestatemanager.core.ui.theme.RealestatemanagerTheme
+import com.ocproject.realestatemanager.domain.models.Property
+import com.ocproject.realestatemanager.presentation.scene.propertydetails.PropertyDetailScreen
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListScreen
 import kotlinx.parcelize.Parcelize
 import org.koin.compose.KoinContext
@@ -52,44 +55,59 @@ fun RealEstateManagerApp(
         NavigableListDetailPaneScaffold(
             navigator = navigator,
             listPane = {
-                ListPane(
-                    onClick = { item ->
+//                ListPane(
+//                    onClick = { item ->
+//                        navigator.navigateTo(
+//                            ListDetailPaneScaffoldRole.Detail,
+//                            content = item
+//                        )
+//                    }
+//                )
+                PropertyListScreen(
+                    onClick = { propertyId ->
                         navigator.navigateTo(
                             ListDetailPaneScaffoldRole.Detail,
-                            content = item
+                            content = propertyId
                         )
-                    }
+                    },
+                    onNavigateToAddPropertyScreen = {},
+                    onNavigateToPropertyDetailScreen = {},
                 )
-                PropertyListScreen(
-                    onClick = {
-
-                    })
             },
             detailPane = {
                 AnimatedPane {
-                    navigator.currentDestination?.content?.let { item ->
-                        DetailPane(
-                            item = item as Item,
+                    navigator.currentDestination?.content?.let { propertyId ->
+//                        DetailPane(
+//                            item = item as Item,
+//                            navigateBack = {
+//                                navigator.navigateBack()
+//                            }
+//                        )
+                        PropertyDetailScreen(
+                            propertyId = propertyId as Long,
                             navigateBack = {
                                 navigator.navigateBack()
-                            }
+                            },
+                            onNavigateToAddPropertyScreen = {},
+                            onNavigateToPropertyListScreen = {},
+
                         )
                     }
                 }
             },
         )
 
-        val navController = rememberNavController()
-        KoinContext {
-            NavHost(
-                navController = navController,
-                startDestination = Screen.PropertyListScreen.route
-            ){
-                addPropertyListScreen(navController)
-                addPropertyScreen(navController)
-                addPropertyDetailsScreen(navController)
-            }
-        }
+//        val navController = rememberNavController()
+//        KoinContext {
+//            NavHost(
+//                navController = navController,
+//                startDestination = Screen.PropertyListScreen.route
+//            ) {
+//                addPropertyListScreen(navController)
+//                addPropertyScreen(navController)
+//                addPropertyDetailsScreen(navController)
+//            }
+//        }
     }
 }
 
