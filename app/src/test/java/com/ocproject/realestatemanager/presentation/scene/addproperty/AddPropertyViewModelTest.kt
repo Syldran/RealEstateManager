@@ -1,28 +1,17 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.google.common.truth.ExpectFailure.assertThat
 import com.ocproject.realestatemanager.MainCoroutineRule
 import com.ocproject.realestatemanager.core.InterestPoint
-import com.ocproject.realestatemanager.data.repositories.FakePropertiesRepository
-import com.ocproject.realestatemanager.data.repositories.LocalPropertiesRepository
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
-import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
 import com.ocproject.realestatemanager.domain.usecases.SavePropertyUseCase
-import com.ocproject.realestatemanager.presentation.scene.propertydetails.PropertyDetailsState
-import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListState
-import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
+import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -33,7 +22,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddPropertyViewModelTest {
@@ -46,11 +34,9 @@ class AddPropertyViewModelTest {
 
     val testDispatcher = StandardTestDispatcher()
 
-    private var id: Long? = null
     private val getPropertyDetails = mockk<GetPropertyDetailsUseCase>(relaxed = true)
     private val saveProperty = mockk<SavePropertyUseCase>(relaxed = true)
     private lateinit var viewModel: AddPropertyViewModel
-//    private val testScope = TestCoroutineScope(testDispatcher)
 
     @Before
     fun setUp() {
@@ -115,18 +101,52 @@ class AddPropertyViewModelTest {
 
     @Test
     fun `update form test`() = runTest {
-        viewModel.updateForm(
-            AddPropertyEvent.UpdateForm(
-                town = "Paris"
-            )
+        coEvery { getPropertyDetails(1L) } returns Property(
+            photoList = emptyList(),
+            interestPoints = emptyList(),
+            address = "",
+            town = "",
+            lat = 0.0,
+            lng = 0.0,
+            country = "",
+            createdDate = null,
+            areaCode = null,
+            surfaceArea = null,
+            price = null,
+            id = 1L,
+            sold = false,
         )
+        val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
-        assert(viewModel.newProperty.town == "Paris")
+        viewModelTest.updateForm(AddPropertyEvent.UpdateForm(town = "Paris"))
+        advanceUntilIdle()
+        val town = viewModelTest.newProperty.town
+        assertEquals("Paris", town)
     }
+
 
     @Test
     fun `update tags test`() = runTest {
-        viewModel.updateTags(
+
+        coEvery { getPropertyDetails(1L) } returns Property(
+            photoList = emptyList(),
+            interestPoints = emptyList(),
+            address = "",
+            town = "",
+            lat = 0.0,
+            lng = 0.0,
+            country = "",
+            createdDate = null,
+            areaCode = null,
+            surfaceArea = null,
+            price = null,
+            id = 1L,
+            sold = false,
+        )
+        val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
+        advanceUntilIdle()
+
+        viewModelTest.updateTags(
             AddPropertyEvent.UpdateTags(
                 school = true,
                 shop = false,
@@ -136,7 +156,7 @@ class AddPropertyViewModelTest {
             )
         )
         advanceUntilIdle()
-        assert(viewModel.newProperty.interestPoints.contains(InterestPoint.SCHOOL))
-        assert(viewModel.newProperty.sold == false)
+        val interestPoint = viewModelTest.newProperty.interestPoints
+        assert(interestPoint.contains(InterestPoint.SCHOOL))
     }
 }

@@ -36,6 +36,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun PropertyListScreen(
     viewModel: PropertyListViewModel = koinViewModel(),
+    onClick: (propertyId: Long?) -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
     onNavigateToPropertyDetailScreen: (propertyId: Long) -> Unit,
 ) {

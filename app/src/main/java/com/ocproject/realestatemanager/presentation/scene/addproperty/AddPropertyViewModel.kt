@@ -355,7 +355,7 @@ class AddPropertyViewModel(
         }
 
         // Update newProperty interestPoints state with new values from temp list
-        newProperty.copy(
+        newProperty = newProperty.copy(
             interestPoints = list
         )
     }

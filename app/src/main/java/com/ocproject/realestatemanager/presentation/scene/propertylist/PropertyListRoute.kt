@@ -15,6 +15,8 @@ fun NavGraphBuilder.addPropertyListScreen(navController: NavController){
             .build()
 
         PropertyListScreen(
+            onClick = {},
+
             onNavigateToAddPropertyScreen = {
                 navController.navigate(Screen.AddPropertyScreen.withArgs(it?:0))
             },
