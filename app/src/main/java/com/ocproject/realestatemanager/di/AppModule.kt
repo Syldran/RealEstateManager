@@ -50,10 +50,15 @@ val appModule = org.koin.dsl.module {
             propertyId = get(),
             getPropertyDetailsUseCase = get(),
             savePropertyUseCase = get(),
-//            savePhotoProperty = get()
         )
     }
 
+//    viewModel { (propertyId: Long) ->
+//        PropertyDetailsViewModel(
+//            getPropertyDetailsUseCase = get(),
+//            propertyId = propertyId
+//        )
+//    }
     viewModel {
         PropertyDetailsViewModel(
             getPropertyDetailsUseCase = get(),

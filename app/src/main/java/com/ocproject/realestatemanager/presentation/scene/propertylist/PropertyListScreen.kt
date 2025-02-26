@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager.presentation.scene.propertylist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,96 +43,96 @@ fun PropertyListScreen(
     onNavigateToPropertyDetailScreen: (propertyId: Long) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    Scaffold(
-        topBar = {
-            PropertyListTopBar(
-                onEvent = viewModel::onEvent,
-                onNavigateToAddPropertyScreen =  onNavigateToAddPropertyScreen,
-                modifier = Modifier
-            )
-        },
+//    Scaffold(
+//        topBar = {
+//            PropertyListTopBar(
+//                onEvent = viewModel::onEvent,
+//                onNavigateToAddPropertyScreen =  onNavigateToAddPropertyScreen,
+//                modifier = Modifier
+//            )
+//        },
 
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    onNavigateToAddPropertyScreen(null)
-                },
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = "Add property"
-                )
-            }
-        }
+//        floatingActionButton = {
+//            FloatingActionButton(
+//                onClick = {
+//                    onNavigateToAddPropertyScreen(null)
+//                },
+//                shape = RoundedCornerShape(20.dp)
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Rounded.Add,
+//                    contentDescription = "Add property"
+//                )
+//            }
+//        }
+//    ) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp),
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = it,
-        ) {
 
 
-            item {
-                Text(
-                    text = "List of properties (${state.properties.size})",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    fontWeight = FontWeight.Bold
-                )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-            }
+        item {
+            Text(
+                text = "List of properties (${state.properties.size})",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                fontWeight = FontWeight.Bold
+            )
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        }
 
-            items(
-                items = state.properties,
-                key = { property ->
-                    property.id
-                }) { property ->
-                PropertyListItem(
-                    viewModel = viewModel,
-                    propertyWithPhotos = property,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onClick(property.id)
+        items(
+            items = state.properties,
+            key = { property ->
+                property.id
+            }) { property ->
+            PropertyListItem(
+                viewModel = viewModel,
+                propertyWithPhotos = property,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onClick(property.id)
 //                            onNavigateToPropertyDetailScreen(propertyWithPhotos.id)
-                        }
-                        .padding(start = 16.dp, end = 16.dp),
-                    onEvent = viewModel::onEvent
-                )
-            }
+                    }
+                    .padding(start = 16.dp, end = 16.dp),
+                onEvent = viewModel::onEvent
+            )
         }
-        when {
-            state.isFilterSheetOpen -> {
-                    PropertyFilterSheet(
-                    state = state,
-                    onEvent = viewModel::onEvent,
-                    sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-                    scope = rememberCoroutineScope(),
-                )
-            }
-
-            state.isLoadingProgressBar -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
-                    CircularProgressIndicator(color = Color.Red)
-                }
-            }
-
-            state.isError -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
-                    Text(text = "ERROR Data", color = Color.Red)
-
-                }
-            }
-        }
-
-
     }
+    when {
+        state.isFilterSheetOpen -> {
+            PropertyFilterSheet(
+                state = state,
+                onEvent = viewModel::onEvent,
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                scope = rememberCoroutineScope(),
+            )
+        }
+
+        state.isLoadingProgressBar -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.Red)
+            }
+        }
+
+        state.isError -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "ERROR Data", color = Color.Red)
+
+            }
+        }
+    }
+
+
 }
+//}
 

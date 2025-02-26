@@ -13,7 +13,6 @@ import org.koin.core.annotation.InjectedParam
 
 @KoinViewModel
 class PropertyDetailsViewModel(
-    @InjectedParam
     private val propertyId: Long?,
     private val getPropertyDetailsUseCase: GetPropertyDetailsUseCase,
 ) : ViewModel() {

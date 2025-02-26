@@ -36,8 +36,10 @@ import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
 import com.ocproject.realestatemanager.core.InterestPoint
 import com.ocproject.realestatemanager.domain.models.Property
+import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PhotosDetailsComposable
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
+import org.koin.android.annotation.KoinViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -45,9 +47,10 @@ fun PropertyDetailScreen(
     viewModel: PropertyDetailsViewModel = koinViewModel(),
     propertyId: Long,
     navigateBack: () -> Unit,
-    onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
-    onNavigateToPropertyListScreen: () -> Unit,
+//    onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
+//    onNavigateToPropertyListScreen: () -> Unit,
 ) {
+    Text(text = "PropertyId = $propertyId",)
     val selectedProperty = viewModel.selectedProperty
     Box(
         modifier = Modifier
@@ -125,7 +128,7 @@ fun PropertyDetailScreen(
             }
             Spacer(Modifier.height(16.dp))
             FilledTonalIconButton(
-                onClick = { onNavigateToAddPropertyScreen(selectedProperty?.id) },
+                onClick = { /*onNavigateToAddPropertyScreen(selectedProperty?.id)*/ },
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer

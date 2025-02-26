@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -36,7 +37,10 @@ import com.ocproject.realestatemanager.core.ui.theme.RealestatemanagerTheme
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.propertydetails.PropertyDetailScreen
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListScreen
+import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListViewModel
+import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListTopBar
 import kotlinx.parcelize.Parcelize
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 
 
@@ -45,16 +49,23 @@ import org.koin.compose.KoinContext
 fun RealEstateManagerApp(
     darkTheme: Boolean,
     dynamicColor: Boolean,
+    viewModel: PropertyListViewModel = koinViewModel(),
 ) {
     RealestatemanagerTheme(
         darkTheme = darkTheme,
         dynamicColor = dynamicColor,
     ) {
         val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
+        Column {
 
-        NavigableListDetailPaneScaffold(
-            navigator = navigator,
-            listPane = {
+            PropertyListTopBar(
+                onEvent = viewModel::onEvent,
+                onNavigateToAddPropertyScreen =  {},
+                modifier = Modifier
+            )
+            NavigableListDetailPaneScaffold(
+                navigator = navigator,
+                listPane = {
 //                ListPane(
 //                    onClick = { item ->
 //                        navigator.navigateTo(
@@ -63,40 +74,43 @@ fun RealEstateManagerApp(
 //                        )
 //                    }
 //                )
-                PropertyListScreen(
-                    onClick = { propertyId ->
-                        navigator.navigateTo(
-                            ListDetailPaneScaffoldRole.Detail,
-                            content = propertyId
-                        )
-                    },
-                    onNavigateToAddPropertyScreen = {},
-                    onNavigateToPropertyDetailScreen = {},
-                )
-            },
-            detailPane = {
-                AnimatedPane {
-                    navigator.currentDestination?.content?.let { propertyId ->
+
+                    PropertyListScreen(
+                        onClick = { propertyId ->
+                            navigator.navigateTo(
+                                ListDetailPaneScaffoldRole.Detail,
+                                content = propertyId
+                            )
+                        },
+                        onNavigateToAddPropertyScreen = {},
+                        onNavigateToPropertyDetailScreen = {},
+                    )
+                },
+                detailPane = {
+                    AnimatedPane {
+
+                        navigator.currentDestination?.content?.let { propertyId ->
+//                        navigator.currentDestination?.content?.let { item ->
 //                        DetailPane(
 //                            item = item as Item,
 //                            navigateBack = {
 //                                navigator.navigateBack()
 //                            }
 //                        )
-                        PropertyDetailScreen(
-                            propertyId = propertyId as Long,
-                            navigateBack = {
-                                navigator.navigateBack()
-                            },
-                            onNavigateToAddPropertyScreen = {},
-                            onNavigateToPropertyListScreen = {},
+                            PropertyDetailScreen(
+                                propertyId = propertyId as Long,
+                                navigateBack = {
+                                    navigator.navigateBack()
+                                },
+                           
 
-                        )
+                                )
+                        }
                     }
-                }
-            },
-        )
-
+                },
+            )
+        }
+    }
 //        val navController = rememberNavController()
 //        KoinContext {
 //            NavHost(
@@ -108,8 +122,8 @@ fun RealEstateManagerApp(
 //                addPropertyDetailsScreen(navController)
 //            }
 //        }
-    }
 }
+
 
 @Parcelize
 class Item(val id: Int) : Parcelable

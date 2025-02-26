@@ -23,13 +23,13 @@ fun NavGraphBuilder.addPropertyDetailsScreen(navController: NavController) {
         PropertyDetailScreen(
             propertyId = 0,
             navigateBack = {},
-            viewModel = koinViewModel(parameters = { parametersOf(id) }),
-            onNavigateToAddPropertyScreen = {
-                navController.navigate(Screen.AddPropertyScreen.withArgs(it ?: 0))
-            },
-            onNavigateToPropertyListScreen = {
-                navController.popBackStack()
-            }
+//            viewModel = koinViewModel(parameters = { parametersOf(id) }),
+//            onNavigateToAddPropertyScreen = {
+//                navController.navigate(Screen.AddPropertyScreen.withArgs(it ?: 0))
+//            },
+//            onNavigateToPropertyListScreen = {
+//                navController.popBackStack()
+//            }
         )
     }
 }
