@@ -11,6 +11,7 @@ sealed interface PropertyListEvent {
     data class DeleteProperty(val property: Property) : PropertyListEvent
     data class GetProperties(val filter: Filter) : PropertyListEvent
     //    data class UpdateFilters(): PropertyListEvent
+    data class SetRangeSurface(val rangeSurface: Range<Float>) : PropertyListEvent
     data class SetRangePrice(val rangePrice: Range<Float>) : PropertyListEvent
     data class OnSchoolChecked(val value: Boolean) : PropertyListEvent
     data class OnParkChecked(val value: Boolean) : PropertyListEvent

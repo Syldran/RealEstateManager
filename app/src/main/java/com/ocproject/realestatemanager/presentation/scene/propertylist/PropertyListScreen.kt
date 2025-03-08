@@ -1,8 +1,10 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +20,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,73 +37,54 @@ import com.ocproject.realestatemanager.presentation.scene.propertylist.component
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyFilterSheet
 import org.koin.androidx.compose.koinViewModel
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropertyListScreen(
     viewModel: PropertyListViewModel = koinViewModel(),
-    onClick: (propertyId: Long?) -> Unit,
+    onClick: (property: Property?) -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
     onNavigateToPropertyDetailScreen: (propertyId: Long) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-//    Scaffold(
-//        topBar = {
-//            PropertyListTopBar(
-//                onEvent = viewModel::onEvent,
-//                onNavigateToAddPropertyScreen =  onNavigateToAddPropertyScreen,
-//                modifier = Modifier
-//            )
-//        },
-
-//        floatingActionButton = {
-//            FloatingActionButton(
-//                onClick = {
-//                    onNavigateToAddPropertyScreen(null)
-//                },
-//                shape = RoundedCornerShape(20.dp)
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Rounded.Add,
-//                    contentDescription = "Add property"
-//                )
-//            }
-//        }
-//    ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp),
-    ) {
+    Row {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(8.dp),
+        ) {
 
 
-        item {
-            Text(
-                text = "List of properties (${state.properties.size})",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                fontWeight = FontWeight.Bold
-            )
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            item {
+                Text(
+                    text = "List of properties (${state.properties.size})",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    fontWeight = FontWeight.Bold
+                )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            }
+
+            items(
+                items = state.properties,
+                key = { property ->
+                    property.id
+                }) { property ->
+                PropertyListItem(
+                    viewModel = viewModel,
+                    propertyWithPhotos = property,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onClick(property)
+//                            onNavigateToPropertyDetailScreen(property.id)
+                        }
+                        .padding(start = 16.dp, end = 16.dp),
+                    onEvent = viewModel::onEvent
+                )
+            }
         }
-
-        items(
-            items = state.properties,
-            key = { property ->
-                property.id
-            }) { property ->
-            PropertyListItem(
-                viewModel = viewModel,
-                propertyWithPhotos = property,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onClick(property.id)
-//                            onNavigateToPropertyDetailScreen(propertyWithPhotos.id)
-                    }
-                    .padding(start = 16.dp, end = 16.dp),
-                onEvent = viewModel::onEvent
-            )
-        }
+        VerticalDivider()
     }
     when {
         state.isFilterSheetOpen -> {
@@ -131,8 +115,5 @@ fun PropertyListScreen(
             }
         }
     }
-
-
 }
-//}
 

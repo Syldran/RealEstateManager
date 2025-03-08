@@ -10,7 +10,7 @@ import com.ocproject.realestatemanager.presentation.navigation.Screen
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-fun NavGraphBuilder.addPropertyDetailsScreen(navController: NavController) {
+fun NavGraphBuilder.propertyDetailsScreen(navController: NavController) {
     composable(
         route = Screen.PropertyDetailScreen.route + "/{id}",
         arguments = listOf(
@@ -21,12 +21,12 @@ fun NavGraphBuilder.addPropertyDetailsScreen(navController: NavController) {
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getLong("id")
         PropertyDetailScreen(
-            propertyId = 0,
+            property = Property(null,emptyList(),"aaa", "aaa",0.0,0.0,"A",0L,12,12,12,false, 0L),
             navigateBack = {},
 //            viewModel = koinViewModel(parameters = { parametersOf(id) }),
-//            onNavigateToAddPropertyScreen = {
-//                navController.navigate(Screen.AddPropertyScreen.withArgs(it ?: 0))
-//            },
+            onNavigateToAddPropertyScreen = {
+                navController.navigate(Screen.AddPropertyScreen.withArgs(it ?: 0))
+            },
 //            onNavigateToPropertyListScreen = {
 //                navController.popBackStack()
 //            }

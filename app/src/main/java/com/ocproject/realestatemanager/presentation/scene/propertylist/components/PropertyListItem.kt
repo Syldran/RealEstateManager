@@ -45,7 +45,7 @@ fun PropertyListItem(
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = "id: ${propertyWithPhotos.id}, $: ${propertyWithPhotos.price}, date: ${viewModel.datePresentation(propertyWithPhotos)}",
+            text = "id: ${propertyWithPhotos.id}, $: ${propertyWithPhotos.price}, date: ${viewModel.datePresentation(propertyWithPhotos)}, surface: ${propertyWithPhotos.surfaceArea}",
             modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(16.dp))

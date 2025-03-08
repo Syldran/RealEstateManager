@@ -7,10 +7,11 @@ data class Filter(
     val sortType: SortType,
     val orderPrice: Order,
     val orderDate: Order,
+    val orderSurface: Order,
     val rangePrice: Range<Int>,
     val rangeDate: Range<Long>,
-    val sellingStatus : SellingStatus,
-
+    val rangeSurface: Range<Int>,
+    val sellingStatus: SellingStatus,
     val tagSchool: Boolean,
     val tagTransport: Boolean,
     val tagShop: Boolean,
@@ -26,11 +27,12 @@ enum class SellingStatus {
 enum class SortType {
     PRICE,
     DATE,
+    SURFACE,
 //    TAGS,
 //    TOWN,
 }
 
-enum class Order{
+enum class Order {
     ASC,
     DESC,
 }

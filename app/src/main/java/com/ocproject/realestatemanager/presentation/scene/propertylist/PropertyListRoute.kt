@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import com.ocproject.realestatemanager.presentation.navigation.Screen
 
 
-fun NavGraphBuilder.addPropertyListScreen(navController: NavController){
+fun NavGraphBuilder.propertyListScreen(navController: NavController){
     composable(route = Screen.PropertyListScreen.route) {
         val navOptions = NavOptions.Builder()
             .setRestoreState(true)

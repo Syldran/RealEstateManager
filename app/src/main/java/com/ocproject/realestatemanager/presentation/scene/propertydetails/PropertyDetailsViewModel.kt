@@ -13,7 +13,7 @@ import org.koin.core.annotation.InjectedParam
 
 @KoinViewModel
 class PropertyDetailsViewModel(
-    private val propertyId: Long?,
+    private val propertyId: Long/*?*/,
     private val getPropertyDetailsUseCase: GetPropertyDetailsUseCase,
 ) : ViewModel() {
 
@@ -26,9 +26,9 @@ class PropertyDetailsViewModel(
 
     private fun getProperty() {
         viewModelScope.launch {
-            if(propertyId != null && propertyId >= 0L){
+//            if(propertyId != null && propertyId >= 0L){
                 selectedProperty = getPropertyDetailsUseCase(propertyId)
-            }
+//            }
         }
     }
 }

@@ -39,13 +39,17 @@ class PropertyListViewModel(
      val sortedProperties = MutableStateFlow(emptyList<Property>())
     private var _properties = emptyList<Property>()
     private val selectedTags = mutableStateOf(listOf<InterestPoint>())
-//    private val selectedTags: List<InterestPoint> = emptyList()
 
 
     private val _filter = MutableStateFlow(
         Filter(
-            SortType.PRICE, Order.ASC, Order.ASC,
-            Range<Int>(0, Int.MAX_VALUE), Range<Long>(0L, Long.MAX_VALUE),
+            SortType.PRICE,
+            Order.ASC,
+            Order.ASC,
+            Order.ASC,
+            Range<Int>(0, Int.MAX_VALUE),
+            Range<Long>(0L, Long.MAX_VALUE),
+            Range<Int>(0, Int.MAX_VALUE),
             SellingStatus.ALL,
             tagSchool = false,
             tagTransport = false,
@@ -65,8 +69,9 @@ class PropertyListViewModel(
             sortType = filter.sortType,
             orderPrice = filter.orderPrice,
             orderDate = filter.orderDate,
-            rangePrice = filter.rangePrice,
+            orderSurface = filter.orderSurface,
             rangeDate = filter.rangeDate,
+            rangeSurface = filter.rangeSurface,
             soldState = filter.sellingStatus,
             shopState = filter.tagShop,
             schoolState = filter.tagSchool,
@@ -81,18 +86,31 @@ class PropertyListViewModel(
 
     private fun setMaxPrice() {
         viewModelScope.launch {
-            val maxProperty = _properties.maxByOrNull { propertyWithPhoto ->
+            val maxPriceProperty = _properties.maxByOrNull { propertyWithPhoto ->
                 propertyWithPhoto.price!!
             }
 
             _state.update { propertyListState ->
                 propertyListState.copy(
-                    maxPrice = (maxProperty?.price) ?: Int.MAX_VALUE
+                    maxPrice = (maxPriceProperty?.price) ?: Int.MAX_VALUE
                 )
             }
         }
     }
 
+    private fun setMaxSurface() {
+        viewModelScope.launch {
+            val maxSurfaceProperty = _properties.maxByOrNull { propertyWithPhoto ->
+                propertyWithPhoto.surfaceArea!!
+            }
+
+            _state.update { propertyListState ->
+                propertyListState.copy(
+                    maxSurface = (maxSurfaceProperty?.surfaceArea) ?: Int.MAX_VALUE
+                )
+            }
+        }
+    }
 
     private fun addTags(filter: Filter) {
         val currentTags = emptyList<InterestPoint>().toMutableList()
@@ -155,6 +173,7 @@ class PropertyListViewModel(
                     }
                     _properties = propertiesDataState.data
                     setMaxPrice()
+                    setMaxSurface()
                     getPropertiesSorted(filter)
                 }
             }
@@ -213,6 +232,25 @@ class PropertyListViewModel(
         }
     }
 
+    private fun sortBySurface(
+        properties: List<Property>,
+        filter: Filter
+    ): List<Property> {
+        return when (filter.orderSurface) {
+            Order.ASC -> {
+                properties
+                    .sortedBy { it.surfaceArea }
+                    .filter { it.surfaceArea!! >= filter.rangeSurface.lower && it.surfaceArea <= filter.rangeSurface.upper }
+            }
+
+            Order.DESC -> {
+                properties
+                    .sortedByDescending { it.surfaceArea }
+                    .filter { it.surfaceArea!! >= filter.rangeSurface.lower && it.surfaceArea <= filter.rangeSurface.upper }
+            }
+        }
+    }
+
     private fun sortByDate(
         properties: List<Property>,
         filter: Filter
@@ -243,6 +281,10 @@ class PropertyListViewModel(
             SortType.DATE -> {
                 sortByDate(properties, filter)
             }
+
+            SortType.SURFACE -> {
+                sortBySurface(properties, filter)
+            }
         }
     }
 
@@ -270,7 +312,10 @@ class PropertyListViewModel(
                             sortType = event.filter.sortType,
                             orderPrice = event.filter.orderPrice,
                             orderDate = event.filter.orderDate,
+                            orderSurface = event.filter.orderSurface,
                             rangePrice = event.filter.rangePrice,
+//                            rangeDate = event.filter.rangeDate,
+                            rangeSurface = event.filter.rangeSurface,
                             sellingStatus = event.filter.sellingStatus,
                             tagSchool = event.filter.tagSchool,
                             tagShop = event.filter.tagShop,
@@ -314,8 +359,37 @@ class PropertyListViewModel(
                         sortType = state.value.sortType,
                         orderPrice = state.value.orderPrice,
                         orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        rangeSurface = state.value.rangeSurface,
+                        sellingStatus = state.value.soldState,
+                        tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
+                    )
+                )
+            }
+
+            is PropertyListEvent.SetRangeSurface -> {
+                _filter.update {
+                    it.copy(
+                        rangeSurface = Range<Int>(
+                            event.rangeSurface.lower.toInt(),
+                            event.rangeSurface.upper.toInt()
+                        )
+                    )
+                }
+                getPropertiesSorted(
+                    Filter(
+                        sortType = state.value.sortType,
+                        orderPrice = state.value.orderPrice,
+                        orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
+                        rangePrice = state.value.rangePrice,
+                        rangeDate = state.value.rangeDate,
+                        rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
                         tagShop = state.value.shopState,
@@ -336,8 +410,10 @@ class PropertyListViewModel(
                         sortType = state.value.sortType,
                         orderPrice = state.value.orderPrice,
                         orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
                         tagShop = state.value.shopState,
@@ -355,16 +431,18 @@ class PropertyListViewModel(
                 }
                 getPropertyList(
                     filter = Filter(
-                        state.value.sortType,
-                        state.value.orderPrice,
-                        state.value.orderDate,
-                        state.value.rangePrice,
-                        state.value.rangeDate,
-                        state.value.soldState,
-                        tagPark = state.value.parkState,
-                        tagTransport = state.value.transportState,
-                        tagShop = state.value.shopState,
+                        sortType = state.value.sortType,
+                        orderPrice = state.value.orderPrice,
+                        orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
+                        rangePrice = state.value.rangePrice,
+                        rangeDate = state.value.rangeDate,
+                        rangeSurface = state.value.rangeSurface,
+                        sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
                     )
                 )
             }
@@ -380,8 +458,10 @@ class PropertyListViewModel(
                         sortType = state.value.sortType,
                         orderPrice = state.value.orderPrice,
                         orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
                         tagShop = state.value.shopState,
@@ -402,8 +482,10 @@ class PropertyListViewModel(
                         sortType = state.value.sortType,
                         orderPrice = state.value.orderPrice,
                         orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
                         tagShop = state.value.shopState,

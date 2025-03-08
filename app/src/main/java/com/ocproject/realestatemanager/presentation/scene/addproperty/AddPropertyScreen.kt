@@ -37,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.core.InterestPoint
-import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.AutocompleteSearch
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PhotosComposable
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
@@ -47,7 +46,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AddPropertyScreen(
     viewModel: AddPropertyViewModel = koinViewModel(),
-    onNavigateToPropertyListScreen: () -> Unit,
+    onNavigateToListDetails: () -> Unit,
 ) {
     val imagePicker = ImagePicker(
         LocalContext.current as ComponentActivity
@@ -88,7 +87,7 @@ fun AddPropertyScreen(
     }
 
     if (state.navToPropertyListScreen) {
-        onNavigateToPropertyListScreen()
+        onNavigateToListDetails()
         viewModel.onEvent(AddPropertyEvent.OnChangeNavigationStatus(true))
     }
 
@@ -354,7 +353,8 @@ fun AddPropertyScreen(
             Button(onClick = {
                 viewModel.onEvent(AddPropertyEvent.SaveProperty)
                 if (state.navToPropertyListScreen) {
-                    onNavigateToPropertyListScreen()
+
+                    onNavigateToListDetails()
                 }
             }) {
                 Text(text = "Save contact")
@@ -364,7 +364,7 @@ fun AddPropertyScreen(
         }
         IconButton(
             onClick = {
-                onNavigateToPropertyListScreen()
+                onNavigateToListDetails()
             },
             colors = IconButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,

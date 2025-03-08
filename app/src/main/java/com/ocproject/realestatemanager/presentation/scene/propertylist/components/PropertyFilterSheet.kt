@@ -88,8 +88,10 @@ fun PropertyFilterSheet(
                                         SortType.PRICE,
                                         state.orderPrice,
                                         state.orderDate,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         SellingStatus.PURCHASABLE,
                                         state.schoolState,
                                         state.parkState,
@@ -111,10 +113,11 @@ fun PropertyFilterSheet(
                                         state.sortType,
                                         state.orderPrice,
                                         state.orderDate,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         SellingStatus.SOLD,
-//                                        state.tags,
                                         state.schoolState,
                                         state.parkState,
                                         state.shopState,
@@ -135,10 +138,11 @@ fun PropertyFilterSheet(
                                         state.sortType,
                                         state.orderPrice,
                                         state.orderDate,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         SellingStatus.ALL,
-//                                        state.tags,
                                         state.schoolState,
                                         state.parkState,
                                         state.shopState,
@@ -163,10 +167,11 @@ fun PropertyFilterSheet(
                                         SortType.PRICE,
                                         state.orderPrice,
                                         state.orderDate,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
-                                        SellingStatus.ALL,
-//                                        state.tags,
+                                        state.rangeSurface,
+                                        state.soldState,
                                         state.schoolState,
                                         state.parkState,
                                         state.shopState,
@@ -188,10 +193,11 @@ fun PropertyFilterSheet(
                                         state.sortType,
                                         Order.ASC,
                                         state.orderDate,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         state.soldState,
-//                                        state.tags,
                                         state.schoolState,
                                         state.parkState,
                                         state.shopState,
@@ -213,10 +219,11 @@ fun PropertyFilterSheet(
                                         state.sortType,
                                         Order.DESC,
                                         state.orderDate,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         state.soldState,
-//                                        state.tags,
                                         state.schoolState,
                                         state.parkState,
                                         state.shopState,
@@ -230,11 +237,10 @@ fun PropertyFilterSheet(
                 }
 
                 var maxPrice = state.maxPrice
-                var sliderMax: Int
-                if (maxPrice > state.rangePrice.upper) {
-                    sliderMax = state.rangePrice.upper
+                var sliderMax = if (maxPrice > state.rangePrice.upper) {
+                    state.rangePrice.upper
                 } else {
-                    sliderMax = maxPrice
+                    maxPrice
                 }
                 var sliderPosition by remember { mutableStateOf(state.rangePrice.lower.toFloat()..sliderMax.toFloat()) }
                 RangeSlider(
@@ -270,10 +276,11 @@ fun PropertyFilterSheet(
                                         SortType.DATE,
                                         state.orderPrice,
                                         state.orderDate,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         state.soldState,
-//                                        state.tags,
                                         state.schoolState,
                                         state.parkState,
                                         state.shopState,
@@ -295,10 +302,11 @@ fun PropertyFilterSheet(
                                         state.sortType,
                                         state.orderPrice,
                                         Order.ASC,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         state.soldState,
-//                                        state.tags,
                                         state.schoolState,
                                         state.parkState,
                                         state.shopState,
@@ -320,8 +328,10 @@ fun PropertyFilterSheet(
                                         state.sortType,
                                         state.orderPrice,
                                         Order.DESC,
+                                        state.orderSurface,
                                         state.rangePrice,
                                         state.rangeDate,
+                                        state.rangeSurface,
                                         state.soldState,
                                         state.schoolState,
                                         state.parkState,
@@ -334,6 +344,118 @@ fun PropertyFilterSheet(
                     )
                     Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
                 }
+                HorizontalDivider(modifier = Modifier.padding(16.dp))
+
+                Row(Modifier) {
+                    // RADIO SORT TYPE SURFACE
+                    RadioButton(
+                        modifier = Modifier.weight(2f),
+                        selected = state.sortType == SortType.SURFACE,
+                        onClick = {
+                            onEvent(
+                                PropertyListEvent.GetProperties(
+                                    filter = Filter(
+                                        SortType.SURFACE,
+                                        state.orderPrice,
+                                        state.orderDate,
+                                        state.orderSurface,
+                                        state.rangePrice,
+                                        state.rangeDate,
+                                        state.rangeSurface,
+                                        state.soldState,
+                                        state.schoolState,
+                                        state.parkState,
+                                        state.shopState,
+                                        state.transportState,
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    Text(text = SortType.SURFACE.name, Modifier.padding(end = 16.dp))
+                    //RADIO SURFACE ASC
+                    RadioButton(
+                        modifier = Modifier.weight(1f),
+                        selected = state.orderSurface == Order.ASC,
+                        onClick = {
+                            onEvent(
+                                PropertyListEvent.GetProperties(
+                                    filter = Filter(
+                                        sortType = state.sortType,
+                                        orderPrice = state.orderPrice,
+                                        orderDate = state.orderDate,
+                                        orderSurface = Order.ASC,
+                                        rangePrice = state.rangePrice,
+                                        rangeDate = state.rangeDate,
+                                        rangeSurface = state.rangeSurface,
+                                        sellingStatus = state.soldState,
+                                        tagSchool = state.schoolState,
+                                        tagTransport = state.parkState,
+                                        tagShop = state.shopState,
+                                        tagPark = state.transportState,
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    Text(text = Order.ASC.name, Modifier.padding(end = 16.dp))
+                    //RADIO SURFACE DESC
+                    RadioButton(
+                        modifier = Modifier.weight(1f),
+                        selected = state.orderSurface == Order.DESC,
+                        onClick = {
+                            onEvent(
+                                PropertyListEvent.GetProperties(
+                                    filter = Filter(
+                                        sortType = state.sortType,
+                                        orderPrice = state.orderPrice,
+                                        orderDate = state.orderDate,
+                                        orderSurface = Order.DESC,
+                                        rangePrice = state.rangePrice,
+                                        rangeDate = state.rangeDate,
+                                        rangeSurface = state.rangeSurface,
+                                        sellingStatus = state.soldState,
+                                        tagSchool = state.schoolState,
+                                        tagTransport = state.parkState,
+                                        tagShop = state.shopState,
+                                        tagPark = state.transportState,
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
+                }
+
+                var maxSurface = state.maxSurface
+                var surfaceSliderMax = if (maxSurface > state.rangeSurface.upper) {
+                    state.rangeSurface.upper
+                } else {
+                    maxSurface
+                }
+                var surfaceSliderPosition by remember { mutableStateOf(state.rangeSurface.lower.toFloat()..surfaceSliderMax.toFloat()) }
+                RangeSlider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    value = surfaceSliderPosition,
+                    steps = 0,
+                    onValueChange = { range ->
+                        surfaceSliderPosition = range
+                    },
+                    valueRange = 0F..maxSurface.toFloat(),
+                    onValueChangeFinished = {
+                        onEvent(
+                            PropertyListEvent.SetRangeSurface(
+                                Range<Float>(
+                                    surfaceSliderPosition.start,
+                                    surfaceSliderPosition.endInclusive
+                                )
+                            )
+                        )
+                    },
+                )
+                Text(text = "min: ${state.rangeSurface.lower}    max:${surfaceSliderMax}")
+                HorizontalDivider(modifier = Modifier.padding(16.dp))
+
                 /*
                 // ajouter validation de la date sur le textfield focus
                 DateRangePicker(
@@ -420,22 +542,6 @@ fun PropertyFilterSheet(
                         modifier = Modifier.padding(4.dp),
                         onClick = {
                             onEvent(PropertyListEvent.OnTransportChecked(state.transportState))
-//                            onEvent(
-//                                PropertyListEvent.SortProperties(
-//                                    filter = Filter(
-//                                        state.sortType,
-//                                        state.orderPrice,
-//                                        state.orderDate,
-//                                        state.rangePrice,
-//                                        state.rangeDate,
-//                                        state.soldState,
-//                                        tagPark = state.parkState,
-//                                        tagTransport = transportChecked,
-//                                        tagShop = state.shopState,
-//                                        tagSchool = state.schoolState,
-//                                    )
-//                                )
-//                            )
                         },
                         label = {
                             Text("Transport")
