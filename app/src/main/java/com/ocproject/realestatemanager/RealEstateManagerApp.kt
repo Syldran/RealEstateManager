@@ -1,19 +1,23 @@
 package com.ocproject.realestatemanager
 
+import android.location.Location
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.maps.model.LatLng
 import com.ocproject.realestatemanager.presentation.navigation.Screen
 import com.ocproject.realestatemanager.presentation.scene.addproperty.addPropertyScreen
 import com.ocproject.realestatemanager.core.ui.theme.RealestatemanagerTheme
-import com.ocproject.realestatemanager.presentation.scene.listdetails.listDetails
+import com.ocproject.realestatemanager.presentation.scene.listdetails.listDetailsScreen
+import com.ocproject.realestatemanager.presentation.scene.map.mapOfPropertiesScreen
 import org.koin.compose.KoinContext
 
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun RealEstateManagerApp(
+    currentLocation: LatLng?,
     darkTheme: Boolean,
     dynamicColor: Boolean,
 ) {
@@ -26,12 +30,13 @@ fun RealEstateManagerApp(
         KoinContext {
             NavHost(
                 navController = navController,
-                startDestination = Screen.ListDetails.route
+                startDestination = Screen.ListDetailsScreen.route
 //                startDestination = Screen.PropertyListScreen.route
             ) {
-                listDetails(navController)
-//                propertyListScreen(navController)
+                listDetailsScreen(navController)
                 addPropertyScreen(navController)
+                mapOfPropertiesScreen(navController, currentLocation)
+//                propertyListScreen(navController)
 //                propertyDetailsScreen(navController)
             }
         }

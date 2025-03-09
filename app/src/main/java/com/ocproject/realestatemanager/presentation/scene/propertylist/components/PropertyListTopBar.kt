@@ -25,6 +25,7 @@ fun PropertyListTopBar(
     onEvent: (PropertyListEvent) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
+    onNavigateToMapOfProperties: () -> Unit,
 ) {
     var menuExpanded by remember {
         mutableStateOf(false)
@@ -58,7 +59,7 @@ fun PropertyListTopBar(
                         Text("Add Property")
                     },
                     onClick = {
-                        menuExpanded=false
+                        menuExpanded = false
                         onNavigateToAddPropertyScreen(null)
                     },
                 )
@@ -68,14 +69,17 @@ fun PropertyListTopBar(
                     },
                     onClick = {
                         onEvent(PropertyListEvent.OpenFilter)
-                        menuExpanded=false
+                        menuExpanded = false
                     },
                 )
                 DropdownMenuItem(
                     text = {
-                        Text("About")
+                        Text("Map")
                     },
-                    onClick = {  menuExpanded=false },
+                    onClick = {
+                        onNavigateToMapOfProperties()
+                        menuExpanded = false
+                    },
                 )
             }
         },

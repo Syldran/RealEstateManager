@@ -37,18 +37,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
 import com.ocproject.realestatemanager.core.InterestPoint
 import com.ocproject.realestatemanager.domain.models.Property
-import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
-import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PhotosDetailsComposable
-import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
-import org.koin.android.annotation.KoinViewModel
-import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun PropertyDetailScreen(

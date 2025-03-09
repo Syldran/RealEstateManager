@@ -1,5 +1,5 @@
 package com.ocproject.realestatemanager.presentation.scene.propertydetails
 
-data class PropertyDetailsState(
-    val selectedProperty: Long = 0
-)
+//data class PropertyDetailsState(
+//    val selectedProperty: Long = 0
+//)

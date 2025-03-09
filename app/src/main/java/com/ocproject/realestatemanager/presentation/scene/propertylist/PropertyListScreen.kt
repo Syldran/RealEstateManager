@@ -33,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListItem
-import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListTopBar
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyFilterSheet
 import org.koin.androidx.compose.koinViewModel
 
@@ -43,8 +42,6 @@ import org.koin.androidx.compose.koinViewModel
 fun PropertyListScreen(
     viewModel: PropertyListViewModel = koinViewModel(),
     onClick: (property: Property?) -> Unit,
-    onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
-    onNavigateToPropertyDetailScreen: (propertyId: Long) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
     Row {
