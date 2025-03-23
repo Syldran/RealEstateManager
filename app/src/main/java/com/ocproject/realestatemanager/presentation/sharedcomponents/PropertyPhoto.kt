@@ -28,7 +28,8 @@ import com.ocproject.realestatemanager.presentation.utils.rememberBitmapFromByte
 fun PropertyPhoto(
     propertyWithPhotos: Property?,
     modifier: Modifier = Modifier,
-    iconSize: Dp = 25.dp
+    iconSize: Dp = 25.dp,
+//    isSold: Boolean = false,
 ) {
     val bitmap = if (propertyWithPhotos?.photoList.isNullOrEmpty()) {
         null
@@ -46,12 +47,15 @@ fun PropertyPhoto(
                 modifier = photoModifier,
                 contentScale = ContentScale.Crop
             )
-            Image(
-                painter = painterResource(id = R.drawable.sold_png_transparent),
-                contentDescription = "Your Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (propertyWithPhotos?.sold == true) {
+                Image(
+                    painter = painterResource(id = R.drawable.sold_png_transparent),
+                    contentDescription = "Your Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
         }
     } else {
         Box(
@@ -64,12 +68,14 @@ fun PropertyPhoto(
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
-            Image(
-                painter = painterResource(id = R.drawable.sold_png_transparent),
-                contentDescription = "Your Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (propertyWithPhotos?.sold == true) {
+                Image(
+                    painter = painterResource(id = R.drawable.sold_png_transparent),
+                    contentDescription = "Your Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

@@ -12,7 +12,11 @@ fun NavGraphBuilder.mapOfPropertiesScreen(navController: NavController, currentP
 //        arguments =
     ) {
 
-        MapOfProperties(currentPosition = currentPosition)
+        MapOfProperties(
+            currentPosition = currentPosition,
+            focusPosition = currentPosition!!,
+
+        )
 
     }
 }

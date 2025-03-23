@@ -48,8 +48,9 @@ fun AddPropertyScreen(
     viewModel: AddPropertyViewModel = koinViewModel(),
     onNavigateToListDetails: () -> Unit,
 ) {
+    val context = LocalContext.current
     val imagePicker = ImagePicker(
-        LocalContext.current as ComponentActivity
+        context as ComponentActivity
     )
     imagePicker.RegisterPickerMulti {
         viewModel.onEvent(AddPropertyEvent.OnPhotoPicked(it))

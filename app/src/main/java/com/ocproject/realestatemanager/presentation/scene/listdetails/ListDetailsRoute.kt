@@ -4,9 +4,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.google.android.gms.maps.model.LatLng
 import com.ocproject.realestatemanager.presentation.navigation.Screen
 
-fun NavGraphBuilder.listDetailsScreen(navController: NavController){
+fun NavGraphBuilder.listDetailsScreen(navController: NavController, currentPosition: LatLng?){
     composable(route = Screen.ListDetailsScreen.route){
 //        val navOptions = NavOptions.Builder()
 //            .setRestoreState(true)
@@ -19,7 +20,11 @@ fun NavGraphBuilder.listDetailsScreen(navController: NavController){
             },
             onNavigateToMapOfProperties = {
                 navController.navigate(Screen.MapOfPropertiesScreen.route)
-            }
+            },
+            onNavigateToFundingScreen = {
+                navController.navigate(Screen.FundingScreen.route)
+            },
+            currentPosition = currentPosition,
         )
 
     }

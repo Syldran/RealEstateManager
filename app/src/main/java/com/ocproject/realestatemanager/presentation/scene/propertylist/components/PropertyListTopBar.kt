@@ -26,6 +26,7 @@ fun PropertyListTopBar(
     modifier: Modifier = Modifier,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
     onNavigateToMapOfProperties: () -> Unit,
+    onNavigateToFundingScreen: () -> Unit,
 ) {
     var menuExpanded by remember {
         mutableStateOf(false)
@@ -78,6 +79,15 @@ fun PropertyListTopBar(
                     },
                     onClick = {
                         onNavigateToMapOfProperties()
+                        menuExpanded = false
+                    },
+                )
+                DropdownMenuItem(
+                    text = {
+                        Text("Funding")
+                    },
+                    onClick = {
+                        onNavigateToFundingScreen()
                         menuExpanded = false
                     },
                 )

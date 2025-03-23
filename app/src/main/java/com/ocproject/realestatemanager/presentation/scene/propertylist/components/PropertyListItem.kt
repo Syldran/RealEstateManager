@@ -41,7 +41,8 @@ fun PropertyListItem(
     ) {
         PropertyPhoto(
             propertyWithPhotos = propertyWithPhotos,
-            modifier = Modifier.size(50.dp)
+            modifier = Modifier.size(50.dp),
+
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
