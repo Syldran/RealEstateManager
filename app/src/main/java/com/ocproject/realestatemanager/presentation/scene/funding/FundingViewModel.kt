@@ -35,8 +35,9 @@ class FundingViewModel() : ViewModel() {
         }
     }
 
-    fun calcMonthlyPayment(amountToBorrow: Double, rate: Double, durationInMonth: Double) : Double{
-    var monthlyPayment = (amountToBorrow * rate / 12) / (1- (1+rate/12).pow(-durationInMonth))
+    fun calcMonthlyPayment(amountToBorrow: Double, rate: Double, durationInMonth: Double): Double {
+        var monthlyPayment =
+            (amountToBorrow * rate / 12) / (1 - (1 + rate / 12).pow(-durationInMonth))
         return monthlyPayment
     }
 

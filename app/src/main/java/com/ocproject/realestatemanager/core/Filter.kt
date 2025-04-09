@@ -16,6 +16,7 @@ data class Filter(
     val tagTransport: Boolean,
     val tagShop: Boolean,
     val tagPark: Boolean,
+    val areaCodeFilter: Int?,
 )
 
 enum class SellingStatus {

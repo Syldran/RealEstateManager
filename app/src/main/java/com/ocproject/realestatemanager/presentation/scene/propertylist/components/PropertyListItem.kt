@@ -22,16 +22,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ocproject.realestatemanager.domain.models.Property
-import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListEvent
-import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListViewModel
+import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
+import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
 import com.ocproject.realestatemanager.presentation.sharedcomponents.PropertyPhoto
 
 @Composable
 fun PropertyListItem(
-    viewModel: PropertyListViewModel,
+    viewModel: ListDetailsViewModel,
     propertyWithPhotos: Property,
     modifier: Modifier = Modifier,
-    onEvent: (PropertyListEvent) -> Unit,
+    onEvent: (ListDetailsEvent) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -51,7 +51,7 @@ fun PropertyListItem(
         )
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(
-            onClick = { onEvent(PropertyListEvent.DeleteProperty(propertyWithPhotos)) },
+            onClick = { onEvent(ListDetailsEvent.DeleteProperty(propertyWithPhotos)) },
 //            modifier = Modifier.align(Alignment.End)
         ) {
             Icon(
@@ -68,7 +68,7 @@ fun PropertyListItem(
 @Composable
 fun PreviewItem() {
    PropertyListItem(
-       viewModel = viewModel<PropertyListViewModel>(),
+       viewModel = viewModel<ListDetailsViewModel>(),
        onEvent = {},
        modifier = Modifier.background(color = MaterialTheme.colorScheme.surface),
         propertyWithPhotos = Property(

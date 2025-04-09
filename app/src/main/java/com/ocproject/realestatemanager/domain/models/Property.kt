@@ -19,19 +19,3 @@ data class Property(
     val sold: Boolean,
     val id: Long,
 ): Parcelable
-
-//data class Property(
-//    val photoList: List<PhotoProperty>?,
-//    val interestPoints: List<InterestPoint>,
-//    val address: String,
-//    val town: String,
-//    val lat: Double,
-//    val lng: Double,
-//    val country: String,
-//    val createdDate: Long?,
-//    val areaCode: Int?,
-//    val surfaceArea: Int?,
-//    val price: Int?,
-//    val sold: Boolean,
-//    val id: Long,
-//)

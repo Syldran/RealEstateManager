@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
 import org.koin.androidx.compose.koinViewModel
+import java.nio.file.WatchEvent
 import kotlin.math.roundToInt
 
 @Composable
@@ -47,7 +48,10 @@ fun FundingScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var price: Int? = viewModel.price
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         PropertyTextField(
             value = if (price == null || price == 0) "" else price.toString(),
             error = null,
@@ -57,90 +61,110 @@ fun FundingScreen(
             keyboardType = KeyboardType.Number,
             labelValue = "Price"
         )
-        Box(
-            modifier = Modifier.clickable(
-                true,
-                "",
-                null,
-                onClick = {
 
-                }
-            )) {
 
-            var expanded by remember { mutableStateOf(false) }
-            Box(
+        var expanded by remember { mutableStateOf(false) }
+        Column(Modifier.padding(16.dp)) {
+            Row(
                 modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .border(1.dp, shape = RectangleShape, color = Color.Black)
-                        .clickable(
-                            true,
-                            onClick = {
-                                expanded = true
-                            }
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
+                    .border(1.dp, shape = RectangleShape, color = Color.Black)
+                    .clickable(
+                        true,
+                        onClick = {
+                            expanded = true
+                        }
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            )
+            {
+                Text(modifier = Modifier.padding(8.dp),
+                    text = state.chosenText)
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "More options")
 
-                    ) {
-                    Text(text = state.chosenText)
-                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = "More options")
-
-                }
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("7 years 3.24 %") },
-                        onClick = {
-                            viewModel.onEvent(FundingEvent.OnRateOptionChosen(FundingRate.ON7YEARS, "7 years 3.24 %"))
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("10 years 3.38 %") },
-                        onClick = {
-                            viewModel.onEvent(FundingEvent.OnRateOptionChosen(FundingRate.ON10YEARS, "10 years 3.38 %"))
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("15 years 3.48 %") },
-                        onClick = {
-                            viewModel.onEvent(FundingEvent.OnRateOptionChosen(FundingRate.ON15YEARS, "15 years 3.48 %"))
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("20 years 3.58 %") },
-                        onClick = {
-                            viewModel.onEvent(FundingEvent.OnRateOptionChosen(FundingRate.ON20YEARS, "20 years 3.58 %"))
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("25 years 3.68 %") },
-                        onClick = {
-                            viewModel.onEvent(FundingEvent.OnRateOptionChosen(FundingRate.ON25YEARS, "25 years 3.68 %"))
-                            expanded = false
-                        }
-                    )
-                }
             }
+
+            DropdownMenu(
+                modifier = Modifier.padding(8.dp),
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("7 years 3.24 % ") },
+                    onClick = {
+                        viewModel.onEvent(
+                            FundingEvent.OnRateOptionChosen(
+                                FundingRate.ON7YEARS,
+                                "7 years ${FundingRate.ON7YEARS * 100F} % "
+                            )
+                        )
+                        expanded = false
+                    }
+                )
+                HorizontalDivider()
+                DropdownMenuItem(
+                    text = { Text("10 years 3.38 %") },
+                    onClick = {
+                        viewModel.onEvent(
+                            FundingEvent.OnRateOptionChosen(
+                                FundingRate.ON10YEARS,
+                                "10 years ${FundingRate.ON10YEARS * 100F} % "
+                            )
+                        )
+                        expanded = false
+                    }
+                )
+                HorizontalDivider()
+                DropdownMenuItem(
+                    text = { Text("15 years 3.48 % ") },
+                    onClick = {
+                        viewModel.onEvent(
+                            FundingEvent.OnRateOptionChosen(
+                                FundingRate.ON15YEARS,
+                                "15 years ${FundingRate.ON15YEARS * 100F} % "
+                            )
+                        )
+                        expanded = false
+                    }
+                )
+                HorizontalDivider()
+                DropdownMenuItem(
+                    text = { Text("20 years 3.58 % ") },
+                    onClick = {
+                        viewModel.onEvent(
+                            FundingEvent.OnRateOptionChosen(
+                                FundingRate.ON20YEARS,
+                                "20 years ${FundingRate.ON20YEARS * 100F} % "
+                            )
+                        )
+                        expanded = false
+                    }
+                )
+                HorizontalDivider()
+                DropdownMenuItem(
+                    text = { Text("25 years 3.68 % ") },
+                    onClick = {
+                        viewModel.onEvent(
+                            FundingEvent.OnRateOptionChosen(
+                                FundingRate.ON25YEARS,
+                                "25 years ${FundingRate.ON25YEARS * 100F} % "
+                            )
+                        )
+                        expanded = false
+                    }
+                )
+            }
+
         }
         Card(
-            modifier = Modifier
+            modifier = Modifier.padding(16.dp)
         ) {
             //add notarial price
             var monthlyPayment =
-                viewModel.calcMonthlyPayment(price?.toDouble() ?: 0.0, state.chosenRate.toDouble(), 240.0)
+                viewModel.calcMonthlyPayment(
+                    price?.toDouble() ?: 0.0,
+                    state.chosenRate.toDouble(),
+                    240.0
+                )
             Text("Total Cost = ${((monthlyPayment * 240.0) * 100.0).roundToInt() / 100.0}")
             Text("Monthly Payment = ${(monthlyPayment * 100.0).roundToInt() / 100.0}")
             Text("Interest Payment = ${((monthlyPayment * 240.0 - (price?.toDouble() ?: 0.0)) * 100.0).roundToInt() / 100.0}")

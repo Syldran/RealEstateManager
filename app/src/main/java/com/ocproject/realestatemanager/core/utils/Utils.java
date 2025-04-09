@@ -51,7 +51,7 @@ public class Utils {
     public static Boolean isInternetAvailable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting(); // tester avec Mockk
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
         /*
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService((Context.CONNECTIVITY_SERVICE));
         WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);

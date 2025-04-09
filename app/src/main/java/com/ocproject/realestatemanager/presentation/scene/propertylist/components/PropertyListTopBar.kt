@@ -17,12 +17,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListEvent
+import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropertyListTopBar(
-    onEvent: (PropertyListEvent) -> Unit,
+    onEvent: (ListDetailsEvent) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
     onNavigateToMapOfProperties: () -> Unit,
@@ -69,7 +69,7 @@ fun PropertyListTopBar(
                         Text("Display Criteria")
                     },
                     onClick = {
-                        onEvent(PropertyListEvent.OpenFilter)
+                        onEvent(ListDetailsEvent.OpenFilter)
                         menuExpanded = false
                     },
                 )

@@ -1,6 +1,5 @@
 package com.ocproject.realestatemanager.presentation.scene.propertylist
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,15 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -32,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.domain.models.Property
+import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListItem
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyFilterSheet
 import org.koin.androidx.compose.koinViewModel
@@ -40,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropertyListScreen(
-    viewModel: PropertyListViewModel = koinViewModel(),
+    viewModel: ListDetailsViewModel = koinViewModel(),
     onClick: (property: Property?) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
@@ -77,7 +71,7 @@ fun PropertyListScreen(
 //                            onNavigateToPropertyDetailScreen(property.id)
                         }
                         .padding(start = 16.dp, end = 16.dp),
-                    onEvent = viewModel::onEvent
+                    onEvent = viewModel::onEvent,
                 )
             }
         }

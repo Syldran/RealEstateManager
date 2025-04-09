@@ -8,9 +8,8 @@ import com.ocproject.realestatemanager.domain.models.Property
 sealed interface PropertyListEvent {
     data object DismissFilter : PropertyListEvent
     data object OpenFilter : PropertyListEvent
-    data class DeleteProperty(val property: Property) : PropertyListEvent
+    data class DeleteDetails(val property: Property) : PropertyListEvent
     data class GetProperties(val filter: Filter) : PropertyListEvent
-    //    data class UpdateFilters(): PropertyListEvent
     data class SetRangeSurface(val rangeSurface: Range<Float>) : PropertyListEvent
     data class SetRangePrice(val rangePrice: Range<Float>) : PropertyListEvent
     data class OnSchoolChecked(val value: Boolean) : PropertyListEvent
