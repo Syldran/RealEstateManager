@@ -23,7 +23,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
+import timber.log.Timber
 import java.text.DateFormat
+import java.util.Calendar
 import java.util.Date
 
 class ListDetailsViewModel(
@@ -45,7 +47,7 @@ class ListDetailsViewModel(
             Order.ASC,
             Order.ASC,
             Range<Int>(0, Int.MAX_VALUE),
-            Range<Long>(0L, Long.MAX_VALUE),
+            Range<Long>(0L, Calendar.getInstance().timeInMillis),
             Range<Int>(0, Int.MAX_VALUE),
             SellingStatus.ALL,
             tagSchool = false,
@@ -79,6 +81,7 @@ class ListDetailsViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), ListDetailsState())
 
     init {
+
         getPropertyList(_filter.value)
     }
 
@@ -212,7 +215,7 @@ class ListDetailsViewModel(
                 filteredProperties = sortByAreaCode(filteredProperties, filter).toMutableList()
                 when (filter.sellingStatus) {
                     SellingStatus.SOLD -> {
-                        subFilter(filteredProperties.filter { it.sold }, filter)
+                        subFilter(filteredProperties.filter { it.sold != null }, filter)
                     }
 
                     SellingStatus.ALL -> {
@@ -220,7 +223,7 @@ class ListDetailsViewModel(
                     }
 
                     SellingStatus.PURCHASABLE -> {
-                        subFilter(filteredProperties.filter { !it.sold }, filter)
+                        subFilter(filteredProperties.filter { it.sold == null }, filter)
                     }
                 }
 
@@ -349,7 +352,7 @@ class ListDetailsViewModel(
                             orderDate = event.filter.orderDate,
                             orderSurface = event.filter.orderSurface,
                             rangePrice = event.filter.rangePrice,
-//                            rangeDate = event.filter.rangeDate,
+                            rangeDate = event.filter.rangeDate,
                             rangeSurface = event.filter.rangeSurface,
                             sellingStatus = event.filter.sellingStatus,
                             tagSchool = event.filter.tagSchool,
@@ -565,13 +568,33 @@ class ListDetailsViewModel(
                 )
             }
 
-//            is ListDetailsEvent.OnAreaCodeList -> {
-//                _state.update {
-//                    it.copy(
-//                        areaCodeList = getAreaCodes()
-//                    )
-//                }
-//            }
+            is ListDetailsEvent.OnDateRangeSelected -> {
+
+                _filter.update {
+                    it.copy(
+                        rangeDate = Range<Long>(event.startRange, event.endRange)
+                    )
+                }
+
+
+                getPropertiesSorted(
+                    Filter(
+                        sortType = state.value.sortType,
+                        orderPrice = state.value.orderPrice,
+                        orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
+                        rangePrice = state.value.rangePrice,
+                        rangeDate = state.value.rangeDate,
+                        rangeSurface = state.value.rangeSurface,
+                        sellingStatus = state.value.soldState,
+                        tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
+                        areaCodeFilter = state.value.chosenAreaCode,
+                    )
+                )
+            }
         }
     }
 }

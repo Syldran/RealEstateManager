@@ -17,4 +17,5 @@ sealed interface ListDetailsEvent {
     data class OnShopChecked(val value: Boolean) : ListDetailsEvent
     data class OnTransportChecked(val value: Boolean) : ListDetailsEvent
     data class OnAreaCodeChosen(val code: Int?) : ListDetailsEvent
+    data class OnDateRangeSelected(val startRange: Long, val endRange: Long): ListDetailsEvent
 }

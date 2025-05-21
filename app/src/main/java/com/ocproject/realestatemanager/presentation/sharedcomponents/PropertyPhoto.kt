@@ -47,7 +47,7 @@ fun PropertyPhoto(
                 modifier = photoModifier,
                 contentScale = ContentScale.Crop
             )
-            if (propertyWithPhotos?.sold == true) {
+            if (propertyWithPhotos?.sold != null) {
                 Image(
                     painter = painterResource(id = R.drawable.sold_png_transparent),
                     contentDescription = "Your Image",
@@ -68,7 +68,7 @@ fun PropertyPhoto(
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
-            if (propertyWithPhotos?.sold == true) {
+            if (propertyWithPhotos?.sold != null) {
                 Image(
                     painter = painterResource(id = R.drawable.sold_png_transparent),
                     contentDescription = "Your Image",

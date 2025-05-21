@@ -1,6 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
+import java.util.Date
 
 sealed interface AddPropertyEvent {
     class OnPhotoPicked(val listByteArray: List<ByteArray>?) : AddPropertyEvent
@@ -22,7 +23,7 @@ sealed interface AddPropertyEvent {
         val shop: Boolean = false,
         val park: Boolean = false,
         val transport: Boolean = false,
-        val sold: Boolean = false,
+        val sold: Long? = null,
     ) : AddPropertyEvent
 
     data class OnPhotoNameChanged(val photoProperty: PhotoProperty, val value: String) :

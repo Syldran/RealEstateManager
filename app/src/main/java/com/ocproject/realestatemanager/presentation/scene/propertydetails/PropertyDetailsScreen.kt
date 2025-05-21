@@ -76,7 +76,7 @@ fun PropertyDetailScreen(
             )
             Spacer(Modifier.height(16.dp))
             Row {
-                if (property.sold == true) {
+                if (property.sold != null) {
                     SuggestionChip(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         onClick = {},

@@ -68,7 +68,6 @@ fun PropertyListScreen(
                         .fillMaxWidth()
                         .clickable {
                             onClick(property)
-//                            onNavigateToPropertyDetailScreen(property.id)
                         }
                         .padding(start = 16.dp, end = 16.dp),
                     onEvent = viewModel::onEvent,

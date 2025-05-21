@@ -24,6 +24,7 @@ import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
 import timber.log.Timber
 import java.util.Calendar
+import java.util.Date
 
 @KoinViewModel
 class AddPropertyViewModel(
@@ -49,7 +50,7 @@ class AddPropertyViewModel(
             surfaceArea = null,
             price = null,
             id = 0L,
-            sold = false,
+            sold = null,
         )
     )
         private set
@@ -85,7 +86,7 @@ class AddPropertyViewModel(
                 surfaceArea = 123,
                 price = 123,
                 id = 0L,
-                sold = false,
+                sold = null,
             )
         }
     }

@@ -1,16 +1,13 @@
 package com.ocproject.realestatemanager.presentation.scene.propertydetails.components
 
-import com.ocproject.realestatemanager.R
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,10 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,14 +29,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
-
-@Composable
-fun PhotosRow(modifier: Modifier = Modifier.horizontalScroll(state = rememberScrollState(), true)) {
-
-}
-
 
 @Composable
 fun PhotosDetailsComposable(
@@ -72,6 +62,14 @@ fun PhotosDetailsComposable(
                         modifier = Modifier .size(150.dp).align(Alignment.CenterHorizontally),
                         contentScale = ContentScale.Crop
                     )
+                    if (propertyWithPhotos.sold != null) {
+                        Image(
+                            painter = painterResource(id = R.drawable.sold_png_transparent),
+                            contentDescription = "Your Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                     Text(
                         modifier = Modifier.width(150.dp).align(Alignment.CenterHorizontally),
                         text =  propertyWithPhotos.photoList[propertyWithPhotos.photoList.indexOf(photo)].name,
@@ -98,12 +96,14 @@ fun PhotosDetailsComposable(
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.size(40.dp)
             )
-            Image(
-                painter = painterResource(id = R.drawable.sold_png_transparent),
-                contentDescription = "Your Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (propertyWithPhotos?.sold != null) {
+                Image(
+                    painter = painterResource(id = R.drawable.sold_png_transparent),
+                    contentDescription = "Your Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

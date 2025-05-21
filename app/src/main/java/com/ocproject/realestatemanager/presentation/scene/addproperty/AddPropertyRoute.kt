@@ -25,7 +25,7 @@ fun NavGraphBuilder.addPropertyScreen(navController: NavController) {
         AddPropertyScreen(
             viewModel = koinViewModel(parameters = {parametersOf(id)}),
             onNavigateToListDetails = {
-                navController.navigate(Screen.ListDetailsScreen.route)
+                navController.popBackStack()
             }
         )
     }

@@ -81,6 +81,7 @@ fun ListDetails(
                                     },
                                 )
                             } else {
+                                // possible création des markers ici en amont de MapOfProperties.
                                 MapOfProperties(
                                     currentPosition = currentPosition,
                                     focusPosition = LatLng(property.lat, property.lng)
@@ -108,15 +109,6 @@ fun ListDetails(
                     }
                 }
             },
-//            extraPane = {
-//                navigator.currentDestination?.content?.let { property: Any ->
-//                    var property = property as Property
-//                    MapOfProperties(
-//                        currentPosition = currentPosition,
-//                        focusPosition = LatLng(property.lat, property.lng)
-//                    )
-//                }
-//            }
         )
     }
 

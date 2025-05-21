@@ -2,16 +2,15 @@ package com.ocproject.realestatemanager.presentation.scene.addproperty
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,12 +23,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,12 +45,16 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.components
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.ImagePicker
 import org.koin.androidx.compose.koinViewModel
+import java.util.Calendar
 
 @Composable
 fun AddPropertyScreen(
     viewModel: AddPropertyViewModel = koinViewModel(),
     onNavigateToListDetails: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+
     val context = LocalContext.current
     val imagePicker = ImagePicker(
         context as ComponentActivity
@@ -83,8 +90,10 @@ fun AddPropertyScreen(
             }
         }
     }
-    if (newProperty.sold == true) {
+    if (newProperty.sold != null) {
         soldChecked = true
+    } else {
+        soldChecked = false
     }
 
     if (state.navToPropertyListScreen) {
@@ -93,16 +102,20 @@ fun AddPropertyScreen(
     }
 
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .statusBarsPadding(),
-        contentAlignment = Alignment.TopStart
-    ) {
 
+    Scaffold(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        contentWindowInsets = WindowInsets.safeDrawing, // Applies safe area to Scaffold content
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
+    ) { contentPadding ->
         Column(
-            modifier = Modifier.fillMaxWidth()/*.nestedScroll(nestedScrollConnection)*/,
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(contentPadding)
+            /*.nestedScroll(nestedScrollConnection)*/,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(60.dp))
@@ -118,7 +131,7 @@ fun AddPropertyScreen(
 
 
             Spacer(modifier = Modifier.height(16.dp))
-            AutocompleteSearch(viewModel)
+            AutocompleteSearch(viewModel, scope, snackBarHostState)
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
                 value = newProperty.address,
@@ -208,7 +221,12 @@ fun AddPropertyScreen(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         soldChecked = !soldChecked
-                        viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = soldChecked))
+                        if (soldChecked == true) {
+                            viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = Calendar.getInstance().timeInMillis))
+                        } else {
+                            viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = null))
+
+                        }
                     },
                     label = {
                         Text("SOLD!")
@@ -364,6 +382,7 @@ fun AddPropertyScreen(
 
         }
         IconButton(
+            modifier = Modifier.padding(top = 32.dp),
             onClick = {
                 onNavigateToListDetails()
             },
@@ -377,4 +396,14 @@ fun AddPropertyScreen(
             Icon(imageVector = Icons.Rounded.Close, contentDescription = "Close")
         }
     }
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .verticalScroll(rememberScrollState())
+//            .statusBarsPadding(),
+//        contentAlignment = Alignment.TopStart
+//    ) {
+//
+//
+//    }
 }

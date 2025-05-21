@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager.data.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.ocproject.realestatemanager.core.InterestPoint
+import java.util.Date
 
 
 @Entity
@@ -16,7 +17,7 @@ data class PropertyEntity(
     val areaCode: Int?,
     val surfaceArea: Int?,
     val price: Int?,
-    val sold: Boolean,
+    val sold: Long?,
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
 )

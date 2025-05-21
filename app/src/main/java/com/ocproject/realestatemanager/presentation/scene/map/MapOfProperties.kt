@@ -37,19 +37,20 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MapOfProperties(
     viewModel: ListDetailsViewModel = koinViewModel(),
+    mapViewModel: MapOfPropertiesViewModel = koinViewModel(),
     currentPosition: LatLng?,
     focusPosition: LatLng,
 
     ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
+    val markers by mapViewModel.markers.collectAsState()
+
+    LaunchedEffect(state.properties) {
+        mapViewModel.createMarkers(state.properties)
+    }
     Column {
-//        PropertyListTopBar(
-//            onEvent = viewModel::onEvent,
-//            onNavigateToAddPropertyScreen = { },
-//            onNavigateToMapOfProperties = { },
-//            modifier = Modifier
-//        )
+
         if (currentPosition == null) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -65,7 +66,6 @@ fun MapOfProperties(
                 mutableStateOf(
                     MapUiSettings(
                         compassEnabled = false,
-//                        myLocationButtonEnabled = true
                     )
                 )
             }
@@ -84,73 +84,34 @@ fun MapOfProperties(
                 position = CameraPosition.fromLatLngZoom(focusPosition, 10f)
             }
             LaunchedEffect(focusPosition) {
-            cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(focusPosition, 10f))
+                cameraPositionState.animate(
+                    CameraUpdateFactory.newLatLngZoom(focusPosition, 10f),
+                    1000
+                )
             }
-//            LaunchedEffect(focusPosition) {
-//                cameraPositionState.animate(
-//                    CameraUpdateFactory.newLatLngZoom(focusPosition, 10f),
-//                    1000 // Animation en 1 seconde
-//                )
-//            }
 
             Box {
-
-
                 GoogleMap(
                     modifier = Modifier.fillMaxSize(),
                     cameraPositionState = cameraPositionState,
                     properties = mapProperties,
                     uiSettings = mapUiSettings,
-//        onMapLoaded =
                 ) {
-
                     Marker(
                         state = markerState
                     )
 
-                    state.properties.forEach { property ->
-                        var bitmap = null
-                        var resizedBitmap: Bitmap? = null
-                        if ( bitmap != null){
-                            val bitmap = BitmapFactory.decodeByteArray(
-                                property.photoList?.first()?.photoBytes, 0,
-                                property.photoList?.first()?.photoBytes?.size!!
-                            )
-                            resizedBitmap = bitmap.scale(96, 96, false)
-                        }
-
-
-
-                        if (resizedBitmap != null){
-                            Marker(
-                                state = MarkerState(LatLng(property.lat, property.lng)),
-                                onInfoWindowClick = {
-                                    Toast.makeText(context, "InfoClick", Toast.LENGTH_LONG).show()
-                                },
-                                icon =
-                                    BitmapDescriptorFactory.fromBitmap(
-                                        resizedBitmap
-                                    ),
-//                            onClick = {
-//                                Toast.makeText(context, "mapClick", Toast.LENGTH_LONG).show()
-//                                false
-//                            }
-                            )
-                        } else {
-                            Marker(
-                                state = MarkerState(LatLng(property.lat, property.lng)),
-                                onInfoWindowClick = {
-                                    Toast.makeText(context, "InfoClick", Toast.LENGTH_LONG).show()
-                                },
-                            )
-                        }
-
+                    markers.forEach { marker ->
+                        Marker(
+                            state = marker.state,
+                            icon = marker.icon,
+                            onInfoWindowClick = {
+                                Toast.makeText(context, "InfoClick", Toast.LENGTH_LONG).show()
+                            }
+                        )
                     }
                 }
-
             }
-
         }
-
     }
 }

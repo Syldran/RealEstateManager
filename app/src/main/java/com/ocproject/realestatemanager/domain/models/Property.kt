@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager.domain.models
 import android.os.Parcelable
 import com.ocproject.realestatemanager.core.InterestPoint
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 @Parcelize
 data class Property(
@@ -16,6 +17,6 @@ data class Property(
     val areaCode: Int?,
     val surfaceArea: Int?,
     val price: Int?,
-    val sold: Boolean,
+    val sold: Long?,
     val id: Long,
 ): Parcelable

@@ -5,6 +5,7 @@ import com.ocproject.realestatemanager.data.entities.PropertyEntity
 import com.ocproject.realestatemanager.data.entities.PropertyWithPhotosEntity
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
+import java.util.Date
 
 fun PhotoPropertyEntity.toPhotoProperty(): PhotoProperty {
     return PhotoProperty(

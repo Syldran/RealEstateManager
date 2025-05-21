@@ -84,7 +84,7 @@ fun PreviewItem() {
             surfaceArea = 110,
             interestPoints = emptyList(),
             photoList = emptyList(),
-            sold = false,
+            sold = null,
         )
     )
 }

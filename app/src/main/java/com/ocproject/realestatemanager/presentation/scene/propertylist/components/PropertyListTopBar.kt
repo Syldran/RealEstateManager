@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +45,10 @@ fun PropertyListTopBar(
             )
         },
         actions = {
-            IconButton(onClick = { menuExpanded = true }) {
+            IconButton(
+                onClick = { menuExpanded = true },
+                modifier = Modifier.testTag("topBarMenuIcon")
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = "Localized description",
@@ -54,8 +58,8 @@ fun PropertyListTopBar(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
-                // 6
                 DropdownMenuItem(
+                    modifier = Modifier.testTag("menuItemAdd"),
                     text = {
                         Text("Add Property")
                     },

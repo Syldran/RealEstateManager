@@ -21,7 +21,21 @@ fun NavGraphBuilder.propertyDetailsScreen(navController: NavController) {
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getLong("id")
         PropertyDetailScreen(
-            property = Property(null,emptyList(),"aaa", "aaa",0.0,0.0,"A",0L,12,12,12,false, 0L),
+            property = Property(
+                null,
+                emptyList(),
+                "aaa",
+                "aaa",
+                0.0,
+                0.0,
+                "A",
+                0L,
+                12,
+                12,
+                12,
+                null,
+                0L
+            ),
             navigateBack = {},
 //            viewModel = koinViewModel(parameters = { parametersOf(id) }),
             onNavigateToAddPropertyScreen = {
