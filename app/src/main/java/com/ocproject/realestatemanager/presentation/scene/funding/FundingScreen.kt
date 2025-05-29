@@ -55,7 +55,9 @@ fun FundingScreen(
     val state by viewModel.state.collectAsState()
     var price: Int? = viewModel.price
     Column(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PropertyTextField(
@@ -72,7 +74,9 @@ fun FundingScreen(
         var expanded by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
                     .border(1.dp, shape = RectangleShape, color = Color.Black)
                     .clickable(
                         true,
@@ -83,9 +87,17 @@ fun FundingScreen(
                 verticalAlignment = Alignment.CenterVertically,
             )
             {
-                Text(modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                    text = state.chosenText)
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "More options", modifier = Modifier.width(4.dp))
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    text = state.chosenText
+                )
+                Icon(
+                    Icons.Default.KeyboardArrowDown,
+                    contentDescription = "More options",
+                    modifier = Modifier.width(4.dp)
+                )
 
             }
 // replace with bottom sheet.
@@ -99,8 +111,8 @@ fun FundingScreen(
                     onClick = {
                         viewModel.onEvent(
                             FundingEvent.OnRateOptionChosen(
-                                FundingRate.ON7YEARS,
-                                "7 years ${FundingRate.ON7YEARS * 100F} % "
+                                FundingRate.SEVEN_YEARS,
+                                "7 years ${FundingRate.SEVEN_YEARS.ratio * 100F} % "
                             )
                         )
                         expanded = false
@@ -112,8 +124,8 @@ fun FundingScreen(
                     onClick = {
                         viewModel.onEvent(
                             FundingEvent.OnRateOptionChosen(
-                                FundingRate.ON10YEARS,
-                                "10 years ${FundingRate.ON10YEARS * 100F} % "
+                                FundingRate.TEN_YEARS,
+                                "10 years ${FundingRate.TEN_YEARS.ratio * 100F} % "
                             )
                         )
                         expanded = false
@@ -125,8 +137,8 @@ fun FundingScreen(
                     onClick = {
                         viewModel.onEvent(
                             FundingEvent.OnRateOptionChosen(
-                                FundingRate.ON15YEARS,
-                                "15 years ${FundingRate.ON15YEARS * 100F} % "
+                                FundingRate.FIFTEEN_YEARS,
+                                "15 years ${FundingRate.FIFTEEN_YEARS.ratio * 100F} % "
                             )
                         )
                         expanded = false
@@ -138,8 +150,8 @@ fun FundingScreen(
                     onClick = {
                         viewModel.onEvent(
                             FundingEvent.OnRateOptionChosen(
-                                FundingRate.ON20YEARS,
-                                "20 years ${FundingRate.ON20YEARS * 100F} % "
+                                FundingRate.TWENTY_YEARS,
+                                "20 years ${FundingRate.TWENTY_YEARS.ratio * 100F} % "
                             )
                         )
                         expanded = false
@@ -151,8 +163,8 @@ fun FundingScreen(
                     onClick = {
                         viewModel.onEvent(
                             FundingEvent.OnRateOptionChosen(
-                                FundingRate.ON25YEARS,
-                                "25 years ${FundingRate.ON25YEARS * 100F} % "
+                                FundingRate.TWENTY_FIVE_YEARS,
+                                "25 years ${FundingRate.TWENTY_FIVE_YEARS.ratio * 100F} % "
                             )
                         )
                         expanded = false
@@ -162,7 +174,9 @@ fun FundingScreen(
 
         }
         Card(
-            modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             border = BorderStroke(1.dp, colorResource(id = R.color.purple_200))
         ) {
@@ -170,10 +184,10 @@ fun FundingScreen(
             var monthlyPayment =
                 viewModel.calcMonthlyPayment(
                     price?.toDouble() ?: 0.0,
-                    state.chosenRate.toDouble(),
-                    240.0
+                    state.chosenRate.ratio.toDouble(),
+                    state.chosenRate.yearsInMonths.toDouble()
                 )
-            Column(modifier = Modifier.padding(16.dp)){
+            Column(modifier = Modifier.padding(16.dp)) {
                 Text("Total Cost = ${((monthlyPayment * 240.0) * 100.0).roundToInt() / 100.0}")
                 Text("Monthly Payment = ${(monthlyPayment * 100.0).roundToInt() / 100.0}")
                 Text("Interest Payment = ${((monthlyPayment * 240.0 - (price?.toDouble() ?: 0.0)) * 100.0).roundToInt() / 100.0}")

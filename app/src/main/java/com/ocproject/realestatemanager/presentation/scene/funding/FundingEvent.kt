@@ -4,5 +4,5 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropert
 
 sealed interface FundingEvent {
     data class OnPriceInput(val value : String?) : FundingEvent
-    data class OnRateOptionChosen(val value : Float, val text:String) : FundingEvent
+    data class OnRateOptionChosen(val value : FundingRate, val text:String) : FundingEvent
 }
