@@ -297,8 +297,8 @@ fun PropertyFilterSheet(
                     )
                     Text(text = "min: ${state.rangePrice.lower}    max:${sliderMax}")
                 }
-                Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
 
+                Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
                     Column() {
                         Row {
                             // RADIO SORT TYPE DATE
@@ -703,66 +703,3 @@ fun PropertyFilterSheet(
         }
     }
 }
-
-
-/*@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable*/
-//fun Preview() {
-//    PropertyFilterSheet(
-//        state = PropertyListState(),
-//        onEvent = {},
-//        sheetState = SheetState(initialValue = SheetValue.Expanded, skipPartiallyExpanded = true),
-//        scope = rememberCoroutineScope()
-//    )
-//
-//}
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun DateRangePickerModal(
-//    onDateRangeSelected: Range<Long>,
-//    onDismiss: () -> Unit
-//) {
-//    val dateRangePickerState = rememberDateRangePickerState()
-//
-//    DatePickerDialog(
-//        onDismissRequest = onDismiss,
-//        confirmButton = {
-//            TextButton(
-//                onClick = {
-//                    onDateRangeSelected(
-//                        Range<Long>(
-//                            lower = dateRangePickerState.selectedStartDateMillis,
-//                            upper = dateRangePickerState.selectedEndDateMillis,
-//                        )
-//                    )
-//                    onDismiss()
-//                }
-//            ) {
-//                Text("OK")
-//            }
-//        },
-//        dismissButton = {
-//            TextButton(onClick = onDismiss) {
-//                Text("Cancel")
-//            }
-//        }
-//    ) {
-//        DateRangePicker(
-//            state = dateRangePickerState,
-//            title = {
-//                Text(
-//                    text = "Select date range"
-//                )
-//            },
-//            showModeToggle = false,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(500.dp)
-//                .padding(16.dp)
-//        )
-//    }
-//}
-//
-//fun onDateRangeSelected(range: Any) {}

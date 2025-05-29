@@ -42,6 +42,7 @@ fun ListDetails(
     val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
     Column {
         PropertyListTopBar(
+            state = state,
             onEvent = viewModel::onEvent,
             onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen,
             onNavigateToMapOfProperties = onNavigateToMapOfProperties,
@@ -52,7 +53,6 @@ fun ListDetails(
         NavigableListDetailPaneScaffold(
             navigator = navigator,
             listPane = {
-                // if list affiche liste if map affiche map
                 PropertyListScreen(
                     onClick = { property ->
                         navigator.navigateTo(
@@ -87,24 +87,7 @@ fun ListDetails(
                                     focusPosition = LatLng(property.lat, property.lng)
                                 )
                             }
-                            FloatingActionButton(
-                                modifier = Modifier.padding(16.dp),
-                                onClick = {
-                                    viewModel.onEvent(OnClickPropertyDisplayMode(map = !state.mapMode))
-                                },
-                            ) {
-                                if (state.mapMode) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Info,
-                                        contentDescription = "detailMode"
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Rounded.LocationOn,
-                                        contentDescription = "mapMode"
-                                    )
-                                }
-                            }
+
                         }
                     }
                 }

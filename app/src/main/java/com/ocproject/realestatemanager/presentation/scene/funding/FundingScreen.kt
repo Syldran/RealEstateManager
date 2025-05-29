@@ -1,20 +1,24 @@
 package com.ocproject.realestatemanager.presentation.scene.funding
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -34,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.PathNode
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent
@@ -41,6 +46,7 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.components
 import org.koin.androidx.compose.koinViewModel
 import java.nio.file.WatchEvent
 import kotlin.math.roundToInt
+import com.ocproject.realestatemanager.R
 
 @Composable
 fun FundingScreen(
@@ -49,7 +55,7 @@ fun FundingScreen(
     val state by viewModel.state.collectAsState()
     var price: Int? = viewModel.price
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(16.dp).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PropertyTextField(
@@ -64,9 +70,9 @@ fun FundingScreen(
 
 
         var expanded by remember { mutableStateOf(false) }
-        Column(Modifier.padding(16.dp)) {
+        Column(Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier
+                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
                     .border(1.dp, shape = RectangleShape, color = Color.Black)
                     .clickable(
                         true,
@@ -77,9 +83,9 @@ fun FundingScreen(
                 verticalAlignment = Alignment.CenterVertically,
             )
             {
-                Text(modifier = Modifier.padding(8.dp),
+                Text(modifier = Modifier.padding(8.dp).fillMaxWidth(),
                     text = state.chosenText)
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "More options")
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = "More options", modifier = Modifier.width(4.dp))
 
             }
 // replace with bottom sheet.
@@ -156,7 +162,9 @@ fun FundingScreen(
 
         }
         Card(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            border = BorderStroke(1.dp, colorResource(id = R.color.purple_200))
         ) {
             //add notarial price
             var monthlyPayment =
@@ -165,9 +173,11 @@ fun FundingScreen(
                     state.chosenRate.toDouble(),
                     240.0
                 )
-            Text("Total Cost = ${((monthlyPayment * 240.0) * 100.0).roundToInt() / 100.0}")
-            Text("Monthly Payment = ${(monthlyPayment * 100.0).roundToInt() / 100.0}")
-            Text("Interest Payment = ${((monthlyPayment * 240.0 - (price?.toDouble() ?: 0.0)) * 100.0).roundToInt() / 100.0}")
+            Column(modifier = Modifier.padding(16.dp)){
+                Text("Total Cost = ${((monthlyPayment * 240.0) * 100.0).roundToInt() / 100.0}")
+                Text("Monthly Payment = ${(monthlyPayment * 100.0).roundToInt() / 100.0}")
+                Text("Interest Payment = ${((monthlyPayment * 240.0 - (price?.toDouble() ?: 0.0)) * 100.0).roundToInt() / 100.0}")
+            }
         }
     }
 }
