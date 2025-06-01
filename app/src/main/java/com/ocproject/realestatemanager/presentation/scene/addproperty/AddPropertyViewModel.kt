@@ -157,11 +157,9 @@ class AddPropertyViewModel(
             }
 
             is AddPropertyEvent.OnChangeNavigationStatus -> onChangeNavStatus()
+
             is AddPropertyEvent.OnPhotoPicked -> {
-//                newProperty = newProperty?.copy(
-//                    photo = event.listByteArray
-//                )
-                var cpt: Int = 0
+                var cpt = 0
                 val list = mutableListOf<PhotoProperty>()
                 event.listByteArray?.forEach {
                     list.add(

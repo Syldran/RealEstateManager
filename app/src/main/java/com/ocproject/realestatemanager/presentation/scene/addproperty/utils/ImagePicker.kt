@@ -11,29 +11,29 @@ import androidx.compose.runtime.Composable
 class ImagePicker(
     private val activity: ComponentActivity
 ) {
-    private lateinit var getVisualMedia: ActivityResultLauncher<PickVisualMediaRequest>
+//    private lateinit var getVisualMedia: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var getMultiVisualMedia: ActivityResultLauncher<PickVisualMediaRequest>
     private var byteArray: List<ByteArray>? = emptyList()
 
-    @Composable
-    fun RegisterPicker(onImagePicked: (ByteArray) -> Unit) {
-        getVisualMedia =
-            rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.PickVisualMedia(),
-                onResult = { uri ->
-                    if (uri != null) {
-                        activity.contentResolver.openInputStream(uri)?.use {
-                            onImagePicked(it.readBytes())
-                        }
-                    }
-                }
-            )
-
-    }
-
-    fun pickImage() {
-        getVisualMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-    }
+//    @Composable
+//    fun RegisterPicker(onImagePicked: (ByteArray) -> Unit) {
+//        getVisualMedia =
+//            rememberLauncherForActivityResult(
+//                contract = ActivityResultContracts.PickVisualMedia(),
+//                onResult = { uri ->
+//                    if (uri != null) {
+//                        activity.contentResolver.openInputStream(uri)?.use {
+//                            onImagePicked(it.readBytes())
+//                        }
+//                    }
+//                }
+//            )
+//
+//    }
+//
+//    fun pickImage() {
+//        getVisualMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//    }
 
     @Composable
     fun RegisterPickerMulti(onImagesPicked: (List<ByteArray>?) -> Unit) {
@@ -50,6 +50,7 @@ class ImagePicker(
                 } else {
                     byteArray=null
                 }
+                byteArray = emptyList()
             }
         )
     }
