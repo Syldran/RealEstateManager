@@ -92,16 +92,15 @@ fun PropertyListTopBar(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
-//                DropdownMenuItem(
-//                    modifier = Modifier.testTag("menuItemAdd"),
-//                    text = {
-//                        Text("Add Property")
-//                    },
-//                    onClick = {
-//                        menuExpanded = false
-//                        onNavigateToAddPropertyScreen(null)
-//                    },
-//                )
+                DropdownMenuItem(
+                    text = {
+                        Text("Map Geolocation")
+                    },
+                    onClick = {
+                        onNavigateToMapOfProperties()
+                        menuExpanded = false
+                    },
+                )
                 DropdownMenuItem(
                     text = {
                         Text("Display Criteria")

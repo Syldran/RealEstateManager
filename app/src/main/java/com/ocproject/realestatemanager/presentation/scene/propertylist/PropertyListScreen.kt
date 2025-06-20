@@ -60,10 +60,10 @@ fun PropertyListScreen(
                 items = state.properties,
                 key = { property ->
                     property.id
-                }) { property ->
+                }) { property:Property? ->
                 PropertyListItem(
                     viewModel = viewModel,
-                    propertyWithPhotos = property,
+                    propertyWithPhotos = property!!,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {

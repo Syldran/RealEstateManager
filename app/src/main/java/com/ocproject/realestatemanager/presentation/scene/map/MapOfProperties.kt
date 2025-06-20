@@ -39,7 +39,7 @@ fun MapOfProperties(
     viewModel: ListDetailsViewModel = koinViewModel(),
     mapViewModel: MapOfPropertiesViewModel = koinViewModel(),
     currentPosition: LatLng?,
-    focusPosition: LatLng,
+    focusPosition: LatLng?,
 
     ) {
     val state by viewModel.state.collectAsState()
@@ -62,6 +62,7 @@ fun MapOfProperties(
                 )
             }
         } else {
+
             val mapUiSettings by remember {
                 mutableStateOf(
                     MapUiSettings(
@@ -80,15 +81,28 @@ fun MapOfProperties(
             val markerState by remember {
                 mutableStateOf(MarkerState(currentPosition))
             }
-            val cameraPositionState = rememberCameraPositionState {
-                position = CameraPosition.fromLatLngZoom(focusPosition, 10f)
+            var cameraPositionState = rememberCameraPositionState {
+                position = CameraPosition.fromLatLngZoom(currentPosition, 10f)
             }
             LaunchedEffect(focusPosition) {
                 cameraPositionState.animate(
-                    CameraUpdateFactory.newLatLngZoom(focusPosition, 10f),
+                    CameraUpdateFactory.newLatLngZoom(currentPosition, 10f),
                     1000
                 )
             }
+            if (focusPosition != null){
+                cameraPositionState = rememberCameraPositionState{
+                 position = CameraPosition.fromLatLngZoom(focusPosition, 10f)
+                }
+
+                LaunchedEffect(focusPosition) {
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newLatLngZoom(focusPosition, 10f),
+                        1000
+                    )
+                }
+            }
+
 
             Box {
                 GoogleMap(

@@ -44,7 +44,7 @@ import com.ocproject.realestatemanager.presentation.scene.propertydetails.compon
 
 @Composable
 fun PropertyDetailScreen(
-    property: Property,
+    property: Property?,
     navigateBack: () -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
 ) {
@@ -56,106 +56,108 @@ fun PropertyDetailScreen(
         contentAlignment = Alignment.TopStart
     ) {
 
-
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.height(60.dp))
-            PhotosDetailsComposable(
-                propertyWithPhotos = property
-            )
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = "${property.address} ${property.town}",
-                textAlign = TextAlign.Center,
+        if (property == null){
+            Column {
+                Text("Select or Add Property")
+            }
+        }
+        else {
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 30.sp
-            )
-            Spacer(Modifier.height(16.dp))
-            Row {
-                if (property.sold != null) {
-                    SuggestionChip(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        onClick = {},
-                        label = { Text("SOLD") },
-                    )
-                }
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(60.dp))
+                PhotosDetailsComposable(
+                    propertyWithPhotos = property
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = "${property.address} ${property.town}",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp
+                )
+                Spacer(Modifier.height(16.dp))
+                Row {
+                    if (property.sold != null) {
+                        SuggestionChip(
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            onClick = {},
+                            label = { Text("SOLD") },
+                        )
+                    }
 
-                property.interestPoints.forEach {
-                    when (it) {
-                        InterestPoint.PARK -> {
-                            SuggestionChip(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                onClick = {},
-                                label = { Text("Park") },
-                            )
-                        }
+                    property.interestPoints.forEach {
+                        when (it) {
+                            InterestPoint.PARK -> {
+                                SuggestionChip(
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    onClick = {},
+                                    label = { Text("Park") },
+                                )
+                            }
 
-                        InterestPoint.SCHOOL -> {
+                            InterestPoint.SCHOOL -> {
 
-                            SuggestionChip(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                onClick = {},
-                                label = { Text("School") },
-                            )
-                        }
+                                SuggestionChip(
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    onClick = {},
+                                    label = { Text("School") },
+                                )
+                            }
 
-                        InterestPoint.SHOP -> {
-                            SuggestionChip(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                onClick = { },
-                                label = { Text("Shop") },
-                            )
-                        }
+                            InterestPoint.SHOP -> {
+                                SuggestionChip(
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    onClick = { },
+                                    label = { Text("Shop") },
+                                )
+                            }
 
-                        InterestPoint.TRANSPORT -> {
-                            SuggestionChip(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                onClick = {},
-                                label = { Text("Transport") },
-                            )
+                            InterestPoint.TRANSPORT -> {
+                                SuggestionChip(
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    onClick = {},
+                                    label = { Text("Transport") },
+                                )
+                            }
                         }
                     }
+
                 }
+                Spacer(Modifier.height(16.dp))
+                FilledTonalIconButton(
+                    onClick = { onNavigateToAddPropertyScreen(property.id) },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Edit,
+                        contentDescription = "Edit contact"
+                    )
+                }
+                Text(text = property.address)
+                Spacer(Modifier.height(16.dp))
+                Text(text = property.town)
+                Spacer(Modifier.height(16.dp))
 
-            }
-            Spacer(Modifier.height(16.dp))
-            FilledTonalIconButton(
-                onClick = { onNavigateToAddPropertyScreen(property.id) },
-                colors = IconButtonDefaults.filledTonalIconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Edit,
-                    contentDescription = "Edit contact"
+                AsyncImage(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .fillMaxSize(),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(
+                            "https://maps.googleapis.com/maps/api/staticmap?center=${property.lat},${property.lng}&markers=color:red|${property.lat},${property.lng}&zoom=14&size=500x500&scale=2&key=${BuildConfig.PLACES_API_KEY}"
+                        ).build(), contentDescription = ""
                 )
             }
-            Text(text = property.address)
-            Spacer(Modifier.height(16.dp))
-            Text(text = property.town)
-            Spacer(Modifier.height(16.dp))
-
-            AsyncImage(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .fillMaxSize(),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(
-                        "https://maps.googleapis.com/maps/api/staticmap?center=${property.lat},${property.lng}&markers=color:red|${property.lat},${property.lng}&zoom=14&size=500x500&scale=2&key=${BuildConfig.PLACES_API_KEY}"
-                    ).build(), contentDescription = ""
-            )
         }
 
         IconButton(
             onClick = navigateBack
-//            {
-//                onNavigateToPropertyListScreen()
-//            }
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
@@ -164,30 +166,3 @@ fun PropertyDetailScreen(
         }
     }
 }
-
-// superposition d'image
-//@Composable
-//fun ImageWithTopRightText() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(250.dp) // Adjust height as needed
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.sold),
-//            contentDescription = "Your Image",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier.fillMaxSize()
-//        )
-//
-//        Text(
-//            text = "Top Right Text",
-//            color = Color.White,
-//            fontSize = 16.sp,
-//            fontWeight = FontWeight.Bold,
-//            modifier = Modifier
-//                .align(Alignment.TopEnd)
-//                .padding(8.dp) // Adds some space from edges
-//        )
-//    }
-//}

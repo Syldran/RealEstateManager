@@ -40,7 +40,7 @@ class ListDetailsViewModel(
     private val selectedTags = mutableStateOf(listOf<InterestPoint>())
 
 
-    private val _filter = MutableStateFlow(
+    val _filter = MutableStateFlow(
         Filter(
             sortType = SortType.PRICE,
             orderPrice = Order.ASC,

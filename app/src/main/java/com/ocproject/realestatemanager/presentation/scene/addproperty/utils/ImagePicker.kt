@@ -47,10 +47,8 @@ class ImagePicker(
                         }
                     }
                     onImagesPicked(byteArray)
-                } else {
-                    byteArray=null
                 }
-                byteArray = emptyList()
+                byteArray = null
             }
         )
     }
