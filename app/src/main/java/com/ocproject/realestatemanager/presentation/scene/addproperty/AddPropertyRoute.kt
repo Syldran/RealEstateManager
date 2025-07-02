@@ -1,5 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -11,21 +13,24 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.addPropertyScreen(navController: NavController) {
     composable(
-        route = Screen.AddPropertyScreen.route+ "/{id}",
+        route = Screen.AddPropertyScreen.route + "/{id}",
         arguments = listOf(
             navArgument("id") {
                 type = NavType.LongType
             }
         )
-    ) {
-            navBackStackEntry ->
+    ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments!!.getLong("id")
         AddPropertyScreen(
-            viewModel = koinViewModel(parameters = {parametersOf(id)}),
+            viewModel = koinViewModel(parameters = { parametersOf(id) }),
             onNavigateToListDetails = {
                 navController.popBackStack()
+            },
+            onNavigateToCamera = {
+                navController.navigate(Screen.CameraScreen.route)
             }
         )
     }

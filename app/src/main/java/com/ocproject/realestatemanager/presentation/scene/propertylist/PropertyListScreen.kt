@@ -37,7 +37,7 @@ fun PropertyListScreen(
     viewModel: ListDetailsViewModel = koinViewModel(),
     onClick: (property: Property?) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by    viewModel.state.collectAsState()
     Row {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

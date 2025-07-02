@@ -13,8 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -24,12 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,10 +40,17 @@ import com.ocproject.realestatemanager.presentation.scene.propertydetails.compon
 
 @Composable
 fun PropertyDetailScreen(
-    property: Property?,
+    viewModel: PropertyDetailsViewModel,
+    propertyId: Long,
     navigateBack: () -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
 ) {
+    var property = viewModel.selectedProperty
+
+    // Mettre à jour l'ID de la propriété dans le ViewModel
+    LaunchedEffect(propertyId) {
+        viewModel.updatePropertyId(propertyId)
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()

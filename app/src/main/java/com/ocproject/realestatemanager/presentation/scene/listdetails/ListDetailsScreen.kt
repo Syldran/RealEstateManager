@@ -2,30 +2,47 @@
 
 package com.ocproject.realestatemanager.presentation.scene.listdetails
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.R
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
+import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.map.MapOfProperties
 import com.ocproject.realestatemanager.presentation.scene.propertydetails.PropertyDetailScreen
+import com.ocproject.realestatemanager.presentation.scene.propertydetails.PropertyDetailsViewModel
 import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyListScreen
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListTopBar
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ListDetails(
@@ -75,22 +92,29 @@ fun ListDetails(
                             Box {
 
                                 if (state.mapMode == false) {
-                                    PropertyDetailScreen(
-                                        property = property,
-                                        navigateBack = {
-                                            navigator.navigateBack()
-                                        },
-                                        onNavigateToAddPropertyScreen = {
-                                            onNavigateToAddPropertyScreen(
-                                                property.id
+                                    key(property.id) {
+                                        val propertyDetailsViewModel =
+                                            koinViewModel<PropertyDetailsViewModel>(
+                                                parameters = { parametersOf(property.id) }
                                             )
-                                        },
-                                    )
+                                        PropertyDetailScreen(
+                                            viewModel = propertyDetailsViewModel,
+                                            propertyId = property.id,
+                                            navigateBack = {
+                                                navigator.navigateBack()
+                                            },
+                                            onNavigateToAddPropertyScreen = {
+                                                onNavigateToAddPropertyScreen(
+                                                    property.id
+                                                )
+                                            },
+                                        )
+                                    }
                                 } else {
-                                    // possible création des markers ici en amont de MapOfProperties.
+                                    // possible création des markers ici en amount de MapOfProperties.
                                     MapOfProperties(
                                         currentPosition = currentPosition,
-                                        focusPosition = if (property == null) {
+                                        focusPosition = if (false) {
                                             null
                                         } else {
                                             LatLng(property.lat, property.lng)
@@ -100,10 +124,16 @@ fun ListDetails(
 
                             }
                         }
-                    }else {
+                    } else {
                         Box {
 
-                            Text (text = "Add or select a Property.", modifier = Modifier.fillMaxSize().padding(8.dp), textAlign = TextAlign.Center)
+                            Text(
+                                text = "Add or select a Property.",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp),
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
@@ -111,3 +141,46 @@ fun ListDetails(
         )
     }
 }
+
+/*
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CarouselExample() {
+    data class CarouselItem(
+        val id: Int,
+        @DrawableRes val imageResId: Int,
+        val contentDescription: String
+    )
+
+    val carouselItems = remember {
+        listOf(
+            CarouselItem(0, R.drawable.cupcake, "cupcake"),
+            CarouselItem(1, R.drawable.donut, "donut"),
+            CarouselItem(2, R.drawable.eclair, "eclair"),
+            CarouselItem(3, R.drawable.froyo, "froyo"),
+            CarouselItem(4, R.drawable.gingerbread, "gingerbread"),
+        )
+    }
+
+    HorizontalUncontainedCarousel(
+        state = rememberCarouselState { carouselItems.count() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 16.dp, bottom = 16.dp),
+        itemWidth = 186.dp,
+        itemSpacing = 8.dp,
+        contentPadding = PaddingValues(horizontal = 16.dp)
+    ) { i ->
+        val item = carouselItems[i]
+        Image(
+            modifier = Modifier
+                .height(205.dp)
+                .maskClip(MaterialTheme.shapes.extraLarge),
+            painter = painterResource(id = item.imageResId),
+            contentDescription = item.contentDescription,
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+*/

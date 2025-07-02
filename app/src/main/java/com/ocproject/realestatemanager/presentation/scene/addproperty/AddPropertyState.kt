@@ -1,5 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
+import androidx.compose.ui.graphics.ImageBitmap
+
 data class AddPropertyState(
     val addressError: String? = null,
     val townError: String? = null,
@@ -11,4 +13,5 @@ data class AddPropertyState(
     val surfaceAreaError: String? = null,
     val priceError: String? = null,
     val navToPropertyListScreen: Boolean = false,
+
 )

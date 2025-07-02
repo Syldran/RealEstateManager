@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
-import timber.log.Timber
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.Date
@@ -48,6 +47,7 @@ class ListDetailsViewModel(
             orderSurface = Order.ASC,
             rangePrice = Range<Int>(0, Int.MAX_VALUE),
             rangeDate = Range<Long>(0L, Calendar.getInstance().timeInMillis),
+            soldRangeDate = Range<Long>(0L, Calendar.getInstance().timeInMillis),
             rangeSurface = Range<Int>(0, Int.MAX_VALUE),
             sellingStatus = SellingStatus.ALL,
             tagSchool = false,
@@ -72,6 +72,7 @@ class ListDetailsViewModel(
             orderSurface = filter.orderSurface,
             rangePrice = filter.rangePrice,
             rangeDate = filter.rangeDate,
+            soldRangeDate = filter.soldRangeDate,
             rangeSurface = filter.rangeSurface,
             soldState = filter.sellingStatus,
             shopState = filter.tagShop,
@@ -212,11 +213,19 @@ class ListDetailsViewModel(
                         selectedTags.value.isEmpty() ||
                                 selectedTags.value.all { it in property.interestPoints }
                     }
+                        .filter { it.price!! >= filter.rangePrice.lower && it.price <= filter.rangePrice.upper }
+                        .filter { it.surfaceArea!! >= filter.rangeSurface.lower && it.surfaceArea <= filter.rangeSurface.upper }
+                        .filter { it.createdDate!! >= filter.rangeDate.lower && it.createdDate <= filter.rangeDate.upper }
                 )
                 filteredProperties = sortByAreaCode(filteredProperties, filter).toMutableList()
+
                 when (filter.sellingStatus) {
                     SellingStatus.SOLD -> {
-                        subFilter(filteredProperties.filter { it.sold != null }, filter)
+                        subFilter(
+                            filteredProperties.filter { it.sold != null }
+                                .filter { it.sold != null && it.sold >= filter.soldRangeDate.lower && it.sold <= filter.soldRangeDate.upper },
+                            filter
+                        )
                     }
 
                     SellingStatus.ALL -> {
@@ -354,6 +363,7 @@ class ListDetailsViewModel(
                             orderSurface = event.filter.orderSurface,
                             rangePrice = event.filter.rangePrice,
                             rangeDate = event.filter.rangeDate,
+                            soldRangeDate = event.filter.soldRangeDate,
                             rangeSurface = event.filter.rangeSurface,
                             sellingStatus = event.filter.sellingStatus,
                             tagSchool = event.filter.tagSchool,
@@ -402,6 +412,7 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
@@ -430,6 +441,7 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
@@ -455,6 +467,7 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
@@ -480,6 +493,7 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
@@ -505,6 +519,7 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
@@ -530,6 +545,7 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
@@ -558,6 +574,7 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,
@@ -586,6 +603,33 @@ class ListDetailsViewModel(
                         orderSurface = state.value.orderSurface,
                         rangePrice = state.value.rangePrice,
                         rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
+                        rangeSurface = state.value.rangeSurface,
+                        sellingStatus = state.value.soldState,
+                        tagSchool = state.value.schoolState,
+                        tagShop = state.value.shopState,
+                        tagTransport = state.value.transportState,
+                        tagPark = state.value.parkState,
+                        areaCodeFilter = state.value.chosenAreaCode,
+                    )
+                )
+            }
+
+            is ListDetailsEvent.OnCreationDateRangeSelected -> {
+                _filter.update {
+                    it.copy(
+                        rangeDate = Range<Long>(event.startRange, event.endRange)
+                    )
+                }
+                getPropertiesSorted(
+                    Filter(
+                        sortType = state.value.sortType,
+                        orderPrice = state.value.orderPrice,
+                        orderDate = state.value.orderDate,
+                        orderSurface = state.value.orderSurface,
+                        rangePrice = state.value.rangePrice,
+                        rangeDate = state.value.rangeDate,
+                        soldRangeDate = state.value.soldRangeDate,
                         rangeSurface = state.value.rangeSurface,
                         sellingStatus = state.value.soldState,
                         tagSchool = state.value.schoolState,

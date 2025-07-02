@@ -18,6 +18,7 @@ data class ListDetailsState(
     val orderSurface: Order = Order.ASC,
     val rangePrice: Range<Int> = Range<Int>(0, Int.MAX_VALUE),
     val rangeDate: Range<Long> = Range<Long>(0L, Long.MAX_VALUE),
+    val soldRangeDate: Range<Long> = Range<Long>(0L, Long.MAX_VALUE),
     val rangeSurface: Range<Int> = Range<Int>(0, Int.MAX_VALUE),
     val maxPrice: Int = Int.MAX_VALUE,
     val maxSurface: Int = Int.MAX_VALUE,

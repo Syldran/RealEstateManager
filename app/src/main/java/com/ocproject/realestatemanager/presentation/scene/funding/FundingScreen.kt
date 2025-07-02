@@ -45,11 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
-import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -116,78 +112,6 @@ fun FundingScreen(
                 )
             }
 
-
-// replace with bottom sheet.
-            /*    DropdownMenu(
-                    modifier = Modifier.padding(8.dp),
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("7 years 3.24 % ") },
-                        onClick = {
-                            viewModel.onEvent(
-                                FundingEvent.OnRateOptionChosen(
-                                    FundingRate.SEVEN_YEARS,
-                                    "7 years ${viewModel.displayPercent(FundingRate.SEVEN_YEARS.ratio)} % "
-                                )
-                            )
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("10 years 3.38 %") },
-                        onClick = {
-                            viewModel.onEvent(
-                                FundingEvent.OnRateOptionChosen(
-                                    FundingRate.TEN_YEARS,
-                                    "10 years ${viewModel.displayPercent(FundingRate.TEN_YEARS.ratio)} % "
-                                )
-                            )
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("15 years 3.48 % ") },
-                        onClick = {
-                            viewModel.onEvent(
-                                FundingEvent.OnRateOptionChosen(
-                                    FundingRate.FIFTEEN_YEARS,
-                                    "15 years ${viewModel.displayPercent(FundingRate.FIFTEEN_YEARS.ratio)} % "
-                                )
-                            )
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("20 years 3.58 % ") },
-                        onClick = {
-                            viewModel.onEvent(
-                                FundingEvent.OnRateOptionChosen(
-                                    FundingRate.TWENTY_YEARS,
-                                    "20 years ${viewModel.displayPercent(FundingRate.TWENTY_YEARS.ratio)} % "
-                                )
-                            )
-                            expanded = false
-                        }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text("25 years 3.68 % ") },
-                        onClick = {
-                            viewModel.onEvent(
-                                FundingEvent.OnRateOptionChosen(
-                                    FundingRate.TWENTY_FIVE_YEARS,
-                                    "25 years ${viewModel.displayPercent(FundingRate.TWENTY_FIVE_YEARS.ratio)} % "
-                                )
-                            )
-                            expanded = false
-                        }
-                    )
-                }*/
             Card(
                 modifier = Modifier
                     .padding(vertical = 16.dp)

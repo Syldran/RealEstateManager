@@ -10,6 +10,7 @@ data class Filter(
     val orderSurface: Order,
     val rangePrice: Range<Int>,
     val rangeDate: Range<Long>,
+    val soldRangeDate: Range<Long>,
     val rangeSurface: Range<Int>,
     val sellingStatus: SellingStatus,
     val tagSchool: Boolean,

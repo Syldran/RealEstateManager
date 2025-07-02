@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
@@ -43,51 +44,61 @@ fun PhotosDetailsComposable(
                 .heightIn(max = 1000.dp)
                 .padding(horizontal = 8.dp),
             horizontalArrangement =
-            if(propertyWithPhotos.photoList.size == 1) Arrangement.spacedBy(8000.dp)
-            else Arrangement.spacedBy(8.dp)
-            ,
+                if (propertyWithPhotos.photoList.size == 1) Arrangement.spacedBy(8000.dp)
+                else Arrangement.spacedBy(8.dp),
             columns = GridCells.Adaptive(minSize = 128.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             userScrollEnabled = false,
         ) {
             items(propertyWithPhotos.photoList) { photo: PhotoProperty ->
-                Column{
-                    Image(
-                        bitmap = BitmapFactory.decodeByteArray(
-                            photo.photoBytes,
-                            0,
-                            photo.photoBytes.size
-                        ).asImageBitmap(),
-                        contentDescription = photo.name,
-                        modifier = Modifier .size(150.dp).align(Alignment.CenterHorizontally),
-                        contentScale = ContentScale.Crop
-                    )
-                    if (propertyWithPhotos.sold != null) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box{
                         Image(
-                            painter = painterResource(id = R.drawable.sold_png_transparent),
-                            contentDescription = "Your Image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
+                            bitmap = BitmapFactory.decodeByteArray(
+                                photo.photoBytes,
+                                0,
+                                photo.photoBytes.size
+                            ).asImageBitmap(),
+                            contentDescription = photo.name,
+                            modifier = Modifier
+                                .size(150.dp)
+//                                .align(Alignment.CenterHorizontally)
+                            ,
+                            contentScale = ContentScale.Crop
                         )
+//                        if (propertyWithPhotos.sold != null) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.sold_png_transparent),
+//                                contentDescription = "Your Image",
+//                                contentScale = ContentScale.Crop,
+//                                modifier = Modifier.size(150.dp)
+//                            )
+//                        }
                     }
                     Text(
-                        modifier = Modifier.width(150.dp).align(Alignment.CenterHorizontally),
-                        text =  propertyWithPhotos.photoList[propertyWithPhotos.photoList.indexOf(photo)].name,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .width(150.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = propertyWithPhotos.photoList[propertyWithPhotos.photoList.indexOf(
+                            photo
+                        )].name,
                     )
                 }
             }
 
         }
     } else {
-        Box(modifier = Modifier
-            .size(150.dp)
-            .clip(RoundedCornerShape(40))
-            .background(MaterialTheme.colorScheme.secondaryContainer)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                shape = RoundedCornerShape(40)
-            ),
+        Box(
+            modifier = Modifier
+                .size(150.dp)
+                .clip(RoundedCornerShape(40))
+                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(40)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(

@@ -46,6 +46,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.13"
@@ -139,6 +140,13 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
 
+    // Camerax implementation
+    val cameraxVersion = "1.3.1"
+    implementation ("androidx.camera:camera-core:${cameraxVersion}")
+    implementation ("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation ("androidx.camera:camera-view:${cameraxVersion}")
+    implementation ("androidx.camera:camera-lifecycle:$cameraxVersion")
+    // Camerax implementation
 //    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 //    androidTestImplementation("androidx.test:runner:1.6.1")
 //    androidTestImplementation("androidx.test:rules:1.6.1")

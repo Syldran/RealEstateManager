@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
+import androidx.compose.ui.graphics.ImageBitmap
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import java.util.Date
 
@@ -28,4 +29,6 @@ sealed interface AddPropertyEvent {
 
     data class OnPhotoNameChanged(val photoProperty: PhotoProperty, val value: String) :
         AddPropertyEvent
+
+
 }

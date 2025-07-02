@@ -2,13 +2,10 @@ package com.ocproject.realestatemanager.presentation.scene.propertylist.componen
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.core.Order
@@ -58,8 +54,6 @@ import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetail
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,6 +112,7 @@ fun PropertyFilterSheet(
                                             state.orderSurface,
                                             state.rangePrice,
                                             state.rangeDate,
+                                            state.soldRangeDate,
                                             state.rangeSurface,
                                             SellingStatus.PURCHASABLE,
                                             state.schoolState,
@@ -144,6 +139,7 @@ fun PropertyFilterSheet(
                                             state.orderSurface,
                                             state.rangePrice,
                                             state.rangeDate,
+                                            state.soldRangeDate,
                                             state.rangeSurface,
                                             SellingStatus.SOLD,
                                             state.schoolState,
@@ -170,6 +166,7 @@ fun PropertyFilterSheet(
                                             state.orderSurface,
                                             state.rangePrice,
                                             state.rangeDate,
+                                            state.soldRangeDate,
                                             state.rangeSurface,
                                             SellingStatus.ALL,
                                             state.schoolState,
@@ -200,6 +197,7 @@ fun PropertyFilterSheet(
                                             state.orderSurface,
                                             state.rangePrice,
                                             state.rangeDate,
+                                            state.soldRangeDate,
                                             state.rangeSurface,
                                             state.soldState,
                                             state.schoolState,
@@ -227,6 +225,7 @@ fun PropertyFilterSheet(
                                             state.orderSurface,
                                             state.rangePrice,
                                             state.rangeDate,
+                                            state.soldRangeDate,
                                             state.rangeSurface,
                                             state.soldState,
                                             state.schoolState,
@@ -254,6 +253,7 @@ fun PropertyFilterSheet(
                                             state.orderSurface,
                                             state.rangePrice,
                                             state.rangeDate,
+                                            state.soldRangeDate,
                                             state.rangeSurface,
                                             state.soldState,
                                             state.schoolState,
@@ -315,6 +315,7 @@ fun PropertyFilterSheet(
                                                 state.orderSurface,
                                                 state.rangePrice,
                                                 state.rangeDate,
+                                                state.soldRangeDate,
                                                 state.rangeSurface,
                                                 state.soldState,
                                                 state.schoolState,
@@ -342,6 +343,7 @@ fun PropertyFilterSheet(
                                                 state.orderSurface,
                                                 state.rangePrice,
                                                 state.rangeDate,
+                                                state.soldRangeDate,
                                                 state.rangeSurface,
                                                 state.soldState,
                                                 state.schoolState,
@@ -369,6 +371,7 @@ fun PropertyFilterSheet(
                                                 state.orderSurface,
                                                 state.rangePrice,
                                                 state.rangeDate,
+                                                state.soldRangeDate,
                                                 state.rangeSurface,
                                                 state.soldState,
                                                 state.schoolState,
@@ -404,6 +407,27 @@ fun PropertyFilterSheet(
                         ) {
                             Text("Validate Date")
                         }
+                        val creationDateRangePickerState = rememberDateRangePickerState(
+                            initialDisplayMode = DisplayMode.Input,
+                            initialSelectedStartDateMillis = state.rangeDate.lower,
+                            initialSelectedEndDateMillis = state.rangeDate.upper
+                        )
+                        DateRangePicker(
+//                    showModeToggle = false,
+                            state = creationDateRangePickerState,
+                        )
+                        TextButton(
+                            onClick = {
+                                onEvent(
+                                    ListDetailsEvent.OnCreationDateRangeSelected(
+                                        creationDateRangePickerState.selectedStartDateMillis!!,
+                                        creationDateRangePickerState.selectedEndDateMillis!!
+                                    )
+                                )
+                            }
+                        ) {
+                            Text("Validate Sold Date Range")
+                        }
                     }
                 }
                 Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
@@ -422,6 +446,7 @@ fun PropertyFilterSheet(
                                             state.orderSurface,
                                             state.rangePrice,
                                             state.rangeDate,
+                                            state.soldRangeDate,
                                             state.rangeSurface,
                                             state.soldState,
                                             state.schoolState,
@@ -449,6 +474,7 @@ fun PropertyFilterSheet(
                                             orderSurface = Order.ASC,
                                             rangePrice = state.rangePrice,
                                             rangeDate = state.rangeDate,
+                                            soldRangeDate = state.soldRangeDate,
                                             rangeSurface = state.rangeSurface,
                                             sellingStatus = state.soldState,
                                             tagSchool = state.schoolState,
@@ -476,6 +502,7 @@ fun PropertyFilterSheet(
                                             orderSurface = Order.DESC,
                                             rangePrice = state.rangePrice,
                                             rangeDate = state.rangeDate,
+                                            soldRangeDate = state.soldRangeDate,
                                             rangeSurface = state.rangeSurface,
                                             sellingStatus = state.soldState,
                                             tagSchool = state.schoolState,

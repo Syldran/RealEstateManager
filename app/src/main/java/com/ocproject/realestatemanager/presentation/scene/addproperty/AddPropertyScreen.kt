@@ -1,6 +1,8 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
+import android.os.Build
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +30,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +38,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,15 +47,16 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.components
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PhotosComposable
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.ImagePicker
-import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
 import com.ocproject.realestatemanager.R
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddPropertyScreen(
     viewModel: AddPropertyViewModel = koinViewModel(),
     onNavigateToListDetails: () -> Unit,
+    onNavigateToCamera: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -106,8 +107,6 @@ fun AddPropertyScreen(
         viewModel.onEvent(AddPropertyEvent.OnChangeNavigationStatus(true))
     }
 
-
-
     Scaffold(
         modifier = Modifier.padding(horizontal = 16.dp),
         containerColor = colorResource(id = R.color.white),
@@ -130,7 +129,10 @@ fun AddPropertyScreen(
             PhotosComposable(
                 property = newProperty.copy(photoList = photoList.value),
                 modifier = Modifier
-                    .clickable { imagePicker.pickMultiImage() },
+                    .clickable {
+//                        imagePicker.pickMultiImage()
+                        onNavigateToCamera()
+                    },
                 viewModel = viewModel
             )
 
@@ -223,33 +225,7 @@ fun AddPropertyScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Row {
-                FilterChip(
-                    modifier = Modifier.padding(4.dp),
-                    onClick = {
-                        soldChecked = !soldChecked
-                        if (soldChecked == true) {
-                            viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = Calendar.getInstance().timeInMillis))
-                        } else {
-                            viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = null))
 
-                        }
-                    },
-                    label = {
-                        Text("SOLD!")
-                    },
-                    selected = soldChecked,
-                    leadingIcon = if (soldChecked) {
-                        {
-                            Icon(
-                                imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
-                                modifier = Modifier.size(FilterChipDefaults.IconSize)
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                )
 
                 FilterChip(
                     modifier = Modifier.padding(4.dp),
@@ -374,15 +350,39 @@ fun AddPropertyScreen(
                 )
             }
 
+            Row {
+                FilterChip(
+                    modifier = Modifier.padding(4.dp),
+                    onClick = {
+                        soldChecked = !soldChecked
+                        if (soldChecked == true) {
+                            viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = Calendar.getInstance().timeInMillis))
+                        } else {
+                            viewModel.onEvent(AddPropertyEvent.UpdateTags(sold = null))
 
+                        }
+                    },
+                    label = {
+                        Text("SOLD!")
+                    },
+                    selected = soldChecked,
+                    leadingIcon = if (soldChecked) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = "Done icon",
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                )
+            }
             Button(onClick = {
                 viewModel.onEvent(AddPropertyEvent.SaveProperty)
                 if (state.navToPropertyListScreen) {
-
                     onNavigateToListDetails()
-//                    LaunchedEffect(Unit) {
-//                        viewModel.onEvent(ListDetailsEvent.GetProperties(viewModel.state.v))
-//                    }
                 }
             }) {
                 Text(text = "Save contact")
@@ -405,14 +405,4 @@ fun AddPropertyScreen(
             Icon(imageVector = Icons.Rounded.Close, contentDescription = "Close")
         }
     }
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .verticalScroll(rememberScrollState())
-//            .statusBarsPadding(),
-//        contentAlignment = Alignment.TopStart
-//    ) {
-//
-//
-//    }
 }

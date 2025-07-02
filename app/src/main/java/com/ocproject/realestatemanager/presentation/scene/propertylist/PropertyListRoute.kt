@@ -9,20 +9,9 @@ import com.ocproject.realestatemanager.presentation.navigation.Screen
 
 fun NavGraphBuilder.propertyListScreen(navController: NavController){
     composable(route = Screen.PropertyListScreen.route) {
-//        val navOptions = NavOptions.Builder()
-//            .setRestoreState(true)
-//            .setPopUpTo(Screen.PropertyListScreen.route, inclusive = false, saveState = true)
-//            .build()
 
         PropertyListScreen(
             onClick = {},
-
-//            onNavigateToAddPropertyScreen = {
-//                navController.navigate(Screen.AddPropertyScreen.withArgs(it?:0))
-//            },
-//            onNavigateToPropertyDetailScreen = {
-//                navController.navigate(Screen.PropertyDetailScreen.withArgs(it), navOptions)
-//            }
         )
     }
 }
