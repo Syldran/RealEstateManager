@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.propertydetails
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,8 +37,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
 import com.ocproject.realestatemanager.core.InterestPoint
-import com.ocproject.realestatemanager.domain.models.Property
-import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PhotosDetailsComposable
+import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PagerPhotoDetails
+import timber.log.Timber
 
 
 @Composable
@@ -45,7 +48,7 @@ fun PropertyDetailScreen(
     navigateBack: () -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
 ) {
-    var property = viewModel.selectedProperty
+    val property = viewModel.selectedProperty
 
     // Mettre à jour l'ID de la propriété dans le ViewModel
     LaunchedEffect(propertyId) {
@@ -53,26 +56,39 @@ fun PropertyDetailScreen(
     }
     Box(
         modifier = Modifier
+            .background(Color.Red)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .statusBarsPadding(),
-        contentAlignment = Alignment.TopStart
+//        contentAlignment = Alignment.TopStart
     ) {
-
-        if (property == null){
-            Column {
-                Text("Select or Add Property")
-            }
+        IconButton(
+            onClick = navigateBack
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                contentDescription = "Back"
+            )
         }
-        else {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Column(
+            modifier = Modifier
+                .background(Color.Blue)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (property == null) {
+
+                Text("Select or Add Property")
+
+            } else {
+
                 Spacer(Modifier.height(60.dp))
-                PhotosDetailsComposable(
-                    propertyWithPhotos = property
-                )
+                Timber.tag("TEST").d("${property.photoList?.size}")
+                Timber.tag("TEST1").d("${property.sold}")
+                PagerPhotoDetails(property = property)
+//                PhotosDetailsComposable(
+//                    propertyWithPhotos = property
+//                )
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = "${property.address} ${property.town}",
@@ -157,15 +173,8 @@ fun PropertyDetailScreen(
                         ).build(), contentDescription = ""
                 )
             }
-        }
 
-        IconButton(
-            onClick = navigateBack
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = "Back"
-            )
+
         }
     }
 }

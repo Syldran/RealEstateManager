@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -43,7 +44,8 @@ import kotlin.coroutines.suspendCoroutine
 @Composable
 fun CameraScreen(
 //    viewModel: CameraViewModel = koinViewModel<CameraViewModel>(),
-    viewModel: AddPropertyViewModel= koinViewModel()
+    propertyId: Long? = null,
+    viewModel: AddPropertyViewModel = koinViewModel(parameters = { parametersOf(propertyId) })
 ) {
     val state by viewModel.state.collectAsState()
     val lensFacing = CameraSelector.LENS_FACING_BACK
@@ -68,7 +70,7 @@ fun CameraScreen(
         Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.weight(4f)) {
             AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
             Button(
-                onClick = { captureImage(imageCapture, context, /*state, viewModel*/) },
+                onClick = { captureImage(imageCapture, context /*state, viewModel*/) },
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
                 Text(text = "Capture Image")
@@ -99,7 +101,10 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
     }
 
 
-private fun captureImage(imageCapture: ImageCapture, context: Context, /*state: CameraState, viewModel: CameraViewModel*/) {
+private fun captureImage(
+    imageCapture: ImageCapture,
+    context: Context, /*state: CameraState, viewModel: CameraViewModel*/
+) {
 
     imageCapture.takePicture(ContextCompat.getMainExecutor(context), object :
         ImageCapture.OnImageCapturedCallback() {

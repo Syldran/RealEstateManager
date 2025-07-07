@@ -130,8 +130,8 @@ fun AddPropertyScreen(
                 property = newProperty.copy(photoList = photoList.value),
                 modifier = Modifier
                     .clickable {
-//                        imagePicker.pickMultiImage()
-                        onNavigateToCamera()
+                        imagePicker.pickMultiImage()
+//                        onNavigateToCamera()
                     },
                 viewModel = viewModel
             )

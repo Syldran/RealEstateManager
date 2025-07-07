@@ -9,8 +9,6 @@ import com.ocproject.realestatemanager.presentation.navigation.Screen
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.cameraScreen(navController: NavController) {
-
-
     composable(route = Screen.CameraScreen.route){
         CameraScreen()
     }

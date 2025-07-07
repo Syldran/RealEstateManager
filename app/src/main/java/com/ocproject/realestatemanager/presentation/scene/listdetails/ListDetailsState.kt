@@ -7,7 +7,7 @@ import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.models.Property
 
 data class ListDetailsState(
-    val mapMode: Boolean = true,
+    val mapMode: Boolean = false,
     val properties: List<Property> = emptyList(),
     val isLoadingProgressBar: Boolean = false,
     val isError: Boolean = false,

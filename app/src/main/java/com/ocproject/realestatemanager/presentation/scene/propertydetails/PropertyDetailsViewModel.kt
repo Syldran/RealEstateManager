@@ -10,6 +10,7 @@ import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
+import timber.log.Timber
 
 @KoinViewModel
 class PropertyDetailsViewModel(
@@ -41,6 +42,7 @@ class PropertyDetailsViewModel(
         viewModelScope.launch {
 //            if(propertyId != null && propertyId >= 0L){
             selectedProperty = getPropertyDetailsUseCase(currentPropertyId)
+            Timber.tag("TEST3").d("${selectedProperty?.photoList?.size}")
 //            }
         }
     }

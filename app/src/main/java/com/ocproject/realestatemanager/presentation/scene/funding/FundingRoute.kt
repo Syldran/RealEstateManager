@@ -11,6 +11,5 @@ fun NavGraphBuilder.fundingScreen(navController: NavController){
     composable(route = Screen.FundingScreen.route){
         FundingScreen(
         )
-
     }
 }

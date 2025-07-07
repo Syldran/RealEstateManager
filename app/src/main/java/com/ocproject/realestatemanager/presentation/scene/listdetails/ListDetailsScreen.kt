@@ -29,9 +29,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
@@ -89,52 +91,50 @@ fun ListDetails(
                     if (navigator.currentDestination?.content != null) {
                         navigator.currentDestination?.content?.let { property: Any ->
                             var property = property as Property
-                            Box {
 
-                                if (state.mapMode == false) {
-                                    key(property.id) {
-                                        val propertyDetailsViewModel =
-                                            koinViewModel<PropertyDetailsViewModel>(
-                                                parameters = { parametersOf(property.id) }
-                                            )
-                                        PropertyDetailScreen(
-                                            viewModel = propertyDetailsViewModel,
-                                            propertyId = property.id,
-                                            navigateBack = {
-                                                navigator.navigateBack()
-                                            },
-                                            onNavigateToAddPropertyScreen = {
-                                                onNavigateToAddPropertyScreen(
-                                                    property.id
-                                                )
-                                            },
+                            if (state.mapMode == false) {
+                                key(property.id) {
+                                    val propertyDetailsViewModel =
+                                        koinViewModel<PropertyDetailsViewModel>(
+                                            parameters = { parametersOf(property.id) }
                                         )
-                                    }
-                                } else {
-                                    // possible création des markers ici en amount de MapOfProperties.
-                                    MapOfProperties(
-                                        currentPosition = currentPosition,
-                                        focusPosition = if (false) {
-                                            null
-                                        } else {
-                                            LatLng(property.lat, property.lng)
-                                        }
+                                    PropertyDetailScreen(
+                                        viewModel = propertyDetailsViewModel,
+                                        propertyId = property.id,
+                                        navigateBack = {
+                                            navigator.navigateBack()
+                                        },
+                                        onNavigateToAddPropertyScreen = {
+                                            onNavigateToAddPropertyScreen(
+                                                property.id
+                                            )
+                                        },
                                     )
                                 }
-
+                            } else {
+                                // possible création des markers ici en amount de MapOfProperties.
+                                MapOfProperties(
+                                    currentPosition = currentPosition,
+                                    focusPosition = if (false) {
+                                        null
+                                    } else {
+                                        LatLng(property.lat, property.lng)
+                                    }
+                                )
                             }
+
+
                         }
                     } else {
-                        Box {
 
-                            Text(
-                                text = "Add or select a Property.",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(8.dp),
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        Text(
+                            text = "Add or select a Property.",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp),
+                            textAlign = TextAlign.Center
+                        )
+
                     }
                 }
             },

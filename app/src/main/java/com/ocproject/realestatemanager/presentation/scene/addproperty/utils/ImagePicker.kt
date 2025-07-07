@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 class ImagePicker(
     private val activity: ComponentActivity
 ) {
-//    private lateinit var getVisualMedia: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var getMultiVisualMedia: ActivityResultLauncher<PickVisualMediaRequest>
     private var byteArray: List<ByteArray>? = emptyList()
+//    private lateinit var getVisualMedia: ActivityResultLauncher<PickVisualMediaRequest>
 
 //    @Composable
 //    fun RegisterPicker(onImagePicked: (ByteArray) -> Unit) {

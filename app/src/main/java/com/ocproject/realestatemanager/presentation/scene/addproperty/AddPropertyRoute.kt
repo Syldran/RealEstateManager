@@ -30,7 +30,7 @@ fun NavGraphBuilder.addPropertyScreen(navController: NavController) {
                 navController.popBackStack()
             },
             onNavigateToCamera = {
-                navController.navigate(Screen.CameraScreen.route)
+                navController.navigate(Screen.CameraScreen.route + "/{id}")
             }
         )
     }
