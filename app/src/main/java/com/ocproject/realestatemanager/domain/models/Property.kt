@@ -6,6 +6,7 @@ import java.util.Date
 
 @Parcelize
 data class Property(
+    val id: Long,
     val photoList: List<PhotoProperty>?,
     val interestPoints: List<InterestPoint>,
     val address: String,
@@ -18,5 +19,4 @@ data class Property(
     val surfaceArea: Int?,
     val price: Int?,
     val sold: Long?,
-    val id: Long,
 ): Parcelable

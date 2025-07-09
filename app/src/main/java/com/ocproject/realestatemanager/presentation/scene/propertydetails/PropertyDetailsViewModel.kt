@@ -18,7 +18,7 @@ class PropertyDetailsViewModel(
     private val getPropertyDetailsUseCase: GetPropertyDetailsUseCase,
 ) : ViewModel() {
 
-    var selectedProperty: Property? by mutableStateOf(null)
+  /*  var selectedProperty: Property? by mutableStateOf(null)
         private set
 
     var currentPropertyId: Long by mutableLongStateOf(propertyId)
@@ -46,6 +46,6 @@ class PropertyDetailsViewModel(
 //            }
         }
     }
-
+*/
 
 }

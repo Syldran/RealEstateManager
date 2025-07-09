@@ -47,27 +47,27 @@ import org.koin.core.parameter.parametersOf
 //        )
 //    }
 //}
-fun NavGraphBuilder.propertyDetailsScreen(navController: NavController) {
-    composable(
-        route = Screen.PropertyDetailScreen.route + "/{id}",
-        arguments = listOf(
-            navArgument("id") {
-                type = NavType.LongType
-            }
-        )
-    ) { navBackStackEntry ->
-        val id = navBackStackEntry.arguments?.getLong("id")
-        val viewModel = koinViewModel<PropertyDetailsViewModel>(parameters = { parametersOf(id) })
-
-        PropertyDetailScreen(
-            viewModel = viewModel,
-            propertyId = id ?: 0L,
-            navigateBack = {
-                navController.popBackStack()
-            },
-            onNavigateToAddPropertyScreen = {
-                navController.navigate(Screen.AddPropertyScreen.withArgs(it ?: 0))
-            }
-        )
-    }
-}
+    //fun NavGraphBuilder.propertyDetailsScreen(navController: NavController) {
+    //    composable(
+    //        route = Screen.PropertyDetailScreen.route + "/{id}",
+    //        arguments = listOf(
+    //            navArgument("id") {
+    //                type = NavType.LongType
+    //            }
+    //        )
+    //    ) { navBackStackEntry ->
+    //        val id = navBackStackEntry.arguments?.getLong("id")
+    //        val viewModel = koinViewModel<PropertyDetailsViewModel>(parameters = { parametersOf(id) })
+    //
+    //        PropertyDetailScreen(
+    //            viewModel = viewModel,
+    //            propertyId = id ?: 0L,
+    //            navigateBack = {
+    //                navController.popBackStack()
+    //            },
+    //            onNavigateToAddPropertyScreen = {
+    //                navController.navigate(Screen.AddPropertyScreen.withArgs(it ?: 0))
+    //            }
+    //        )
+    //    }
+    //}

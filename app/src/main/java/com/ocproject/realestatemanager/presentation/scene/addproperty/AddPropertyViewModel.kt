@@ -1,7 +1,5 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,7 +22,6 @@ import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
 import timber.log.Timber
 import java.util.Calendar
-import java.util.Date
 
 @KoinViewModel
 class AddPropertyViewModel(
@@ -55,8 +52,8 @@ class AddPropertyViewModel(
     )
         private set
 
-    var photoList: MutableState<List<PhotoProperty>?> = mutableStateOf(null)
-        private set
+//    var photoList: MutableState<List<PhotoProperty>?> = mutableStateOf(null)
+//        private set
 
 
     init {
@@ -69,7 +66,8 @@ class AddPropertyViewModel(
         if (propertyId != null && propertyId != 0L) {
             viewModelScope.launch {
                 newProperty = getPropertyDetailsUseCase(propertyId)
-                photoList.value = newProperty.photoList
+                onEvent(AddPropertyEvent.UpdatePhotos(newProperty.photoList!!))
+//                photoList.value = newProperty.photoList
             }
 
         } else {
@@ -147,13 +145,14 @@ class AddPropertyViewModel(
                     photoBytes = event.photoProperty.photoBytes,
                     name = event.value,
                 )
-                val list: MutableList<PhotoProperty> = photoList.value?.toMutableList()!!
+                var list: List<PhotoProperty> = state.value.photoList
                 list.forEach {
                     if (it == event.photoProperty) {
-                        list[list.indexOf(it)] = photo
+                        list[list.indexOf(it)].copy(photo.isMain, photo.name, photo.photoBytes)
                     }
                 }
-                photoList.value = list
+                Timber.tag("OnPhotoChangeList").d("${list.size}")
+                onEvent(AddPropertyEvent.UpdatePhotos(list))
             }
 
             is AddPropertyEvent.OnChangeNavigationStatus -> onChangeNavStatus()
@@ -172,10 +171,18 @@ class AddPropertyViewModel(
 
                     cpt++
                 }
-                photoList.value = list
+                Timber.tag("OnPhotoPicked").d("${list.size}")
+                onEvent(AddPropertyEvent.UpdatePhotos(list.toList()))
             }
 
-            else -> {}
+            is AddPropertyEvent.UpdatePhotos -> {
+                _state.update {
+                    it.copy(
+                        photoList = event.photos
+                    )
+                }
+            }
+
         }
 
 
@@ -220,16 +227,18 @@ class AddPropertyViewModel(
 
                 viewModelScope.launch {
                     var idProperty: Long = if (property.createdDate == null) {
+                        Timber.tag("AddPropPhotos1").d("${state.value.photoList.size}")
                         savePropertyUseCase(
                             property.copy(
-                                photoList = photoList.value,
+                                photoList = state.value.photoList,
                                 createdDate = Calendar.getInstance().timeInMillis
                             )
                         )
                     } else {
+                        Timber.tag("AddPropPhotos2").d("${state.value.photoList.size}")
                         savePropertyUseCase(
                             property.copy(
-                                photoList = photoList.value,
+                                photoList = state.value.photoList,
                             )
                         )
 

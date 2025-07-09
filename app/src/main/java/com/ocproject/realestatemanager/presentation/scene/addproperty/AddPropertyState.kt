@@ -1,6 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
 import androidx.compose.ui.graphics.ImageBitmap
+import com.ocproject.realestatemanager.domain.models.PhotoProperty
 
 data class AddPropertyState(
     val addressError: String? = null,
@@ -13,5 +14,6 @@ data class AddPropertyState(
     val surfaceAreaError: String? = null,
     val priceError: String? = null,
     val navToPropertyListScreen: Boolean = false,
+    val photoList : List<PhotoProperty> = emptyList(),
 
 )

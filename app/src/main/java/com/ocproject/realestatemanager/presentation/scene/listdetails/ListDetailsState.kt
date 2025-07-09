@@ -9,6 +9,7 @@ import com.ocproject.realestatemanager.domain.models.Property
 data class ListDetailsState(
     val mapMode: Boolean = false,
     val properties: List<Property> = emptyList(),
+    val selectedProperty: Property? = null,
     val isLoadingProgressBar: Boolean = false,
     val isError: Boolean = false,
     val isFilterSheetOpen: Boolean = false,

@@ -1,12 +1,14 @@
 package com.ocproject.realestatemanager.presentation.scene.listdetails
 
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.models.Property
 
 sealed interface ListDetailsEvent {
-    data class OnClickPropertyDisplayMode(val map: Boolean): ListDetailsEvent
-    data object DismissFilter :ListDetailsEvent
+    data class OnClickPropertyDisplayMode(val map: Boolean) : ListDetailsEvent
+    data object DismissFilter : ListDetailsEvent
     data object OpenFilter : ListDetailsEvent
     data class DeleteProperty(val property: Property) : ListDetailsEvent
     data class GetProperties(val filter: Filter) : ListDetailsEvent
@@ -17,6 +19,7 @@ sealed interface ListDetailsEvent {
     data class OnShopChecked(val value: Boolean) : ListDetailsEvent
     data class OnTransportChecked(val value: Boolean) : ListDetailsEvent
     data class OnAreaCodeChosen(val code: Int?) : ListDetailsEvent
-    data class OnDateRangeSelected(val startRange: Long, val endRange: Long): ListDetailsEvent
-    data class OnCreationDateRangeSelected(val startRange: Long, val endRange: Long): ListDetailsEvent
+    data class OnDateRangeSelected(val startRange: Long, val endRange: Long) : ListDetailsEvent
+    data class OnCreationDateRangeSelected(val startRange: Long, val endRange: Long) : ListDetailsEvent
+    data class UpdateSelectedProperty(val property: Property?) : ListDetailsEvent
 }

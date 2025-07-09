@@ -69,7 +69,7 @@ fun AddPropertyScreen(
         viewModel.onEvent(AddPropertyEvent.OnPhotoPicked(it))
     }
     val newProperty = viewModel.newProperty
-    val photoList = viewModel.photoList
+//    val photoList = viewModel.photoList
     val state by viewModel.state.collectAsState()
 
     var soldChecked by remember { mutableStateOf(false) }
@@ -127,7 +127,7 @@ fun AddPropertyScreen(
 
 
             PhotosComposable(
-                property = newProperty.copy(photoList = photoList.value),
+                property = newProperty.copy(photoList = state.photoList),
                 modifier = Modifier
                     .clickable {
                         imagePicker.pickMultiImage()

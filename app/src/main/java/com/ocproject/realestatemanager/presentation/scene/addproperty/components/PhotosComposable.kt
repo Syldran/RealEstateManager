@@ -97,7 +97,7 @@ fun PhotosComposable(
                         )
                         IconButton(
                             onClick = {
-                                viewModel.photoList.value = emptyList()
+                                viewModel.onEvent(AddPropertyEvent.UpdatePhotos(emptyList()))
                             },
                             colors = IconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,

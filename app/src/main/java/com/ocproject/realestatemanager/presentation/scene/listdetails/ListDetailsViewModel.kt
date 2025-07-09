@@ -1,5 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.listdetails
 
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
+import timber.log.Timber
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.Date
@@ -335,6 +338,7 @@ class ListDetailsViewModel(
         return formatter.format(date)
     }
 
+    @OptIn(ExperimentalMaterial3AdaptiveApi::class)
     fun onEvent(event: ListDetailsEvent) {
         when (event) {
             is ListDetailsEvent.OnClickPropertyDisplayMode -> {
@@ -639,6 +643,15 @@ class ListDetailsViewModel(
                         areaCodeFilter = state.value.chosenAreaCode,
                     )
                 )
+            }
+
+            is ListDetailsEvent.UpdateSelectedProperty -> {
+                    _state.update {
+                        it.copy(
+                            selectedProperty = event.property
+                        )
+                    }
+                Timber.tag("SELECTED_PROPERTY").d("${state.value.selectedProperty?.id}")
             }
         }
     }

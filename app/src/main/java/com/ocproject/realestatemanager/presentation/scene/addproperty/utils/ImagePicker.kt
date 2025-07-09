@@ -38,7 +38,7 @@ class ImagePicker(
     @Composable
     fun RegisterPickerMulti(onImagesPicked: (List<ByteArray>?) -> Unit) {
         getMultiVisualMedia = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickMultipleVisualMedia(4),
+            contract = ActivityResultContracts.PickMultipleVisualMedia(6),
             onResult = { uris: List<Uri> ->
                 if (uris.isNotEmpty()) {
                     uris.forEach { uri ->
