@@ -7,9 +7,24 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.ocproject.realestatemanager.presentation.navigation.Screen
 
+//@RequiresApi(Build.VERSION_CODES.O)
+//fun NavGraphBuilder.cameraScreen(navController: NavController) {
+//    composable(route = Screen.CameraScreen.route){
+//        CameraScreen()
+//    }
+//}
+
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.cameraScreen(navController: NavController) {
+fun NavGraphBuilder.cameraScreen(
+    navController: NavController
+) {
     composable(route = Screen.CameraScreen.route){
-        CameraScreen()
+        CameraScreen(
+            onPhotoCaptured = { photoBytes ->
+                // Navigate back to add property screen with the photo
+                navController.previousBackStackEntry?.savedStateHandle?.set("photo_captured", photoBytes)
+                navController.popBackStack()
+            }
+        )
     }
 }

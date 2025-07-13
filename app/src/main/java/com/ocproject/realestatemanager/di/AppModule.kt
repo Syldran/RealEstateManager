@@ -64,6 +64,7 @@ val appModule = org.koin.dsl.module {
         ListDetailsViewModel(
             getPropertyListUseCase = get(),
             deletePropertyUseCase = get(),
+            getPropertyDetailsUseCase = get()
         )
     }
 

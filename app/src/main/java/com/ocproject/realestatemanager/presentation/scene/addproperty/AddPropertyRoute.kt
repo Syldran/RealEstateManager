@@ -29,9 +29,13 @@ fun NavGraphBuilder.addPropertyScreen(navController: NavController) {
             onNavigateToListDetails = {
                 navController.popBackStack()
             },
-            onNavigateToCamera = {
-                navController.navigate(Screen.CameraScreen.route + "/{id}")
-            }
+            onNavigateToCamera = { onPhotoCaptured ->
+                navController.navigate(Screen.CameraScreen.route) {
+                    // Pass the callback through navigation
+                    popUpTo(Screen.CameraScreen.route) { inclusive = true }
+                }
+            },
+            navController = navController
         )
     }
 }

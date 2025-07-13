@@ -147,8 +147,8 @@ fun PagerPhotoDetails(property: Property) {
     HorizontalPager(
         state = pagerState,
         modifier = Modifier
-            .height(250.dp)
-            .background(Color.Yellow),
+            .height(250.dp),
+//            .background(Color.Yellow),
         contentPadding = PaddingValues(horizontal = 64.dp),
     ) { page ->
 
@@ -201,7 +201,7 @@ fun CardContent(page: Int, pagerState: PagerState, property: Property) {
         ) {
             Text(
                 textAlign = TextAlign.Center,
-                modifier = Modifier.wrapContentHeight().background(Color.Green),
+                modifier = Modifier.wrapContentHeight()/*.background(Color.Green)*/,
                 text = property.photoList?.get(page)?.name ?: "",
             )
             AsyncImage(

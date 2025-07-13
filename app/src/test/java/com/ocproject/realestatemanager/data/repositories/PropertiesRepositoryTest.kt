@@ -12,19 +12,20 @@ import org.junit.Test
 
 class PropertiesRepositoryTest {
     val property = Property(
+        id = 1L,
         photoList = emptyList(),
         interestPoints = emptyList(),
         address =  "Somewhere",
         town = "NowhereCity",
         lat =  120.5,
         lng = 50.30,
-        "Faraway",
+        country = "Faraway",
         createdDate =  null,
         areaCode = 18290,
         surfaceArea =  150,
         price =  150000,
-        sold = false,
-        id = 1L,
+        sold = null,
+
     )
 
     @Test

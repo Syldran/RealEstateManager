@@ -88,7 +88,7 @@ ktlint {
     outputColorName.set("RED")
     ignoreFailures.set(true)
     version.set("1.0.0")
-    disabledRules.set(setOf("no-wildcard-imports"))
+//    disabledRules.set(setOf("no-wildcard-imports"))
     reporters {
         reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
         reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)

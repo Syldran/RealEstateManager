@@ -37,7 +37,8 @@ fun PropertyListScreen(
     viewModel: ListDetailsViewModel = koinViewModel(),
     onClick: (property: Property?) -> Unit,
 ) {
-    val state by    viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsState()
+
     Row {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -47,7 +48,7 @@ fun PropertyListScreen(
 
             item {
                 Text(
-                    text = "List of properties (${state.properties.size})",
+                    text = "List of properties (${state.sortedProperties.size})",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
@@ -57,10 +58,10 @@ fun PropertyListScreen(
             }
 
             items(
-                items = state.properties,
+                items = state.sortedProperties,
                 key = { property ->
                     property.id
-                }) { property:Property? ->
+                }) { property: Property? ->
                 PropertyListItem(
                     viewModel = viewModel,
                     propertyWithPhotos = property!!,

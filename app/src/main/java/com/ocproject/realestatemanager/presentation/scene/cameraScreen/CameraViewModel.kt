@@ -3,7 +3,6 @@ package com.ocproject.realestatemanager.presentation.scene.cameraScreen
 import androidx.lifecycle.ViewModel
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyState
-import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

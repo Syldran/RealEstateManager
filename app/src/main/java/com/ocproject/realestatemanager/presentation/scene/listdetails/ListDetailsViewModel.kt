@@ -1,12 +1,9 @@
 package com.ocproject.realestatemanager.presentation.scene.listdetails
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ocproject.realestatemanager.core.DataState
-import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.core.InterestPoint
 import com.ocproject.realestatemanager.core.Order
 import com.ocproject.realestatemanager.core.SellingStatus
@@ -14,85 +11,36 @@ import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
+import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
 import timber.log.Timber
 import java.text.DateFormat
-import java.util.Calendar
 import java.util.Date
 
 class ListDetailsViewModel(
     @InjectedParam
     private val getPropertyListUseCase: GetPropertyListUseCase,
     private val deletePropertyUseCase: DeletePropertyUseCase,
+    private val getPropertyDetailsUseCase: GetPropertyDetailsUseCase,
 ) : ViewModel() {
-
-
-    val sortedProperties = MutableStateFlow(emptyList<Property>())
-    private var _properties = emptyList<Property>()
-    private val selectedTags = mutableStateOf(listOf<InterestPoint>())
-
-
-    val _filter = MutableStateFlow(
-        Filter(
-            sortType = SortType.PRICE,
-            orderPrice = Order.ASC,
-            orderDate = Order.ASC,
-            orderSurface = Order.ASC,
-            rangePrice = Range<Int>(0, Int.MAX_VALUE),
-            rangeDate = Range<Long>(0L, Calendar.getInstance().timeInMillis),
-            soldRangeDate = Range<Long>(0L, Calendar.getInstance().timeInMillis),
-            rangeSurface = Range<Int>(0, Int.MAX_VALUE),
-            sellingStatus = SellingStatus.ALL,
-            tagSchool = false,
-            tagTransport = false,
-            tagShop = false,
-            tagPark = false,
-            areaCodeFilter = null,
-        )
-    )
-
     private val _state = MutableStateFlow(ListDetailsState())
-    val state: StateFlow<ListDetailsState> = combine(
-        _state,
-        sortedProperties,
-        _filter
-    ) { state, sortedProperties, filter ->
-        state.copy(
-            properties = sortedProperties,
-            sortType = filter.sortType,
-            orderPrice = filter.orderPrice,
-            orderDate = filter.orderDate,
-            orderSurface = filter.orderSurface,
-            rangePrice = filter.rangePrice,
-            rangeDate = filter.rangeDate,
-            soldRangeDate = filter.soldRangeDate,
-            rangeSurface = filter.rangeSurface,
-            soldState = filter.sellingStatus,
-            shopState = filter.tagShop,
-            schoolState = filter.tagSchool,
-            parkState = filter.tagPark,
-            transportState = filter.tagTransport,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), ListDetailsState())
+    val state = _state.asStateFlow()
 
     init {
-
-        getPropertyList(_filter.value)
+        getPropertyList()
+        onEvent(ListDetailsEvent.GetDetails)
     }
 
     private fun setMaxPrice() {
         viewModelScope.launch {
-            val maxPriceProperty = _properties.maxByOrNull { propertyWithPhoto ->
+            val maxPriceProperty = state.value.properties.maxByOrNull { propertyWithPhoto ->
                 propertyWithPhoto.price!!
             }
 
@@ -106,7 +54,7 @@ class ListDetailsViewModel(
 
     private fun setMaxSurface() {
         viewModelScope.launch {
-            val maxSurfaceProperty = _properties.maxByOrNull { propertyWithPhoto ->
+            val maxSurfaceProperty = state.value.properties.maxByOrNull { propertyWithPhoto ->
                 propertyWithPhoto.surfaceArea!!
             }
 
@@ -121,7 +69,7 @@ class ListDetailsViewModel(
     fun getAreaCodes() {
         viewModelScope.launch {
             val areaCodesFilter = mutableListOf<Int>()
-            for (property in _properties) {
+            for (property in state.value.properties) {
                 if (!areaCodesFilter.contains(property.areaCode)) {
                     areaCodesFilter += property.areaCode!!
                 }
@@ -134,40 +82,40 @@ class ListDetailsViewModel(
         }
     }
 
-    private fun addTags(filter: Filter) {
+    private fun addTags() {
         val currentTags = emptyList<InterestPoint>().toMutableList()
-        if (filter.tagTransport) {
+        if (state.value.transportTag) {
             currentTags.add(InterestPoint.TRANSPORT)
         } else {
             if (currentTags.contains(InterestPoint.TRANSPORT)) {
                 currentTags.remove(InterestPoint.TRANSPORT)
             }
         }
-        if (filter.tagSchool) {
+        if (state.value.schoolTag) {
             currentTags.add(InterestPoint.SCHOOL)
         } else {
             if (currentTags.contains(InterestPoint.SCHOOL)) {
                 currentTags.remove(InterestPoint.SCHOOL)
             }
         }
-        if (filter.tagShop) {
+        if (state.value.shopTag) {
             currentTags.add(InterestPoint.SHOP)
         } else {
             if (currentTags.contains(InterestPoint.SHOP)) {
                 currentTags.remove(InterestPoint.SHOP)
             }
         }
-        if (filter.tagPark) {
+        if (state.value.parkTag) {
             currentTags.add(InterestPoint.PARK)
         } else {
             if (currentTags.contains(InterestPoint.PARK)) {
                 currentTags.remove(InterestPoint.PARK)
             }
         }
-        selectedTags.value = currentTags
+        state.value.selectedTags.value = currentTags
     }
 
-    fun getPropertyList(filter: Filter) {
+    fun getPropertyList() {
 
         getPropertyListUseCase().onEach { propertiesDataState ->
             when (propertiesDataState) {
@@ -193,10 +141,9 @@ class ListDetailsViewModel(
                             isError = false,
                         )
                     }
-                    _properties = propertiesDataState.data
+                    onEvent(ListDetailsEvent.UpdateProperties(propertiesDataState.data))
                     setMaxPrice()
                     setMaxSurface()
-                    getPropertiesSorted(filter)
                     getAreaCodes()
                 }
             }
@@ -204,109 +151,92 @@ class ListDetailsViewModel(
 
     }
 
-    fun getPropertiesSorted(filter: Filter) {
-        addTags(filter)
-        viewModelScope.launch {
-            var filteredProperties: MutableList<Property> =
-                emptyList<Property>().toMutableList()
-            sortedProperties.update {
+    fun sortProperties(): List<Property> {
+        addTags()
+        var filteredProperties: MutableList<Property> = emptyList<Property>().toMutableList()
+        filteredProperties.addAll(
+            state.value.properties.filter { property ->
+                state.value.selectedTags.value.isEmpty() ||
+                        state.value.selectedTags.value.all { it in property.interestPoints }
+            }
+                .filter { it.price!! >= state.value.rangePrice.lower && it.price <= state.value.rangePrice.upper }
+                .filter { it.surfaceArea!! >= state.value.rangeSurface.lower && it.surfaceArea <= state.value.rangeSurface.upper }
+            // WHY ???
+//                .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+        )
 
-                filteredProperties.addAll(
-                    _properties.filter { property ->
-                        selectedTags.value.isEmpty() ||
-                                selectedTags.value.all { it in property.interestPoints }
-                    }
-                        .filter { it.price!! >= filter.rangePrice.lower && it.price <= filter.rangePrice.upper }
-                        .filter { it.surfaceArea!! >= filter.rangeSurface.lower && it.surfaceArea <= filter.rangeSurface.upper }
-                        .filter { it.createdDate!! >= filter.rangeDate.lower && it.createdDate <= filter.rangeDate.upper }
+        filteredProperties = sortByAreaCode(filteredProperties.toList()).toMutableList()
+        return when (state.value.soldStatus) {
+            SellingStatus.SOLD -> {
+                subFilter(
+                    filteredProperties
+                        .filter { it.sold != null && it.sold >= state.value.soldRangeDate.lower && it.sold <= state.value.soldRangeDate.upper })
+            }
+
+            SellingStatus.ALL -> {
+                subFilter(
+                    filteredProperties
                 )
-                filteredProperties = sortByAreaCode(filteredProperties, filter).toMutableList()
 
-                when (filter.sellingStatus) {
-                    SellingStatus.SOLD -> {
-                        subFilter(
-                            filteredProperties.filter { it.sold != null }
-                                .filter { it.sold != null && it.sold >= filter.soldRangeDate.lower && it.sold <= filter.soldRangeDate.upper },
-                            filter
-                        )
-                    }
+            }
 
-                    SellingStatus.ALL -> {
-                        subFilter(filteredProperties, filter)
-                    }
-
-                    SellingStatus.PURCHASABLE -> {
-                        subFilter(filteredProperties.filter { it.sold == null }, filter)
-                    }
-                }
-
+            SellingStatus.PURCHASABLE -> {
+                subFilter(filteredProperties.filter { it.sold == null })
             }
         }
     }
 
-
     private fun sortByPrice(
         properties: List<Property>,
-        filter: Filter
     ): List<Property> {
-        return when (filter.orderPrice) {
+        return when (state.value.orderPrice) {
             Order.ASC -> {
                 properties
                     .sortedBy { it.price }
-                    .filter { it.price!! >= filter.rangePrice.lower && it.price <= filter.rangePrice.upper }
             }
 
             Order.DESC -> {
                 properties
                     .sortedByDescending { it.price }
-                    .filter { it.price!! >= filter.rangePrice.lower && it.price <= filter.rangePrice.upper }
             }
         }
     }
 
     private fun sortBySurface(
         properties: List<Property>,
-        filter: Filter
     ): List<Property> {
-        return when (filter.orderSurface) {
+        return when (state.value.orderSurface) {
             Order.ASC -> {
                 properties
                     .sortedBy { it.surfaceArea }
-                    .filter { it.surfaceArea!! >= filter.rangeSurface.lower && it.surfaceArea <= filter.rangeSurface.upper }
             }
 
             Order.DESC -> {
                 properties
                     .sortedByDescending { it.surfaceArea }
-                    .filter { it.surfaceArea!! >= filter.rangeSurface.lower && it.surfaceArea <= filter.rangeSurface.upper }
             }
         }
     }
 
     private fun sortByDate(
         properties: List<Property>,
-        filter: Filter
     ): List<Property> {
-        return when (filter.orderDate) {
+        return when (state.value.orderDate) {
             Order.ASC ->
                 properties
                     .sortedBy { it.createdDate }
-                    .filter { it.createdDate!! >= filter.rangeDate.lower && it.createdDate <= filter.rangeDate.upper }
 
             Order.DESC ->
                 properties
                     .sortedByDescending { it.createdDate }
-                    .filter { it.createdDate!! >= filter.rangeDate.lower && it.createdDate <= filter.rangeDate.upper }
-
         }
     }
 
     private fun sortByAreaCode(
         properties: List<Property>,
-        filter: Filter
     ): List<Property> {
-        return if (filter.areaCodeFilter != null) {
-            properties.filter { it.areaCode == filter.areaCodeFilter }
+        return if (state.value.chosenAreaCode != null) {
+            properties.filter { it.areaCode == state.value.chosenAreaCode }
         } else {
             properties
         }
@@ -314,19 +244,18 @@ class ListDetailsViewModel(
 
     private fun subFilter(
         properties: List<Property>,
-        filter: Filter
     ): List<Property> {
-        return when (filter.sortType) {
+        return when (state.value.sortType) {
             SortType.PRICE -> {
-                sortByPrice(properties, filter)
+                sortByPrice(properties)
             }
 
             SortType.DATE -> {
-                sortByDate(properties, filter)
+                sortByDate(properties)
             }
 
             SortType.SURFACE -> {
-                sortBySurface(properties, filter)
+                sortBySurface(properties)
             }
         }
     }
@@ -353,31 +282,31 @@ class ListDetailsViewModel(
                 viewModelScope.launch {
                     deletePropertyUseCase(event.property)
                 }
-                getPropertyList(_filter.value)
+                getPropertyList()
             }
 
             is ListDetailsEvent.GetProperties -> {
 
                 viewModelScope.launch {
-                    _filter.update {
-                        it.copy(
-                            sortType = event.filter.sortType,
-                            orderPrice = event.filter.orderPrice,
-                            orderDate = event.filter.orderDate,
-                            orderSurface = event.filter.orderSurface,
-                            rangePrice = event.filter.rangePrice,
-                            rangeDate = event.filter.rangeDate,
-                            soldRangeDate = event.filter.soldRangeDate,
-                            rangeSurface = event.filter.rangeSurface,
-                            sellingStatus = event.filter.sellingStatus,
-                            tagSchool = event.filter.tagSchool,
-                            tagShop = event.filter.tagShop,
-                            tagTransport = event.filter.tagTransport,
-                            tagPark = event.filter.tagPark,
-                            areaCodeFilter = event.filter.areaCodeFilter
+                    getPropertyList()
+                }
+            }
+
+            is ListDetailsEvent.GetDetails -> {
+                viewModelScope.launch {
+                    if (state.value.selectedProperty != null) {
+                        onEvent(
+                            ListDetailsEvent.UpdateSelectedProperty(
+                                getPropertyDetailsUseCase(
+                                    state.value.selectedProperty!!.id
+                                )
+                            )
                         )
+                    } else {
+                        onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
                     }
-                    getPropertyList(_filter.value)
+                    Timber.tag("DETAILS")
+                        .d("photonbr :${state.value.selectedProperty?.photoList?.size}, selectedPropertyId :${state.value.selectedProperty?.id}")
                 }
             }
 
@@ -400,7 +329,7 @@ class ListDetailsViewModel(
             }
 
             is ListDetailsEvent.SetRangePrice -> {
-                _filter.update {
+                _state.update {
                     it.copy(
                         rangePrice = Range<Int>(
                             event.rangePrice.lower.toInt(),
@@ -408,28 +337,11 @@ class ListDetailsViewModel(
                         )
                     )
                 }
-                getPropertiesSorted(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.SetRangeSurface -> {
-                _filter.update {
+                _state.update {
                     it.copy(
                         rangeSurface = Range<Int>(
                             event.rangeSurface.lower.toInt(),
@@ -437,131 +349,43 @@ class ListDetailsViewModel(
                         )
                     )
                 }
-                getPropertiesSorted(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.OnParkChecked -> {
-                _filter.update {
+                _state.update {
                     it.copy(
-                        tagPark = !event.value,
+                        parkTag = !event.value,
                     )
                 }
-                getPropertyList(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.OnSchoolChecked -> {
-                _filter.update {
+                _state.update {
                     it.copy(
-                        tagSchool = !event.value,
+                        schoolTag = !event.value,
                     )
                 }
-                getPropertyList(
-                    filter = Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.OnShopChecked -> {
-                _filter.update {
+                _state.update {
                     it.copy(
-                        tagShop = !event.value,
+                        shopTag = !event.value,
                     )
                 }
-                getPropertyList(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.OnTransportChecked -> {
-                _filter.update {
+                _state.update {
                     it.copy(
-                        tagTransport = !event.value,
+                        transportTag = !event.value,
                     )
                 }
-                getPropertyList(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = null,
-                    )
-                )
-                _state.value = _state.value.copy(
-                    transportState = !event.value
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.OnAreaCodeChosen -> {
@@ -570,88 +394,77 @@ class ListDetailsViewModel(
                         chosenAreaCode = event.code
                     )
                 }
-                getPropertiesSorted(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.OnDateRangeSelected -> {
-
-                _filter.update {
+                _state.update {
                     it.copy(
                         rangeDate = Range<Long>(event.startRange, event.endRange)
                     )
                 }
-
-
-                getPropertiesSorted(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
-            is ListDetailsEvent.OnCreationDateRangeSelected -> {
-                _filter.update {
+            is ListDetailsEvent.OnSoldDateRangeSelected -> {
+                _state.update {
                     it.copy(
-                        rangeDate = Range<Long>(event.startRange, event.endRange)
+                        soldRangeDate = Range<Long>(event.startRange, event.endRange)
                     )
                 }
-                getPropertiesSorted(
-                    Filter(
-                        sortType = state.value.sortType,
-                        orderPrice = state.value.orderPrice,
-                        orderDate = state.value.orderDate,
-                        orderSurface = state.value.orderSurface,
-                        rangePrice = state.value.rangePrice,
-                        rangeDate = state.value.rangeDate,
-                        soldRangeDate = state.value.soldRangeDate,
-                        rangeSurface = state.value.rangeSurface,
-                        sellingStatus = state.value.soldState,
-                        tagSchool = state.value.schoolState,
-                        tagShop = state.value.shopState,
-                        tagTransport = state.value.transportState,
-                        tagPark = state.value.parkState,
-                        areaCodeFilter = state.value.chosenAreaCode,
-                    )
-                )
+                getPropertyList()
             }
 
             is ListDetailsEvent.UpdateSelectedProperty -> {
+                viewModelScope.launch {
                     _state.update {
                         it.copy(
                             selectedProperty = event.property
                         )
                     }
+                }
                 Timber.tag("SELECTED_PROPERTY").d("${state.value.selectedProperty?.id}")
+            }
+
+            is ListDetailsEvent.UpdateSortedProperties -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            sortedProperties = sortProperties()
+                        )
+                    }
+                }
+            }
+
+            is ListDetailsEvent.UpdateProperties -> {
+                _state.update {
+                    it.copy(
+                        properties = event.properties
+                    )
+                }
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
+            }
+
+            is ListDetailsEvent.UpdateFilter -> {
+                _state.update {
+                    it.copy(
+                        sortType = event.filter.sortType,
+                        orderPrice = event.filter.orderPrice,
+                        orderDate = event.filter.orderDate,
+                        orderSurface = event.filter.orderSurface,
+                        rangePrice = event.filter.rangePrice,
+                        rangeDate = event.filter.rangeDate,
+                        soldRangeDate = event.filter.soldRangeDate,
+                        rangeSurface = event.filter.rangeSurface,
+                        soldStatus = event.filter.sellingStatus,
+                        schoolTag = event.filter.tagSchool,
+                        transportTag = event.filter.tagTransport,
+                        shopTag = event.filter.tagShop,
+                        parkTag = event.filter.tagPark,
+                        chosenAreaCode = event.filter.areaCodeFilter,
+                    )
+                }
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
         }
     }

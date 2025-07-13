@@ -13,7 +13,7 @@ data class PropertyEntity(
     val lat: Double,
     val lng: Double,
     val country: String,
-    val createdDate: Long?,
+    val createdDate: Long,
     val areaCode: Int?,
     val surfaceArea: Int?,
     val price: Int?,

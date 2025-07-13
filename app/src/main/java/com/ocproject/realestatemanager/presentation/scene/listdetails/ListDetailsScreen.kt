@@ -14,8 +14,10 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import com.ocproject.realestatemanager.presentation.scene.propertylist.PropertyL
 import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListTopBar
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -43,9 +46,11 @@ fun ListDetails(
 ) {
 
     val state by viewModel.state.collectAsState()
-    val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
+//    val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
+    val navigator = rememberListDetailPaneScaffoldNavigator<Property>()
+    val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
-        viewModel.onEvent(ListDetailsEvent.GetProperties(viewModel._filter.value))
+        viewModel.onEvent(ListDetailsEvent.GetProperties)
     }
     Column {
         PropertyListTopBar(
@@ -59,30 +64,29 @@ fun ListDetails(
         NavigableListDetailPaneScaffold(
             navigator = navigator,
             listPane = {
-//                navigator.navigateTo(
-//                    ListDetailPaneScaffoldRole.Detail,
-//                    content = null
-//                )
                 PropertyListScreen(
                     onClick = { property ->
+
                         viewModel.onEvent(ListDetailsEvent.UpdateSelectedProperty(property))
-                        Timber.tag("SELECTED_ListDetailspri").d("${state.selectedProperty?.id}")
-                        navigator.navigateTo(
-                            ListDetailPaneScaffoldRole.Detail,
-                            content = property
-                        )
-                        Timber.tag("SELECTED_ListDetails").d("${state.selectedProperty?.id}")
+                        scope.launch {
+                            navigator.navigateTo(
+                                ListDetailPaneScaffoldRole.Detail,
+                                property
+                            )
+                        }
                     },
                 )
             },
             detailPane = {
                 AnimatedPane {
-                    if (navigator.currentDestination?.content != null) {
+                    if (navigator.currentDestination?.contentKey != null) {
                         Timber.tag("SELECTED_ListDetails2").d("${state.selectedProperty?.id}")
-                        if (state.mapMode == false) {
+                        if (!state.mapMode) {
                             PropertyDetailScreen(
                                 navigateBack = {
-                                    navigator.navigateBack()
+                                    scope.launch {
+                                        navigator.navigateBack()
+                                    }
                                 },
                                 onNavigateToAddPropertyScreen = {
                                     onNavigateToAddPropertyScreen(
@@ -90,9 +94,20 @@ fun ListDetails(
                                     )
                                 },
                             )
+                        } else {
+                            MapOfProperties(
+                                currentPosition = currentPosition,
+                                focusPosition = if (false) {
+                                    null
+                                } else {
+                                    LatLng(
+                                        state.selectedProperty?.lat ?: 0.0,
+                                        state.selectedProperty?.lng ?: 0.0
+                                    )
+                                }
+                            )
                         }
-                    }
-                    else {
+                    } else {
                         Text(
                             text = "Add or select a Property.",
                             modifier = Modifier
@@ -156,46 +171,3 @@ fun ListDetails(
         )
     }
 }
-
-/*
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CarouselExample() {
-    data class CarouselItem(
-        val id: Int,
-        @DrawableRes val imageResId: Int,
-        val contentDescription: String
-    )
-
-    val carouselItems = remember {
-        listOf(
-            CarouselItem(0, R.drawable.cupcake, "cupcake"),
-            CarouselItem(1, R.drawable.donut, "donut"),
-            CarouselItem(2, R.drawable.eclair, "eclair"),
-            CarouselItem(3, R.drawable.froyo, "froyo"),
-            CarouselItem(4, R.drawable.gingerbread, "gingerbread"),
-        )
-    }
-
-    HorizontalUncontainedCarousel(
-        state = rememberCarouselState { carouselItems.count() },
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(top = 16.dp, bottom = 16.dp),
-        itemWidth = 186.dp,
-        itemSpacing = 8.dp,
-        contentPadding = PaddingValues(horizontal = 16.dp)
-    ) { i ->
-        val item = carouselItems[i]
-        Image(
-            modifier = Modifier
-                .height(205.dp)
-                .maskClip(MaterialTheme.shapes.extraLarge),
-            painter = painterResource(id = item.imageResId),
-            contentDescription = item.contentDescription,
-            contentScale = ContentScale.Crop
-        )
-    }
-}
-*/

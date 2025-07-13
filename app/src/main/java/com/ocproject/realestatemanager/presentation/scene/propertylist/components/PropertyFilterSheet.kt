@@ -101,10 +101,10 @@ fun PropertyFilterSheet(
                         )
                         RadioButton(
                             modifier = Modifier.weight(2f),
-                            selected = state.soldState == SellingStatus.PURCHASABLE,
+                            selected = state.soldStatus == SellingStatus.PURCHASABLE,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             SortType.PRICE,
                                             state.orderPrice,
@@ -115,10 +115,10 @@ fun PropertyFilterSheet(
                                             state.soldRangeDate,
                                             state.rangeSurface,
                                             SellingStatus.PURCHASABLE,
-                                            state.schoolState,
-                                            state.parkState,
-                                            state.shopState,
-                                            state.transportState,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -128,10 +128,10 @@ fun PropertyFilterSheet(
                         Text(text = "Sold", Modifier.padding(end = 16.dp))
                         RadioButton(
                             modifier = Modifier.weight(1f),
-                            selected = state.soldState == SellingStatus.SOLD,
+                            selected = state.soldStatus == SellingStatus.SOLD,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             state.sortType,
                                             state.orderPrice,
@@ -142,10 +142,10 @@ fun PropertyFilterSheet(
                                             state.soldRangeDate,
                                             state.rangeSurface,
                                             SellingStatus.SOLD,
-                                            state.schoolState,
-                                            state.parkState,
-                                            state.shopState,
-                                            state.transportState,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -155,10 +155,10 @@ fun PropertyFilterSheet(
                         Text(text = "All", Modifier.padding(end = 16.dp))
                         RadioButton(
                             modifier = Modifier.weight(1f),
-                            selected = state.soldState == SellingStatus.ALL,
+                            selected = state.soldStatus == SellingStatus.ALL,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             state.sortType,
                                             state.orderPrice,
@@ -169,10 +169,10 @@ fun PropertyFilterSheet(
                                             state.soldRangeDate,
                                             state.rangeSurface,
                                             SellingStatus.ALL,
-                                            state.schoolState,
-                                            state.parkState,
-                                            state.shopState,
-                                            state.transportState,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -189,7 +189,7 @@ fun PropertyFilterSheet(
                             selected = state.sortType == SortType.PRICE,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             SortType.PRICE,
                                             state.orderPrice,
@@ -199,11 +199,11 @@ fun PropertyFilterSheet(
                                             state.rangeDate,
                                             state.soldRangeDate,
                                             state.rangeSurface,
-                                            state.soldState,
-                                            state.schoolState,
-                                            state.parkState,
-                                            state.shopState,
-                                            state.transportState,
+                                            state.soldStatus,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -217,7 +217,7 @@ fun PropertyFilterSheet(
                             selected = state.orderPrice == Order.ASC,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             state.sortType,
                                             Order.ASC,
@@ -227,11 +227,11 @@ fun PropertyFilterSheet(
                                             state.rangeDate,
                                             state.soldRangeDate,
                                             state.rangeSurface,
-                                            state.soldState,
-                                            state.schoolState,
-                                            state.parkState,
-                                            state.shopState,
-                                            state.transportState,
+                                            state.soldStatus,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -245,7 +245,7 @@ fun PropertyFilterSheet(
                             selected = state.orderPrice == Order.DESC,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             state.sortType,
                                             Order.DESC,
@@ -255,11 +255,11 @@ fun PropertyFilterSheet(
                                             state.rangeDate,
                                             state.soldRangeDate,
                                             state.rangeSurface,
-                                            state.soldState,
-                                            state.schoolState,
-                                            state.parkState,
-                                            state.shopState,
-                                            state.transportState,
+                                            state.soldStatus,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -298,6 +298,7 @@ fun PropertyFilterSheet(
                     Text(text = "min: ${state.rangePrice.lower}    max:${sliderMax}")
                 }
 
+                //DATE
                 Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
                     Column() {
                         Row {
@@ -307,7 +308,7 @@ fun PropertyFilterSheet(
                                 selected = state.sortType == SortType.DATE,
                                 onClick = {
                                     onEvent(
-                                        ListDetailsEvent.GetProperties(
+                                        ListDetailsEvent.UpdateFilter(
                                             filter = Filter(
                                                 SortType.DATE,
                                                 state.orderPrice,
@@ -317,11 +318,11 @@ fun PropertyFilterSheet(
                                                 state.rangeDate,
                                                 state.soldRangeDate,
                                                 state.rangeSurface,
-                                                state.soldState,
-                                                state.schoolState,
-                                                state.parkState,
-                                                state.shopState,
-                                                state.transportState,
+                                                state.soldStatus,
+                                                state.schoolTag,
+                                                state.parkTag,
+                                                state.shopTag,
+                                                state.transportTag,
                                                 state.chosenAreaCode,
                                             )
                                         )
@@ -335,7 +336,7 @@ fun PropertyFilterSheet(
                                 selected = state.orderDate == Order.ASC,
                                 onClick = {
                                     onEvent(
-                                        ListDetailsEvent.GetProperties(
+                                        ListDetailsEvent.UpdateFilter(
                                             filter = Filter(
                                                 state.sortType,
                                                 state.orderPrice,
@@ -345,11 +346,11 @@ fun PropertyFilterSheet(
                                                 state.rangeDate,
                                                 state.soldRangeDate,
                                                 state.rangeSurface,
-                                                state.soldState,
-                                                state.schoolState,
-                                                state.parkState,
-                                                state.shopState,
-                                                state.transportState,
+                                                state.soldStatus,
+                                                state.schoolTag,
+                                                state.parkTag,
+                                                state.shopTag,
+                                                state.transportTag,
                                                 state.chosenAreaCode,
                                             )
                                         )
@@ -363,7 +364,7 @@ fun PropertyFilterSheet(
                                 selected = state.orderDate == Order.DESC,
                                 onClick = {
                                     onEvent(
-                                        ListDetailsEvent.GetProperties(
+                                        ListDetailsEvent.UpdateFilter(
                                             filter = Filter(
                                                 state.sortType,
                                                 state.orderPrice,
@@ -373,11 +374,11 @@ fun PropertyFilterSheet(
                                                 state.rangeDate,
                                                 state.soldRangeDate,
                                                 state.rangeSurface,
-                                                state.soldState,
-                                                state.schoolState,
-                                                state.parkState,
-                                                state.schoolState,
-                                                state.transportState,
+                                                state.soldStatus,
+                                                state.schoolTag,
+                                                state.parkTag,
+                                                state.shopTag,
+                                                state.transportTag,
                                                 state.chosenAreaCode,
                                             )
                                         )
@@ -407,21 +408,21 @@ fun PropertyFilterSheet(
                         ) {
                             Text("Validate Date")
                         }
-                        val creationDateRangePickerState = rememberDateRangePickerState(
+                        val soldDateRangePickerState = rememberDateRangePickerState(
                             initialDisplayMode = DisplayMode.Input,
-                            initialSelectedStartDateMillis = state.rangeDate.lower,
-                            initialSelectedEndDateMillis = state.rangeDate.upper
+                            initialSelectedStartDateMillis = state.soldRangeDate.lower,
+                            initialSelectedEndDateMillis = state.soldRangeDate.upper
                         )
                         DateRangePicker(
 //                    showModeToggle = false,
-                            state = creationDateRangePickerState,
+                            state = soldDateRangePickerState,
                         )
                         TextButton(
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.OnCreationDateRangeSelected(
-                                        creationDateRangePickerState.selectedStartDateMillis!!,
-                                        creationDateRangePickerState.selectedEndDateMillis!!
+                                    ListDetailsEvent.OnSoldDateRangeSelected(
+                                        soldDateRangePickerState.selectedStartDateMillis!!,
+                                        soldDateRangePickerState.selectedEndDateMillis!!
                                     )
                                 )
                             }
@@ -438,7 +439,7 @@ fun PropertyFilterSheet(
                             selected = state.sortType == SortType.SURFACE,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             SortType.SURFACE,
                                             state.orderPrice,
@@ -448,11 +449,11 @@ fun PropertyFilterSheet(
                                             state.rangeDate,
                                             state.soldRangeDate,
                                             state.rangeSurface,
-                                            state.soldState,
-                                            state.schoolState,
-                                            state.parkState,
-                                            state.shopState,
-                                            state.transportState,
+                                            state.soldStatus,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -466,7 +467,7 @@ fun PropertyFilterSheet(
                             selected = state.orderSurface == Order.ASC,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             sortType = state.sortType,
                                             orderPrice = state.orderPrice,
@@ -476,11 +477,11 @@ fun PropertyFilterSheet(
                                             rangeDate = state.rangeDate,
                                             soldRangeDate = state.soldRangeDate,
                                             rangeSurface = state.rangeSurface,
-                                            sellingStatus = state.soldState,
-                                            tagSchool = state.schoolState,
-                                            tagTransport = state.parkState,
-                                            tagShop = state.shopState,
-                                            tagPark = state.transportState,
+                                            state.soldStatus,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -494,7 +495,7 @@ fun PropertyFilterSheet(
                             selected = state.orderSurface == Order.DESC,
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.GetProperties(
+                                    ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
                                             sortType = state.sortType,
                                             orderPrice = state.orderPrice,
@@ -504,11 +505,11 @@ fun PropertyFilterSheet(
                                             rangeDate = state.rangeDate,
                                             soldRangeDate = state.soldRangeDate,
                                             rangeSurface = state.rangeSurface,
-                                            sellingStatus = state.soldState,
-                                            tagSchool = state.schoolState,
-                                            tagTransport = state.parkState,
-                                            tagShop = state.shopState,
-                                            tagPark = state.transportState,
+                                            state.soldStatus,
+                                            state.schoolTag,
+                                            state.parkTag,
+                                            state.shopTag,
+                                            state.transportTag,
                                             state.chosenAreaCode,
                                         )
                                     )
@@ -616,14 +617,14 @@ fun PropertyFilterSheet(
                         FilterChip(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
-                                onEvent(ListDetailsEvent.OnSchoolChecked(state.schoolState))
+                                onEvent(ListDetailsEvent.OnSchoolChecked(state.schoolTag))
 
                             },
                             label = {
                                 Text("School")
                             },
-                            selected = state.schoolState,
-                            leadingIcon = if (state.schoolState) {
+                            selected = state.schoolTag,
+                            leadingIcon = if (state.schoolTag) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,
@@ -640,14 +641,14 @@ fun PropertyFilterSheet(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.OnParkChecked(state.parkState)
+                                    ListDetailsEvent.OnParkChecked(state.parkTag)
                                 )
                             },
                             label = {
                                 Text("Park")
                             },
-                            selected = state.parkState,
-                            leadingIcon = if (state.parkState) {
+                            selected = state.parkTag,
+                            leadingIcon = if (state.parkTag) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,
@@ -664,14 +665,14 @@ fun PropertyFilterSheet(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.OnShopChecked(state.shopState)
+                                    ListDetailsEvent.OnShopChecked(state.shopTag)
                                 )
                             },
                             label = {
                                 Text("Shop")
                             },
-                            selected = state.shopState,
-                            leadingIcon = if (state.shopState) {
+                            selected = state.shopTag,
+                            leadingIcon = if (state.shopTag) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,
@@ -687,13 +688,13 @@ fun PropertyFilterSheet(
                         FilterChip(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
-                                onEvent(ListDetailsEvent.OnTransportChecked(state.transportState))
+                                onEvent(ListDetailsEvent.OnTransportChecked(state.transportTag))
                             },
                             label = {
                                 Text("Transport")
                             },
-                            selected = state.transportState,
-                            leadingIcon = if (state.transportState) {
+                            selected = state.transportTag,
+                            leadingIcon = if (state.transportTag) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,

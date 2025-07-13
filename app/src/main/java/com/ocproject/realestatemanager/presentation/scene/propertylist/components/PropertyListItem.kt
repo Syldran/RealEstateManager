@@ -52,7 +52,6 @@ fun PropertyListItem(
         Spacer(modifier = Modifier.width(16.dp))
         IconButton(
             onClick = { onEvent(ListDetailsEvent.DeleteProperty(propertyWithPhotos)) },
-//            modifier = Modifier.align(Alignment.End)
         ) {
             Icon(
                 imageVector = Icons.Rounded.Delete,
