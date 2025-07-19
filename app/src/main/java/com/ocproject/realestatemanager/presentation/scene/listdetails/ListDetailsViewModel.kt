@@ -155,14 +155,15 @@ class ListDetailsViewModel(
         addTags()
         var filteredProperties: MutableList<Property> = emptyList<Property>().toMutableList()
         filteredProperties.addAll(
-            state.value.properties.filter { property ->
-                state.value.selectedTags.value.isEmpty() ||
-                        state.value.selectedTags.value.all { it in property.interestPoints }
-            }
+            state.value.properties
+                .filter { property ->
+                    state.value.selectedTags.value.isEmpty() ||
+                            state.value.selectedTags.value.all { it in property.interestPoints }
+                }
                 .filter { it.price!! >= state.value.rangePrice.lower && it.price <= state.value.rangePrice.upper }
                 .filter { it.surfaceArea!! >= state.value.rangeSurface.lower && it.surfaceArea <= state.value.rangeSurface.upper }
-            // WHY ???
-//                .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+                .filter { it.photoList.size >= state.value.minNbrPhotos }
+                .filter { it.createdDate!! >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
         )
 
         filteredProperties = sortByAreaCode(filteredProperties.toList()).toMutableList()
@@ -170,7 +171,9 @@ class ListDetailsViewModel(
             SellingStatus.SOLD -> {
                 subFilter(
                     filteredProperties
-                        .filter { it.sold != null && it.sold >= state.value.soldRangeDate.lower && it.sold <= state.value.soldRangeDate.upper })
+                        .filter { it.sold != null && it.sold >= state.value.soldRangeDate.lower && it.sold <= state.value.soldRangeDate.upper }
+                )
+
             }
 
             SellingStatus.ALL -> {
@@ -193,11 +196,15 @@ class ListDetailsViewModel(
             Order.ASC -> {
                 properties
                     .sortedBy { it.price }
+//                    .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+
             }
 
             Order.DESC -> {
                 properties
                     .sortedByDescending { it.price }
+//                    .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+
             }
         }
     }
@@ -209,11 +216,15 @@ class ListDetailsViewModel(
             Order.ASC -> {
                 properties
                     .sortedBy { it.surfaceArea }
+//                    .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+
             }
 
             Order.DESC -> {
                 properties
                     .sortedByDescending { it.surfaceArea }
+//                    .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+
             }
         }
     }
@@ -225,10 +236,14 @@ class ListDetailsViewModel(
             Order.ASC ->
                 properties
                     .sortedBy { it.createdDate }
+//                    .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+
 
             Order.DESC ->
                 properties
                     .sortedByDescending { it.createdDate }
+//                    .filter { it.createdDate >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+
         }
     }
 
@@ -251,10 +266,14 @@ class ListDetailsViewModel(
             }
 
             SortType.DATE -> {
-                sortByDate(properties)
+                sortByDate(
+                    properties
+//                        .filter { it.createdDate!! >= state.value.rangeDate.lower && it.createdDate <= state.value.rangeDate.upper }
+
+                )
             }
 
-            SortType.SURFACE -> {
+            SortType.AREA -> {
                 sortBySurface(properties)
             }
         }
@@ -290,6 +309,7 @@ class ListDetailsViewModel(
                 viewModelScope.launch {
                     getPropertyList()
                 }
+                onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
             }
 
             is ListDetailsEvent.GetDetails -> {
@@ -305,9 +325,8 @@ class ListDetailsViewModel(
                     } else {
                         onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
                     }
-                    Timber.tag("DETAILS")
-                        .d("photonbr :${state.value.selectedProperty?.photoList?.size}, selectedPropertyId :${state.value.selectedProperty?.id}")
                 }
+                getPropertyList()
             }
 
             ListDetailsEvent.DismissFilter -> {
@@ -337,7 +356,7 @@ class ListDetailsViewModel(
                         )
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.SetRangeSurface -> {
@@ -349,7 +368,7 @@ class ListDetailsViewModel(
                         )
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.OnParkChecked -> {
@@ -358,7 +377,7 @@ class ListDetailsViewModel(
                         parkTag = !event.value,
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.OnSchoolChecked -> {
@@ -367,7 +386,7 @@ class ListDetailsViewModel(
                         schoolTag = !event.value,
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.OnShopChecked -> {
@@ -376,7 +395,7 @@ class ListDetailsViewModel(
                         shopTag = !event.value,
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.OnTransportChecked -> {
@@ -385,7 +404,7 @@ class ListDetailsViewModel(
                         transportTag = !event.value,
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.OnAreaCodeChosen -> {
@@ -394,7 +413,7 @@ class ListDetailsViewModel(
                         chosenAreaCode = event.code
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.OnDateRangeSelected -> {
@@ -403,7 +422,7 @@ class ListDetailsViewModel(
                         rangeDate = Range<Long>(event.startRange, event.endRange)
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.OnSoldDateRangeSelected -> {
@@ -412,7 +431,7 @@ class ListDetailsViewModel(
                         soldRangeDate = Range<Long>(event.startRange, event.endRange)
                     )
                 }
-                getPropertyList()
+                onEvent(ListDetailsEvent.UpdateSortedProperties)
             }
 
             is ListDetailsEvent.UpdateSelectedProperty -> {
@@ -462,9 +481,11 @@ class ListDetailsViewModel(
                         shopTag = event.filter.tagShop,
                         parkTag = event.filter.tagPark,
                         chosenAreaCode = event.filter.areaCodeFilter,
+                        minNbrPhotos = event.filter.minNbrPhotos,
                     )
                 }
                 onEvent(ListDetailsEvent.UpdateSortedProperties)
+
             }
         }
     }

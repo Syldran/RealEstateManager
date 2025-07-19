@@ -8,6 +8,7 @@ import com.ocproject.realestatemanager.domain.models.Property
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.util.Calendar
 
 
 class PropertiesRepositoryTest {
@@ -20,7 +21,7 @@ class PropertiesRepositoryTest {
         lat =  120.5,
         lng = 50.30,
         country = "Faraway",
-        createdDate =  null,
+        createdDate = 50000,
         areaCode = 18290,
         surfaceArea =  150,
         price =  150000,

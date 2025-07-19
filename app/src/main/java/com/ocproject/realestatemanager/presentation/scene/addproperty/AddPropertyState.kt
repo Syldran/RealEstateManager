@@ -25,7 +25,7 @@ data class AddPropertyState(
         lat = 0.0,
         lng = 0.0,
         country = "",
-        createdDate = Calendar.getInstance().timeInMillis,
+        createdDate = null,
         areaCode = null,
         surfaceArea = null,
         price = null,

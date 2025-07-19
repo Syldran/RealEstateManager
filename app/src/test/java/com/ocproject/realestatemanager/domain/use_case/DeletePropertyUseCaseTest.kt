@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Calendar
 
 class DeletePropertyUseCaseTest {
     // same property is already in repository
@@ -19,12 +20,12 @@ class DeletePropertyUseCaseTest {
         town = "NowhereCity",
         lat =  120.5,
         lng = 50.30,
-        "Faraway",
-        createdDate =  null,
+        country = "Faraway",
+        createdDate = Calendar.getInstance().timeInMillis,
         areaCode = 18290,
         surfaceArea =  150,
         price =  150000,
-        sold = false,
+        sold = null,
         id = 1L,
     )
 
@@ -45,7 +46,7 @@ class DeletePropertyUseCaseTest {
     fun `delete property from list, property is deleted`() = runTest {
         deleteProperty.invoke(property)
         assertThat(
-            fakePropertyRepository.getPropertyList().contains(property) == false
+            !fakePropertyRepository.getPropertyList().contains(property)
         )
     }
 }

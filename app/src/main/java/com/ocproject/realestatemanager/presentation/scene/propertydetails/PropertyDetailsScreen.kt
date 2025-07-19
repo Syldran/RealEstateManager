@@ -1,7 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.propertydetails
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,19 +23,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,10 +40,9 @@ import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
 import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.core.InterestPoint
-import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
-import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PagerPhotoDetails
+import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PhotosComposable
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -65,16 +58,12 @@ fun PropertyDetailScreen(
 //    val property = viewModel.selectedProperty
     val state by viewModel.state.collectAsState()
 
-    // Mettre à jour l'ID de la propriété dans le ViewModel
-//    LaunchedEffect(state.selectedProperty) {
-//        viewModel.updatePropertyId(propertyId)
-//        viewModel.onEvent(ListDetailsEvent.UpdateSelectedProperty(state.selectedProperty))
-//    }
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(ListDetailsEvent.GetProperties)
-        viewModel.onEvent(ListDetailsEvent.GetDetails)
 
+    LaunchedEffect(Unit) {
+//        viewModel.onEvent(ListDetailsEvent.GetProperties)
+//        viewModel.onEvent(ListDetailsEvent.GetDetails)
     }
+
     Box(
         modifier = Modifier
 //            .background(Color.Red)
@@ -110,9 +99,10 @@ fun PropertyDetailScreen(
                 Text("Select or Add Property")
 
             } else {
-                Timber.tag("TEST").d("${state.selectedProperty!!.photoList?.size}")
+                Timber.tag("TEST").d("${state.selectedProperty!!.photoList.size}")
                 Timber.tag("TEST1").d("${state.selectedProperty!!.sold}")
-                PagerPhotoDetails(property = state.selectedProperty!!)
+                PhotosComposable(property = state.selectedProperty!!)
+//                PagerPhotoDetails(property = state.selectedProperty!!)
 //                PhotosDetailsComposable(
 //                    propertyWithPhotos = property
 //                )
@@ -175,7 +165,9 @@ fun PropertyDetailScreen(
                 }
                 Spacer(Modifier.height(16.dp))
                 FilledTonalIconButton(
-                    onClick = { onNavigateToAddPropertyScreen(state.selectedProperty!!.id) },
+                    onClick = {
+                        onNavigateToAddPropertyScreen(state.selectedProperty!!.id)
+                              },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -183,7 +175,7 @@ fun PropertyDetailScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
-                        contentDescription = "Edit contact"
+                        contentDescription = "Edit property"
                     )
                 }
                 Text(text = state.selectedProperty!!.address)

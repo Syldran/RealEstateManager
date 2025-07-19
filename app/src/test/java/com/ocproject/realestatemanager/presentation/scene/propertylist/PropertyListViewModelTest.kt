@@ -13,7 +13,11 @@ import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
+import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
+import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
+import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsState
+import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -31,7 +35,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import timber.log.Timber
 import java.lang.Exception
+import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PropertyListViewModelTest {
@@ -44,7 +50,7 @@ class PropertyListViewModelTest {
 
 
     val mockRangeInt = Range(0, Int.MAX_VALUE)
-    val mockRangeLong = Range(0L, Long.MAX_VALUE)
+    val mockRangeLong = Range(0L, Calendar.getInstance().timeInMillis)
 
     val testDispatcher = StandardTestDispatcher()
     var filter = Filter(
@@ -57,21 +63,32 @@ class PropertyListViewModelTest {
         tagSchool = false,
         tagTransport = false,
         tagShop = false,
-        tagPark = false
+        tagPark = false,
+        orderSurface = Order.ASC,
+        soldRangeDate = mockRangeLong,
+        rangeSurface = mockRangeInt,
+        areaCodeFilter = null,
+        minNbrPhotos = 0,
     )
 
     val getPropertyList = mockk<GetPropertyListUseCase>(relaxed = true)
     val deleteProperty = mockk<DeletePropertyUseCase>(relaxed = true)
-    lateinit var viewModel : PropertyListViewModel
+    val getPropertyDetails = mockk<GetPropertyDetailsUseCase>(relaxed = true)
+
+    lateinit var viewModel: ListDetailsViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = PropertyListViewModel(getPropertyList, deleteProperty)
+        viewModel = ListDetailsViewModel(
+            getPropertyList,
+            deleteProperty,
+            getPropertyDetails,
+        )
     }
 
     @After
-    fun after(){
+    fun after() {
         Dispatchers.resetMain()
     }
 
@@ -89,11 +106,11 @@ class PropertyListViewModelTest {
                             lat = 120.5,
                             lng = 50.30,
                             country = "Faraway",
-                            createdDate = null,
+                            createdDate = Calendar.getInstance().timeInMillis,
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 150000,
-                            sold = false,
+                            sold = null,
                             id = 1L,
                         ),
                         Property(
@@ -104,11 +121,11 @@ class PropertyListViewModelTest {
                             lat = 120.5,
                             lng = 50.30,
                             country = "France",
-                            createdDate = null,
+                            createdDate = Calendar.getInstance().timeInMillis,
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 150000,
-                            sold = false,
+                            sold = null,
                             id = 2L,
                         )
                     )
@@ -116,7 +133,7 @@ class PropertyListViewModelTest {
             )
         }
 
-        viewModel.getPropertyList(filter)
+        viewModel.getPropertyList()
         coVerify { getPropertyList.invoke() }
 
         assertThat(
@@ -130,14 +147,14 @@ class PropertyListViewModelTest {
         coEvery { getPropertyList() } returns flow {
             emit(DataState.Error(Exception("Test Exception")))
         }
-        val emittedStates = mutableListOf<PropertyListState>()
+        val emittedStates = mutableListOf<ListDetailsState>()
 
         val job = launch {
             viewModel.state.toList(emittedStates)
         }
 
 
-        viewModel.getPropertyList(filter)
+        viewModel.getPropertyList()
         advanceUntilIdle()
 
         assertThat(emittedStates).isNotEmpty()
@@ -156,14 +173,14 @@ class PropertyListViewModelTest {
         coEvery { getPropertyList() } returns flow {
             emit(DataState.Loading(true))
         }
-        val emittedStates = mutableListOf<PropertyListState>()
+        val emittedStates = mutableListOf<ListDetailsState>()
 
         val job = launch {
             viewModel.state.toList(emittedStates)
         }
 
 
-        viewModel.getPropertyList(filter)
+        viewModel.getPropertyList()
         advanceUntilIdle()
 
         assertThat(emittedStates).isNotEmpty()
@@ -193,7 +210,7 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 150000,
-                            sold = false,
+                            sold = null,
                             id = 1L,
                         ),
                         Property(
@@ -208,7 +225,7 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 300000,
-                            sold = false,
+                            sold = null,
                             id = 2L,
                         ),
                         Property(
@@ -223,50 +240,61 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 250000,
-                            sold = false,
-                            id = 2L,
+                            sold = null,
+                            id = 3L,
                         )
                     )
                 )
             )
         }
-        val emittedStates = mutableListOf<PropertyListState>()
+        val emittedStates = mutableListOf<ListDetailsState>()
 
         val job = launch {
             viewModel.state.toList(emittedStates)
         }
-
-        viewModel.getPropertyList(filter)
+        viewModel.onEvent(
+            ListDetailsEvent.UpdateFilter(
+                filter.copy(
+                    sortType = SortType.PRICE,
+                    orderPrice = Order.ASC
+                )
+            )
+        )
         advanceUntilIdle()
         coVerify { getPropertyList.invoke() }
 
         // Filter is set to filter by price ascending.
-        viewModel.getPropertiesSorted(filter)
 
         // Check property0 price is lower than property1 meaning property0
-        assert(viewModel.sortedProperties.value[0].price!! == 150000)
-        assert(viewModel.sortedProperties.value[1].price!! == 250000)
-        assert(viewModel.sortedProperties.value[2].price!! == 300000)
+        assert(viewModel.state.value.sortedProperties[0].price!! == 150000)
+        assert(viewModel.state.value.sortedProperties[1].price!! == 250000)
+        assert(viewModel.state.value.sortedProperties[2].price!! == 300000)
 
-        filter = Filter(
-            sortType = SortType.DATE,
-            orderPrice = Order.ASC,
-            orderDate = Order.DESC,
-            rangePrice = mockRangeInt,
-            rangeDate = mockRangeLong,
-            sellingStatus = SellingStatus.PURCHASABLE,
-            tagSchool = false,
-            tagTransport = false,
-            tagShop = false,
-            tagPark = false
-        )
-        // Filter is set for Descending Date Order.
-        viewModel.getPropertiesSorted(filter)
-        // Descending Order filter Older first to Newest last.
-        // item 0 must be lowest while following items keeps increasing
-        assert(viewModel.sortedProperties.value[0].createdDate!! == 500L)
-        assert(viewModel.sortedProperties.value[1].createdDate!! == 3000L)
-        assert(viewModel.sortedProperties.value[2].createdDate!! == 10000L)
+//        filter = Filter(
+//            sortType = SortType.DATE,
+//            orderPrice = Order.ASC,
+//            orderDate = Order.DESC,
+//            rangePrice = mockRangeInt,
+//            rangeDate = mockRangeLong,
+//            sellingStatus = SellingStatus.PURCHASABLE,
+//            tagSchool = false,
+//            tagTransport = false,
+//            tagShop = false,
+//            tagPark = false,
+//            orderSurface = Order.ASC,
+//            soldRangeDate = mockRangeLong,
+//            rangeSurface = mockRangeInt,
+//            areaCodeFilter = null,
+//        )
+//        viewModel.onEvent(ListDetailsEvent.UpdateFilter(filter.copy(orderDate = Order.DESC)))
+//
+//        // Filter is set for Descending Date Order.
+//        viewModel.getPropertyList()
+//        // Descending Order filter Older first to Newest last.
+//        // item 0 must be lowest while following items keeps increasing
+//        assert(viewModel.state.value.sortedProperties[0].createdDate == 500L)
+//        assert(viewModel.state.value.sortedProperties[1].createdDate == 3000L)
+//        assert(viewModel.state.value.sortedProperties[2].createdDate == 10000L)
 
         job.cancel()
     }
@@ -290,7 +318,7 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 150000,
-                            sold = false,
+                            sold = null,
                             id = 1L,
                         ),
                         Property(
@@ -305,7 +333,7 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 300000,
-                            sold = false,
+                            sold = null,
                             id = 2L,
                         ),
                         Property(
@@ -320,23 +348,18 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 250000,
-                            sold = false,
-                            id = 2L,
+                            sold = null,
+                            id = 3L,
                         )
                     )
                 )
             )
         }
-        val emittedStates = mutableListOf<PropertyListState>()
+        val emittedStates = mutableListOf<ListDetailsState>()
 
         val job = launch {
             viewModel.state.toList(emittedStates)
         }
-
-        viewModel.getPropertyList(filter)
-        advanceUntilIdle()
-        coVerify { getPropertyList.invoke() }
-
         filter = Filter(
             sortType = SortType.DATE,
             orderPrice = Order.ASC,
@@ -347,15 +370,29 @@ class PropertyListViewModelTest {
             tagSchool = false,
             tagTransport = false,
             tagShop = false,
-            tagPark = false
+            tagPark = false,
+            orderSurface = Order.ASC,
+            soldRangeDate = mockRangeLong,
+            rangeSurface = mockRangeInt,
+            areaCodeFilter = null,
+            minNbrPhotos = 0,
         )
+
+        viewModel.onEvent(ListDetailsEvent.UpdateFilter(filter))
+
+        advanceUntilIdle()
+        coVerify { getPropertyList.invoke() }
+
+
+//        viewModel.onEvent(ListDetailsEvent.UpdateFilter(filter.copy(sortType = SortType.DATE, orderDate = Order.ASC)))
+
+
         // Filter is set for Descending Date Order.
-        viewModel.getPropertiesSorted(filter)
         // Descending Order filter Older first to Newest last.
         // item 0 must be lowest while following items keeps increasing
-        assert(viewModel.sortedProperties.value[0].createdDate!! == 500L)
-        assert(viewModel.sortedProperties.value[1].createdDate!! == 3000L)
-        assert(viewModel.sortedProperties.value[2].createdDate!! == 10000L)
+        assert(viewModel.state.value.sortedProperties[0].createdDate == 500L)
+        assert(viewModel.state.value.sortedProperties[1].createdDate == 3000L)
+        assert(viewModel.state.value.sortedProperties[2].createdDate == 10000L)
 
         job.cancel()
     }
@@ -378,7 +415,7 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 150000,
-                            sold = false,
+                            sold = null,
                             id = 1L,
                         ),
                         Property(
@@ -393,7 +430,7 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 300000,
-                            sold = false,
+                            sold = null,
                             id = 2L,
                         ),
                         Property(
@@ -408,7 +445,7 @@ class PropertyListViewModelTest {
                             areaCode = 18290,
                             surfaceArea = 150,
                             price = 250000,
-                            sold = false,
+                            sold = null,
                             id = 2L,
                         )
                     )
@@ -426,23 +463,31 @@ class PropertyListViewModelTest {
             tagSchool = true,
             tagTransport = false,
             tagShop = false,
-            tagPark = false
+            tagPark = false,
+            orderSurface = Order.ASC,
+            soldRangeDate = mockRangeLong,
+            rangeSurface = mockRangeInt,
+            areaCodeFilter = null,
+            minNbrPhotos = 0,
         )
-        val emittedStates = mutableListOf<PropertyListState>()
+        val emittedStates = mutableListOf<ListDetailsState>()
 
         val job = launch {
             viewModel.state.toList(emittedStates)
         }
 
-        viewModel.getPropertyList(filter)
+        viewModel.onEvent(ListDetailsEvent.UpdateFilter(filter.copy(tagSchool = true)))
         advanceUntilIdle()
         coVerify { getPropertyList.invoke() }
 
         // Filter is set to filter by school tag.
-        viewModel.getPropertiesSorted(filter)
 
         // Filtered on School Tag so should be 2 properties.
-        assert(viewModel.sortedProperties.value.size == 2)
+        assert(viewModel.state.value.sortedProperties.size == 2)
+        viewModel.onEvent(ListDetailsEvent.UpdateFilter(filter.copy(tagTransport = true, tagSchool = false)))
+        advanceUntilIdle()
+        coVerify { getPropertyList.invoke() }
+        assert(viewModel.state.value.sortedProperties.size == 1)
 
         job.cancel()
     }

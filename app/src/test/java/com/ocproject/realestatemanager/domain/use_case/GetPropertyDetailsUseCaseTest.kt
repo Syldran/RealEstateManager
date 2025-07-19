@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Calendar
 
 class GetPropertyDetailsUseCaseTest {
     @get:Rule
@@ -41,11 +42,11 @@ class GetPropertyDetailsUseCaseTest {
                 lat = 120.5,
                 lng = 50.30,
                 country = "Faraway",
-                createdDate = null,
+                createdDate = 50000,
                 areaCode = 18290,
                 surfaceArea = 150,
                 price = 150000,
-                sold = false,
+                sold = null,
                 id = 1L,
             ),
         )

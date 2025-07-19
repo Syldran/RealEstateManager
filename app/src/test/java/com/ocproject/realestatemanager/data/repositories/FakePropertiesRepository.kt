@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager.data.repositories
 
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
+import java.util.Calendar
 
 class FakePropertiesRepository : PropertiesRepository {
 
@@ -19,11 +20,11 @@ class FakePropertiesRepository : PropertiesRepository {
                         lat = 120.5,
                         lng = 50.30,
                         country = "Faraway",
-                        createdDate = null,
+                        createdDate = 50000,
                         areaCode = 18290,
                         surfaceArea = 150,
                         price = 150000,
-                        sold = false,
+                        sold = null,
                         id = 1L,
                     ),
                     Property(
@@ -34,11 +35,11 @@ class FakePropertiesRepository : PropertiesRepository {
                         lat = 120.5,
                         lng = 50.30,
                         country = "France",
-                        createdDate = null,
+                        createdDate = 50000,
                         areaCode = 18290,
                         surfaceArea = 150,
                         price = 150000,
-                        sold = false,
+                        sold = null,
                         id = 2L,
                     ),
                     Property(
@@ -49,11 +50,11 @@ class FakePropertiesRepository : PropertiesRepository {
                         lat = 120.5,
                         lng = 50.30,
                         country = "Angleterre",
-                        createdDate = null,
+                        createdDate = 50000,
                         areaCode = 18290,
                         surfaceArea = 150,
                         price = 150000,
-                        sold = false,
+                        sold = null,
                         id = 3L,
                     ),
                 )
@@ -84,11 +85,11 @@ class FakePropertiesRepository : PropertiesRepository {
             lat = 0.0,
             lng = 0.0,
             country = "",
-            createdDate = null,
+            createdDate = Calendar.getInstance().timeInMillis,
             areaCode = null,
             surfaceArea = null,
             price = null,
-            sold = false,
+            sold = null,
             id = -1L
         )
         properties.forEach {

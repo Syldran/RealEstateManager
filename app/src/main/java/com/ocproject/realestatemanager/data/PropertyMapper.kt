@@ -18,7 +18,7 @@ fun PhotoPropertyEntity.toPhotoProperty(): PhotoProperty {
 
 fun PropertyWithPhotosEntity.toProperty(): Property {
     return Property(
-        photoList = this.photoList?.map {it.toPhotoProperty()},
+        photoList = this.photoList?.map {it.toPhotoProperty()} ?: emptyList(),
         interestPoints = this.property.interestPoints,
         address = this.property.address,
         town = this.property.town,
@@ -52,7 +52,7 @@ fun Property.toPropertyEntity(): PropertyEntity {
         lat = this.lat,
         lng = this.lng,
         country = this.country,
-        createdDate = this.createdDate,
+        createdDate = this.createdDate!!,
         areaCode = this.areaCode,
         surfaceArea = this.surfaceArea,
         price = this.price,

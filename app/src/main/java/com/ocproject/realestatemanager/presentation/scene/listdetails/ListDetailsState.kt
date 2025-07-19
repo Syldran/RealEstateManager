@@ -26,8 +26,8 @@ data class ListDetailsState(
     val orderDate: Order = Order.ASC,
     val orderSurface: Order = Order.ASC,
     val rangePrice: Range<Int> = Range<Int>(0, Int.MAX_VALUE),
-    val rangeDate: Range<Long> = Range<Long>(0L, Calendar.getInstance().timeInMillis),
-    val soldRangeDate: Range<Long> = Range<Long>(0L, Calendar.getInstance().timeInMillis),
+    val rangeDate: Range<Long> = Range<Long>(0L, Calendar.getInstance().timeInMillis + 12583060),
+    val soldRangeDate: Range<Long> = Range<Long>(0L, Calendar.getInstance().timeInMillis + 12583060),
     val rangeSurface: Range<Int> = Range<Int>(0, Int.MAX_VALUE),
     val maxPrice: Int = Int.MAX_VALUE,
     val maxSurface: Int = Int.MAX_VALUE,
@@ -38,4 +38,5 @@ data class ListDetailsState(
     val shopTag: Boolean = false,
     val areaCodeList: List<Int> = emptyList(),
     val chosenAreaCode: Int? = null,
+    val minNbrPhotos: Int = 0,
 )

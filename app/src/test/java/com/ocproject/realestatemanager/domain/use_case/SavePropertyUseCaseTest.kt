@@ -38,7 +38,7 @@ class SavePropertyUseCaseTest {
             areaCode = 18290,
             surfaceArea = 150,
             price = 150000,
-            sold = false,
+            sold = null,
             id = 10L,
         )
         saveProperty.invoke(

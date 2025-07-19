@@ -55,10 +55,10 @@ fun PhotosComposable(
     viewModel: AddPropertyViewModel,
     property: Property,
     modifier: Modifier = Modifier,
-    iconSize: Dp = 25.dp
+    iconSize: Dp = 25.dp,
 ) {
 
-    if (!property.photoList.isNullOrEmpty()) {
+    if (!property.photoList.isEmpty()) {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()

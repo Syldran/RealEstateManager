@@ -18,6 +18,7 @@ data class Filter(
     val tagShop: Boolean,
     val tagPark: Boolean,
     val areaCodeFilter: Int?,
+    val minNbrPhotos: Int,
 )
 
 enum class SellingStatus {
@@ -29,7 +30,7 @@ enum class SellingStatus {
 enum class SortType {
     PRICE,
     DATE,
-    SURFACE,
+    AREA,
 //    TAGS,
 //    TOWN,
 }

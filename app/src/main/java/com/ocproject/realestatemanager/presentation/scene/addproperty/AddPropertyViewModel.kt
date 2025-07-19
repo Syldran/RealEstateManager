@@ -60,15 +60,16 @@ class AddPropertyViewModel(
     init {
 
         getProperty()
-        Timber.tag("afterGetProperty").d("PropertyId :${state.value.newProperty.id}, PhotoSize : ${state.value.photoList.size} ")
+        Timber.tag("afterGetProperty")
+            .d("PropertyId :${state.value.newProperty.id}, PhotoSize : ${state.value.photoList.size} ")
     }
 
     fun getProperty() {
         if (propertyId != null && propertyId != 0L) {
             viewModelScope.launch {
                 onEvent(AddPropertyEvent.UpdateNewProperty(getPropertyDetailsUseCase(propertyId)))
-                onEvent(AddPropertyEvent.UpdatePhotos(state.value.newProperty.photoList ?: emptyList()))
-                if(state.value.newProperty.sold != null){
+                onEvent(AddPropertyEvent.UpdatePhotos(state.value.newProperty.photoList))
+                if (state.value.newProperty.sold != null) {
                     onEvent(AddPropertyEvent.UpdateSoldState(true))
                 } else {
                     onEvent(AddPropertyEvent.UpdateSoldState(false))
@@ -77,7 +78,7 @@ class AddPropertyViewModel(
 
         } else {
             onEvent(
-                AddPropertyEvent.UpdateNewProperty(
+                UpdateNewProperty(
                     Property(
                         photoList = emptyList(),
                         interestPoints = emptyList(),
@@ -86,7 +87,7 @@ class AddPropertyViewModel(
                         lat = 0.0,
                         lng = 0.0,
                         country = "a",
-                        createdDate = Calendar.getInstance().timeInMillis,
+                        createdDate = null,
                         areaCode = 123,
                         surfaceArea = 123,
                         price = 123,
@@ -277,23 +278,23 @@ class AddPropertyViewModel(
                 }
 
                 viewModelScope.launch {
-                    /* var idProperty: Long = */if (property.createdDate == null) {
+                    if (property.createdDate == null) {
 //                    Timber.tag("AddPropPhotos1").d("${state.value.photoList.size}")
-                    savePropertyUseCase(
-                        property.copy(
-                            photoList = state.value.photoList,
-                            createdDate = Calendar.getInstance().timeInMillis
+                        savePropertyUseCase(
+                            property.copy(
+                                photoList = state.value.photoList,
+                                createdDate = Calendar.getInstance().timeInMillis
+                            ),
                         )
-                    )
-                } else {
+                    } else {
 //                    Timber.tag("AddPropPhotos2").d("${state.value.photoList.size}")
-                    savePropertyUseCase(
-                        property.copy(
-                            photoList = state.value.photoList,
+                        savePropertyUseCase(
+                            property.copy(
+                                photoList = state.value.photoList,
+                            )
                         )
-                    )
 
-                }
+                    }
                 }
 
 

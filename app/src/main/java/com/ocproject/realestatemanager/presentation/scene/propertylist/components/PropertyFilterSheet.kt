@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -29,11 +31,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,9 +50,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.core.Filter
-import com.ocproject.realestatemanager.core.Order
 import com.ocproject.realestatemanager.core.SellingStatus
 import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.core.utils.Range
@@ -54,6 +62,7 @@ import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetail
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +72,7 @@ fun PropertyFilterSheet(
     sheetState: SheetState,
     scope: CoroutineScope,
 ) {
+    var isAreaCodeListExpended by remember { mutableStateOf(false) }
 
     ModalBottomSheet(
         onDismissRequest = {
@@ -87,111 +97,157 @@ fun PropertyFilterSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Card(
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .fillMaxWidth()
                 ) {
                     Row {
                         Text(
                             "Selling Status"
                         )
                     }
-                    Row {
-                        Text(
-                            "Purchasable"
-                        )
-                        RadioButton(
-                            modifier = Modifier.weight(2f),
-                            selected = state.soldStatus == SellingStatus.PURCHASABLE,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            SortType.PRICE,
-                                            state.orderPrice,
-                                            state.orderDate,
-                                            state.orderSurface,
-                                            state.rangePrice,
-                                            state.rangeDate,
-                                            state.soldRangeDate,
-                                            state.rangeSurface,
-                                            SellingStatus.PURCHASABLE,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(
+                            modifier = Modifier,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "Purchasable",
+                                textAlign = TextAlign.Center,
+                            )
+                            RadioButton(
+                                modifier = Modifier,
+                                selected = state.soldStatus == SellingStatus.PURCHASABLE,
+                                onClick = {
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = Filter(
+                                                SortType.PRICE,
+                                                state.orderPrice,
+                                                state.orderDate,
+                                                state.orderSurface,
+                                                state.rangePrice,
+                                                state.rangeDate,
+                                                state.soldRangeDate,
+                                                state.rangeSurface,
+                                                SellingStatus.PURCHASABLE,
+                                                state.schoolTag,
+                                                state.parkTag,
+                                                state.shopTag,
+                                                state.transportTag,
+                                                state.chosenAreaCode,
+                                                state.minNbrPhotos,
+                                            )
                                         )
                                     )
-                                )
-                            }
-                        )
-                        Text(text = "Sold", Modifier.padding(end = 16.dp))
-                        RadioButton(
-                            modifier = Modifier.weight(1f),
-                            selected = state.soldStatus == SellingStatus.SOLD,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            state.sortType,
-                                            state.orderPrice,
-                                            state.orderDate,
-                                            state.orderSurface,
-                                            state.rangePrice,
-                                            state.rangeDate,
-                                            state.soldRangeDate,
-                                            state.rangeSurface,
-                                            SellingStatus.SOLD,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
+                                }
+                            )
+                        }
+                        Column(
+                            modifier = Modifier,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Sold", Modifier.padding(end = 16.dp),
+                                textAlign = TextAlign.Center,
+                            )
+                            RadioButton(
+                                modifier = Modifier,
+                                selected = state.soldStatus == SellingStatus.SOLD,
+                                onClick = {
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = Filter(
+                                                state.sortType,
+                                                state.orderPrice,
+                                                state.orderDate,
+                                                state.orderSurface,
+                                                state.rangePrice,
+                                                state.rangeDate,
+                                                state.soldRangeDate,
+                                                state.rangeSurface,
+                                                SellingStatus.SOLD,
+                                                state.schoolTag,
+                                                state.parkTag,
+                                                state.shopTag,
+                                                state.transportTag,
+                                                state.chosenAreaCode,
+                                                state.minNbrPhotos,
+                                            )
                                         )
                                     )
-                                )
-                            }
-                        )
-                        Text(text = "All", Modifier.padding(end = 16.dp))
-                        RadioButton(
-                            modifier = Modifier.weight(1f),
-                            selected = state.soldStatus == SellingStatus.ALL,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            state.sortType,
-                                            state.orderPrice,
-                                            state.orderDate,
-                                            state.orderSurface,
-                                            state.rangePrice,
-                                            state.rangeDate,
-                                            state.soldRangeDate,
-                                            state.rangeSurface,
-                                            SellingStatus.ALL,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
+                                }
+                            )
+                        }
+                        Column(
+                            modifier = Modifier,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "All",
+                                textAlign = TextAlign.Center,
+                            )
+                            RadioButton(
+                                modifier = Modifier,
+                                selected = state.soldStatus == SellingStatus.ALL,
+                                onClick = {
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = Filter(
+                                                state.sortType,
+                                                state.orderPrice,
+                                                state.orderDate,
+                                                state.orderSurface,
+                                                state.rangePrice,
+                                                state.rangeDate,
+                                                state.soldRangeDate,
+                                                state.rangeSurface,
+                                                SellingStatus.ALL,
+                                                state.schoolTag,
+                                                state.parkTag,
+                                                state.shopTag,
+                                                state.transportTag,
+                                                state.chosenAreaCode,
+                                                state.minNbrPhotos,
+                                            )
                                         )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
+                        }
+
                     }
                 }
-                Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-                    Row(Modifier) {
-                        // RADIO SORT TYPE PRICE
-                        RadioButton(
-                            modifier = Modifier.weight(2f),
-                            selected = state.sortType == SortType.PRICE,
-                            onClick = {
+                Card(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+//                        Text(text = "Photos Minimum: ")
+                        OutlinedTextField(
+                            shape = RoundedCornerShape(size = 8.dp),
+                            colors = TextFieldDefaults.colors(focusedContainerColor = Color.White,),
+                            modifier = Modifier,
+                            value = if (state.minNbrPhotos == 0) "" else state.minNbrPhotos.toString(),
+                            placeholder = { Text("0") },
+                            label = {Text("Min Photos")},
+                            onValueChange = {
                                 onEvent(
                                     ListDetailsEvent.UpdateFilter(
                                         filter = Filter(
-                                            SortType.PRICE,
+                                            state.sortType,
                                             state.orderPrice,
                                             state.orderDate,
                                             state.orderSurface,
@@ -205,72 +261,27 @@ fun PropertyFilterSheet(
                                             state.shopTag,
                                             state.transportTag,
                                             state.chosenAreaCode,
+                                            if (it.isEmpty()) {
+                                                0
+                                            } else {
+                                                it.toInt()
+                                            },
                                         )
                                     )
                                 )
-                            }
-                        )
-                        Text(text = SortType.PRICE.name, Modifier.padding(end = 16.dp))
-                        //RADIO PRICE ASC
-                        RadioButton(
-                            modifier = Modifier.weight(1f),
-                            selected = state.orderPrice == Order.ASC,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            state.sortType,
-                                            Order.ASC,
-                                            state.orderDate,
-                                            state.orderSurface,
-                                            state.rangePrice,
-                                            state.rangeDate,
-                                            state.soldRangeDate,
-                                            state.rangeSurface,
-                                            state.soldStatus,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
-                                        )
-                                    )
-                                )
-                            }
-                        )
-                        Text(text = Order.ASC.name, Modifier.padding(end = 16.dp))
-                        //RADIO PRICE DESC
-                        RadioButton(
-                            modifier = Modifier.weight(1f),
-                            selected = state.orderPrice == Order.DESC,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            state.sortType,
-                                            Order.DESC,
-                                            state.orderDate,
-                                            state.orderSurface,
-                                            state.rangePrice,
-                                            state.rangeDate,
-                                            state.soldRangeDate,
-                                            state.rangeSurface,
-                                            state.soldStatus,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
-                                        )
-                                    )
-                                )
-                            }
-                        )
-                        Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
-                    }
 
-                    var maxPrice = state.maxPrice
-                    var sliderMax = if (maxPrice > state.rangePrice.upper) {
+
+                            },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+                            )
+                    }
+                }
+
+                Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+                    Text("Price Range")
+                    val maxPrice = state.maxPrice
+                    val sliderMax = if (maxPrice > state.rangePrice.upper) {
                         state.rangePrice.upper
                     } else {
                         maxPrice
@@ -300,129 +311,65 @@ fun PropertyFilterSheet(
 
                 //DATE
                 Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-                    Column() {
-                        Row {
-                            // RADIO SORT TYPE DATE
-                            RadioButton(
-                                modifier = Modifier.weight(2f),
-                                selected = state.sortType == SortType.DATE,
-                                onClick = {
-                                    onEvent(
-                                        ListDetailsEvent.UpdateFilter(
-                                            filter = Filter(
-                                                SortType.DATE,
-                                                state.orderPrice,
-                                                state.orderDate,
-                                                state.orderSurface,
-                                                state.rangePrice,
-                                                state.rangeDate,
-                                                state.soldRangeDate,
-                                                state.rangeSurface,
-                                                state.soldStatus,
-                                                state.schoolTag,
-                                                state.parkTag,
-                                                state.shopTag,
-                                                state.transportTag,
-                                                state.chosenAreaCode,
-                                            )
-                                        )
-                                    )
-                                }
-                            )
-                            Text(text = SortType.DATE.name, Modifier.padding(end = 16.dp))
-                            //RADIO DATE ASC
-                            RadioButton(
-                                modifier = Modifier.weight(1f),
-                                selected = state.orderDate == Order.ASC,
-                                onClick = {
-                                    onEvent(
-                                        ListDetailsEvent.UpdateFilter(
-                                            filter = Filter(
-                                                state.sortType,
-                                                state.orderPrice,
-                                                Order.ASC,
-                                                state.orderSurface,
-                                                state.rangePrice,
-                                                state.rangeDate,
-                                                state.soldRangeDate,
-                                                state.rangeSurface,
-                                                state.soldStatus,
-                                                state.schoolTag,
-                                                state.parkTag,
-                                                state.shopTag,
-                                                state.transportTag,
-                                                state.chosenAreaCode,
-                                            )
-                                        )
-                                    )
-                                }
-                            )
-                            Text(text = Order.ASC.name, Modifier.padding(end = 16.dp))
-                            // RADIO DATE DESC
-                            RadioButton(
-                                modifier = Modifier.weight(1f),
-                                selected = state.orderDate == Order.DESC,
-                                onClick = {
-                                    onEvent(
-                                        ListDetailsEvent.UpdateFilter(
-                                            filter = Filter(
-                                                state.sortType,
-                                                state.orderPrice,
-                                                Order.DESC,
-                                                state.orderSurface,
-                                                state.rangePrice,
-                                                state.rangeDate,
-                                                state.soldRangeDate,
-                                                state.rangeSurface,
-                                                state.soldStatus,
-                                                state.schoolTag,
-                                                state.parkTag,
-                                                state.shopTag,
-                                                state.transportTag,
-                                                state.chosenAreaCode,
-                                            )
-                                        )
-                                    )
-                                }
-                            )
-                            Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
-                        }
-                        val dateRangePickerState = rememberDateRangePickerState(
-                            initialDisplayMode = DisplayMode.Input,
-                            initialSelectedStartDateMillis = state.rangeDate.lower,
-                            initialSelectedEndDateMillis = state.rangeDate.upper
-                        )
-                        DateRangePicker(
-//                    showModeToggle = false,
-                            state = dateRangePickerState,
-                        )
-                        TextButton(
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.OnDateRangeSelected(
-                                        dateRangePickerState.selectedStartDateMillis!!,
-                                        dateRangePickerState.selectedEndDateMillis!!
-                                    )
+                    val dateRangePickerState = rememberDateRangePickerState(
+                        initialDisplayMode = DisplayMode.Input,
+                        initialSelectedStartDateMillis = state.rangeDate.lower,
+                        initialSelectedEndDateMillis = state.rangeDate.upper
+                    )
+                    Text("Added Date Range")
+                    DateRangePicker(
+                        showModeToggle = false,
+                        state = dateRangePickerState,
+                    )
+                    TextButton(
+                        onClick = {
+                            val selectedDateEnd = Calendar.getInstance()
+                            selectedDateEnd.setTimeInMillis(dateRangePickerState.selectedEndDateMillis!!)
+                            selectedDateEnd.set(Calendar.HOUR_OF_DAY, 0)
+                            selectedDateEnd.set(Calendar.MINUTE, 0)
+                            selectedDateEnd.set(Calendar.SECOND, 0)
+                            selectedDateEnd.set(Calendar.MILLISECOND, 0)
+                            selectedDateEnd.add(Calendar.DAY_OF_YEAR, 1)
+                            selectedDateEnd.add(Calendar.MILLISECOND, -1)
+
+                            onEvent(
+                                ListDetailsEvent.OnDateRangeSelected(
+                                    dateRangePickerState.selectedStartDateMillis!!,
+                                    selectedDateEnd.timeInMillis
                                 )
-                            }
-                        ) {
-                            Text("Validate Date")
+                            )
                         }
+                    ) {
+                        Text("Validate Date")
+                    }
+                }
+                if (state.soldStatus == SellingStatus.SOLD) {
+                    Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
                         val soldDateRangePickerState = rememberDateRangePickerState(
                             initialDisplayMode = DisplayMode.Input,
                             initialSelectedStartDateMillis = state.soldRangeDate.lower,
                             initialSelectedEndDateMillis = state.soldRangeDate.upper
                         )
+                        Text("Sold Date Range")
+
                         DateRangePicker(
-//                    showModeToggle = false,
+                            showModeToggle = false,
                             state = soldDateRangePickerState,
                         )
                         TextButton(
                             onClick = {
+                                val selectedSoldDateEnd = Calendar.getInstance()
+                                selectedSoldDateEnd.setTimeInMillis(soldDateRangePickerState.selectedEndDateMillis!!)
+                                selectedSoldDateEnd.set(Calendar.HOUR_OF_DAY, 0)
+                                selectedSoldDateEnd.set(Calendar.MINUTE, 0)
+                                selectedSoldDateEnd.set(Calendar.SECOND, 0)
+                                selectedSoldDateEnd.set(Calendar.MILLISECOND, 0)
+                                selectedSoldDateEnd.add(Calendar.DAY_OF_YEAR, 1)
+                                selectedSoldDateEnd.add(Calendar.MILLISECOND, -1)
                                 onEvent(
                                     ListDetailsEvent.OnSoldDateRangeSelected(
                                         soldDateRangePickerState.selectedStartDateMillis!!,
-                                        soldDateRangePickerState.selectedEndDateMillis!!
+                                        selectedSoldDateEnd.timeInMillis
                                     )
                                 )
                             }
@@ -431,102 +378,16 @@ fun PropertyFilterSheet(
                         }
                     }
                 }
+
                 Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-                    Row(Modifier) {
-                        // RADIO SORT TYPE SURFACE
-                        RadioButton(
-                            modifier = Modifier.weight(2f),
-                            selected = state.sortType == SortType.SURFACE,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            SortType.SURFACE,
-                                            state.orderPrice,
-                                            state.orderDate,
-                                            state.orderSurface,
-                                            state.rangePrice,
-                                            state.rangeDate,
-                                            state.soldRangeDate,
-                                            state.rangeSurface,
-                                            state.soldStatus,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
-                                        )
-                                    )
-                                )
-                            }
-                        )
-                        Text(text = SortType.SURFACE.name, Modifier.padding(end = 16.dp))
-                        //RADIO SURFACE ASC
-                        RadioButton(
-                            modifier = Modifier.weight(1f),
-                            selected = state.orderSurface == Order.ASC,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            sortType = state.sortType,
-                                            orderPrice = state.orderPrice,
-                                            orderDate = state.orderDate,
-                                            orderSurface = Order.ASC,
-                                            rangePrice = state.rangePrice,
-                                            rangeDate = state.rangeDate,
-                                            soldRangeDate = state.soldRangeDate,
-                                            rangeSurface = state.rangeSurface,
-                                            state.soldStatus,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
-                                        )
-                                    )
-                                )
-                            }
-                        )
-                        Text(text = Order.ASC.name, Modifier.padding(end = 16.dp))
-                        //RADIO SURFACE DESC
-                        RadioButton(
-                            modifier = Modifier.weight(1f),
-                            selected = state.orderSurface == Order.DESC,
-                            onClick = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            sortType = state.sortType,
-                                            orderPrice = state.orderPrice,
-                                            orderDate = state.orderDate,
-                                            orderSurface = Order.DESC,
-                                            rangePrice = state.rangePrice,
-                                            rangeDate = state.rangeDate,
-                                            soldRangeDate = state.soldRangeDate,
-                                            rangeSurface = state.rangeSurface,
-                                            state.soldStatus,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
-                                        )
-                                    )
-                                )
-                            }
-                        )
-                        Text(text = Order.DESC.name, Modifier.padding(end = 16.dp))
-                    }
-
-
-                    var maxSurface = state.maxSurface
-                    var surfaceSliderMax = if (maxSurface > state.rangeSurface.upper) {
+                    val maxSurface = state.maxSurface
+                    val surfaceSliderMax = if (maxSurface > state.rangeSurface.upper) {
                         state.rangeSurface.upper
                     } else {
                         maxSurface
                     }
                     var surfaceSliderPosition by remember { mutableStateOf(state.rangeSurface.lower.toFloat()..surfaceSliderMax.toFloat()) }
+                    Text("Surface Area Range")
                     RangeSlider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         value = surfaceSliderPosition,
@@ -550,7 +411,6 @@ fun PropertyFilterSheet(
                 }
 
 
-                var expanded by remember { mutableStateOf(false) }
                 Card(
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp)
@@ -567,7 +427,7 @@ fun PropertyFilterSheet(
                                 .clickable(
                                     true,
                                     onClick = {
-                                        expanded = true
+                                        isAreaCodeListExpended = true
                                     }
                                 ),
                             verticalAlignment = Alignment.CenterVertically,
@@ -581,14 +441,14 @@ fun PropertyFilterSheet(
                         }
                         // replace with bottom sheet.
                         DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
+                            expanded = isAreaCodeListExpended,
+                            onDismissRequest = { isAreaCodeListExpended = false },
                         ) {
                             DropdownMenuItem(
                                 text = { Text("Area Code") },
                                 onClick = {
                                     onEvent(ListDetailsEvent.OnAreaCodeChosen(null))
-                                    expanded = false
+                                    isAreaCodeListExpended = false
                                 }
                             )
                             for (i in state.areaCodeList) {
@@ -597,7 +457,7 @@ fun PropertyFilterSheet(
                                     text = { Text("$i") },
                                     onClick = {
                                         onEvent(ListDetailsEvent.OnAreaCodeChosen(i))
-                                        expanded = false
+                                        isAreaCodeListExpended = false
                                     }
                                 )
                             }

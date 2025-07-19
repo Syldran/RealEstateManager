@@ -24,5 +24,4 @@ sealed interface ListDetailsEvent {
     data object UpdateSortedProperties : ListDetailsEvent
     data class UpdateProperties(val properties: List<Property>) : ListDetailsEvent
     data class UpdateFilter(val filter: Filter) : ListDetailsEvent
-
 }

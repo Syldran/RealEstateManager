@@ -22,6 +22,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddPropertyViewModelTest {
@@ -66,14 +67,14 @@ class AddPropertyViewModelTest {
             areaCode = 18290,
             surfaceArea = 150,
             price = 150000,
-            sold = false,
+            sold = null,
             id = 1L,
         )
         coEvery { getPropertyDetails.invoke(any()) } returns property
         viewModel.getProperty()
         advanceUntilIdle()
         coVerify { getPropertyDetails.invoke(any()) }
-        assert(viewModel.newProperty.id == 1L)
+        assert(viewModel.state.value.newProperty.id == 1L)
     }
 
     @Test
@@ -91,7 +92,7 @@ class AddPropertyViewModelTest {
                 areaCode = 18290,
                 surfaceArea = 150,
                 price = 300000,
-                sold = false,
+                sold =null,
                 id = 2L,
             )
         )
@@ -109,18 +110,18 @@ class AddPropertyViewModelTest {
             lat = 0.0,
             lng = 0.0,
             country = "",
-            createdDate = null,
+            createdDate = Calendar.getInstance().timeInMillis,
             areaCode = null,
             surfaceArea = null,
             price = null,
             id = 1L,
-            sold = false,
+            sold = null,
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
         viewModelTest.updateForm(AddPropertyEvent.UpdateForm(town = "Paris"))
         advanceUntilIdle()
-        val town = viewModelTest.newProperty.town
+        val town = viewModelTest.state.value.newProperty.town
         assertEquals("Paris", town)
     }
 
@@ -136,12 +137,12 @@ class AddPropertyViewModelTest {
             lat = 0.0,
             lng = 0.0,
             country = "",
-            createdDate = null,
+            createdDate = Calendar.getInstance().timeInMillis,
             areaCode = null,
             surfaceArea = null,
             price = null,
             id = 1L,
-            sold = false,
+            sold = null,
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
@@ -152,11 +153,10 @@ class AddPropertyViewModelTest {
                 shop = false,
                 park = false,
                 transport = false,
-                sold = false,
             )
         )
         advanceUntilIdle()
-        val interestPoint = viewModelTest.newProperty.interestPoints
+        val interestPoint = viewModelTest.state.value.newProperty.interestPoints
         assert(interestPoint.contains(InterestPoint.SCHOOL))
     }
 }

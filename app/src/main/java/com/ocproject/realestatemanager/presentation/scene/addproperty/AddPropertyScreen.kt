@@ -237,7 +237,7 @@ fun AddPropertyScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = state.newProperty?.town ?: "",
+                value = state.newProperty.town,
                 error = state.townError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(town = it))
@@ -258,7 +258,7 @@ fun AddPropertyScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = state.newProperty?.country ?: "",
+                value = state.newProperty.country,
                 error = state.countryError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(country = it))
