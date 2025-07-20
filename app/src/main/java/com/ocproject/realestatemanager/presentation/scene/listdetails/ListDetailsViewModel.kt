@@ -309,7 +309,7 @@ class ListDetailsViewModel(
                 viewModelScope.launch {
                     getPropertyList()
                 }
-                onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
+//                onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
             }
 
             is ListDetailsEvent.GetDetails -> {

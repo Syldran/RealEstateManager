@@ -1,5 +1,8 @@
 package com.ocproject.realestatemanager.data.repositories
 
+import android.app.Application
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import com.ocproject.realestatemanager.data.database.PropertiesDao
 import com.ocproject.realestatemanager.data.entities.PhotoPropertyEntity
 import com.ocproject.realestatemanager.data.toPhotoPropertyEntity
@@ -8,6 +11,9 @@ import com.ocproject.realestatemanager.data.toPropertyEntity
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
+import org.koin.compose.getKoin
+import timber.log.Timber
+import kotlin.coroutines.coroutineContext
 
 
 class LocalPropertiesRepository(
@@ -18,12 +24,17 @@ class LocalPropertiesRepository(
         // upsert return -1 for replacing existing data
         if (propertyToAdd < 0L) {
             propertyToAdd = property.id
-            dao.deletePicturesOfPropertyByIdProperty(propertyToAdd)
+        }
+        dao.deletePicturesOfPropertyByIdProperty(propertyToAdd)
+
+        try {
+            property.photoList.forEach {
+                dao.upsertPhoto(it.toPhotoPropertyEntity(propertyToAdd))
+            }
+        } catch (e: Exception) {
+            Timber.tag("LocalRepo").d(e.toString())
         }
 
-        property.photoList.forEach {
-            dao.upsertPhoto(it.toPhotoPropertyEntity(propertyToAdd))
-        }
 
         return propertyToAdd
     }

@@ -422,8 +422,7 @@ class AddPropertyViewModel(
             AddPropertyEvent.UpdateNewProperty(
                 state.value.newProperty.copy(
                     interestPoints = list,
-//                    sold = event.sold
-                )
+                    )
             )
         )
     }

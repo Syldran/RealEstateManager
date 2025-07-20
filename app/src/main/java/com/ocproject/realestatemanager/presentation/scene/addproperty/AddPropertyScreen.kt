@@ -123,11 +123,6 @@ fun AddPropertyScreen(
             }
         }
     }
-//    soldChecked = if (state.newProperty.sold != null) {
-//        true
-//    } else {
-//        false
-//    }
 
     if (state.navToPropertyListScreen) {
         onNavigateToListDetails()
@@ -483,9 +478,10 @@ fun AddPropertyScreen(
                 viewModel.onEvent(AddPropertyEvent.SaveProperty)
                 if (state.navToPropertyListScreen) {
                     onNavigateToListDetails()
+                    viewModel.onEvent(AddPropertyEvent.OnChangeNavigationStatus(true))
                 }
             }) {
-                Text(text = "Save contact")
+                Text(text = "Save property")
             }
             Spacer(modifier = Modifier.height(16.dp))
 

@@ -59,9 +59,8 @@ fun PropertyDetailScreen(
     val state by viewModel.state.collectAsState()
 
 
-    LaunchedEffect(Unit) {
-//        viewModel.onEvent(ListDetailsEvent.GetProperties)
-//        viewModel.onEvent(ListDetailsEvent.GetDetails)
+    LaunchedEffect(state) {
+        viewModel.onEvent(ListDetailsEvent.GetDetails)
     }
 
     Box(
@@ -94,14 +93,14 @@ fun PropertyDetailScreen(
 //                    tint = Color.Green
                 )
             }
+            Timber.tag("TEST").d("${state.selectedProperty?.id}")
             if (state.selectedProperty == null) {
 
                 Text("Select or Add Property")
 
             } else {
-                Timber.tag("TEST").d("${state.selectedProperty!!.photoList.size}")
-                Timber.tag("TEST1").d("${state.selectedProperty!!.sold}")
                 PhotosComposable(property = state.selectedProperty!!)
+                Timber.tag("Details SelectedProp").d("${state.selectedProperty!!.id}")
 //                PagerPhotoDetails(property = state.selectedProperty!!)
 //                PhotosDetailsComposable(
 //                    propertyWithPhotos = property
