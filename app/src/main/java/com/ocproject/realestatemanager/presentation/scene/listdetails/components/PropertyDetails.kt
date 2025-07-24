@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.presentation.scene.propertydetails
+package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -42,14 +42,13 @@ import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.core.InterestPoint
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
-import com.ocproject.realestatemanager.presentation.scene.propertydetails.components.PhotosComposable
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun PropertyDetailScreen(
+fun PropertyDetails(
     viewModel: ListDetailsViewModel = koinViewModel(),
 //    propertyId: Long,
     navigateBack: () -> Unit,

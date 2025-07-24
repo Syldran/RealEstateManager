@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.presentation.scene.propertylist.components
+package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

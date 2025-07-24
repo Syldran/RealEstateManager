@@ -24,15 +24,15 @@ class LocalPropertiesRepository(
         // upsert return -1 for replacing existing data
         if (propertyToAdd < 0L) {
             propertyToAdd = property.id
+            dao.deletePicturesOfPropertyByIdProperty(propertyToAdd)
         }
-        dao.deletePicturesOfPropertyByIdProperty(propertyToAdd)
 
         try {
             property.photoList.forEach {
                 dao.upsertPhoto(it.toPhotoPropertyEntity(propertyToAdd))
             }
         } catch (e: Exception) {
-            Timber.tag("LocalRepo").d(e.toString())
+            println("Exception : ${e.toString()}")
         }
 
 

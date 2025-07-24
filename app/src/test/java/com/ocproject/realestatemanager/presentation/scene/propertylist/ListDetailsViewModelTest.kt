@@ -35,12 +35,11 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import timber.log.Timber
 import java.lang.Exception
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PropertyListViewModelTest {
+class ListDetailsViewModelTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()

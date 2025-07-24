@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.presentation.scene.propertylist.components
+package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
 import android.icu.util.Calendar
 import androidx.compose.foundation.background

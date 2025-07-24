@@ -45,11 +45,11 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     // LocationRequest - Requirements for the location updates, i.e.,
-// how often you should receive updates, the priority, etc.
+    // how often you should receive updates, the priority, etc.
     private lateinit var locationRequest: LocationRequest
 
     // LocationCallback - Called when FusedLocationProviderClient
-// has a new Location
+    // has a new Location
     private lateinit var locationCallback: LocationCallback
 
     // This will store current location info

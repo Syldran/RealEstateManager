@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.presentation.scene.propertylist
+package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -36,14 +36,12 @@ import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
-import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyListItem
-import com.ocproject.realestatemanager.presentation.scene.propertylist.components.PropertyFilterSheet
 import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PropertyListScreen(
+fun PropertyList(
     viewModel: ListDetailsViewModel = koinViewModel(),
     onClick: (property: Property?) -> Unit,
 ) {
