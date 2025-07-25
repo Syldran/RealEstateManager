@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,11 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.Navigator
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
 import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.core.InterestPoint
+import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -49,17 +52,17 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun PropertyDetails(
+//    navigator: ThreePaneScaffoldNavigator<Property>,
     viewModel: ListDetailsViewModel = koinViewModel(),
-//    propertyId: Long,
+    property: Property,
     navigateBack: () -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
 ) {
-//    val property = viewModel.selectedProperty
     val state by viewModel.state.collectAsState()
 
 
-    LaunchedEffect(state) {
-        viewModel.onEvent(ListDetailsEvent.GetDetails)
+    LaunchedEffect(state.selectedProperty!!) {
+          viewModel.onEvent(ListDetailsEvent.GetDetails(state.selectedProperty!!.id))
     }
 
     Box(
@@ -81,8 +84,8 @@ fun PropertyDetails(
                 modifier = Modifier,
                 onClick =
                     {
-                        viewModel.onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
-                        viewModel.onEvent(ListDetailsEvent.GetProperties)
+//                        viewModel.onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
+//                        viewModel.onEvent(ListDetailsEvent.GetProperties)
                         navigateBack()
                     }
             ) {
@@ -92,14 +95,8 @@ fun PropertyDetails(
 //                    tint = Color.Green
                 )
             }
-            Timber.tag("TEST").d("${state.selectedProperty?.id}")
-            if (state.selectedProperty == null) {
 
-                Text("Select or Add Property")
-
-            } else {
                 PhotosComposable(property = state.selectedProperty!!)
-                Timber.tag("Details SelectedProp").d("${state.selectedProperty!!.id}")
 //                PagerPhotoDetails(property = state.selectedProperty!!)
 //                PhotosDetailsComposable(
 //                    propertyWithPhotos = property
@@ -107,7 +104,7 @@ fun PropertyDetails(
                 if (state.selectedProperty!!.sold != null) {
                     Image(
                         modifier = Modifier.height(50.dp),
-                        painter = painterResource(id = R.drawable.sold_png_transparent),
+                        painter = painterResource(id = R.drawable.sold_transparent),
                         contentDescription = "Sold Image"
                     )
                 }
@@ -190,7 +187,7 @@ fun PropertyDetails(
                             "https://maps.googleapis.com/maps/api/staticmap?center=${state.selectedProperty!!.lat},${state.selectedProperty!!.lng}&markers=color:red|${state.selectedProperty!!.lat},${state.selectedProperty!!.lng}&zoom=14&size=500x500&scale=2&key=${BuildConfig.PLACES_API_KEY}"
                         ).build(), contentDescription = ""
                 )
-            }
+
 
 
         }

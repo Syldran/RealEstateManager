@@ -10,7 +10,7 @@ sealed interface ListDetailsEvent {
     data object OpenFilter : ListDetailsEvent
     data class DeleteProperty(val property: Property) : ListDetailsEvent
     data object GetProperties : ListDetailsEvent
-    data object GetDetails : ListDetailsEvent
+    data class GetDetails(val propertyId: Long) : ListDetailsEvent
     data class SetRangeSurface(val rangeSurface: Range<Float>) : ListDetailsEvent
     data class SetRangePrice(val rangePrice: Range<Float>) : ListDetailsEvent
     data class OnSchoolChecked(val value: Boolean) : ListDetailsEvent

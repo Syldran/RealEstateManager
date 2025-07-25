@@ -41,6 +41,7 @@ fun ListDetails(
     val state by viewModel.state.collectAsState()
     val navigator = rememberListDetailPaneScaffoldNavigator<Property>()
     val scope = rememberCoroutineScope()
+
     LaunchedEffect(state) {
         viewModel.onEvent(ListDetailsEvent.GetProperties)
     }
@@ -58,8 +59,8 @@ fun ListDetails(
             listPane = {
                 PropertyList(
                     onClick = { property ->
-
                         viewModel.onEvent(ListDetailsEvent.UpdateSelectedProperty(property))
+
                         scope.launch {
                             navigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
@@ -71,10 +72,12 @@ fun ListDetails(
             },
             detailPane = {
                 AnimatedPane {
-                    if (navigator.currentDestination?.contentKey != null) {
-                        Timber.tag("SELECTED_ListDetails2").d("${state.selectedProperty?.id}")
+                    val property = state.selectedProperty
+                    if (property != null) {
+//                        Timber.tag("SELECTED_ListDetails2").d("${state.selectedProperty?.id}")
                         if (!state.mapMode) {
                             PropertyDetails(
+                                property = property,
                                 navigateBack = {
                                     scope.launch {
                                         navigator.navigateBack()
@@ -82,21 +85,17 @@ fun ListDetails(
                                 },
                                 onNavigateToAddPropertyScreen = {
                                     onNavigateToAddPropertyScreen(
-                                        state.selectedProperty?.id
+                                        property.id
                                     )
                                 },
                             )
                         } else {
                             MapOfProperties(
                                 currentPosition = currentPosition,
-                                focusPosition = if (false) {
-                                    null
-                                } else {
-                                    LatLng(
-                                        state.selectedProperty?.lat ?: 0.0,
-                                        state.selectedProperty?.lng ?: 0.0
-                                    )
-                                }
+                                focusPosition = LatLng(
+                                    property.lat,
+                                    property.lng,
+                                )
                             )
                         }
                     } else {

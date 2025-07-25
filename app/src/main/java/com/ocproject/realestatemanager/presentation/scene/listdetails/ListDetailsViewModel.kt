@@ -35,7 +35,7 @@ class ListDetailsViewModel(
 
     init {
         getPropertyList()
-        onEvent(ListDetailsEvent.GetDetails)
+//        onEvent(ListDetailsEvent.GetDetails)
     }
 
     private fun setMaxPrice() {
@@ -314,17 +314,13 @@ class ListDetailsViewModel(
 
             is ListDetailsEvent.GetDetails -> {
                 viewModelScope.launch {
-                    if (state.value.selectedProperty != null) {
-                        onEvent(
-                            ListDetailsEvent.UpdateSelectedProperty(
-                                getPropertyDetailsUseCase(
-                                    state.value.selectedProperty!!.id
-                                )
+                    onEvent(
+                        ListDetailsEvent.UpdateSelectedProperty(
+                            getPropertyDetailsUseCase(
+                                event.propertyId
                             )
                         )
-                    } else {
-                        onEvent(ListDetailsEvent.UpdateSelectedProperty(null))
-                    }
+                    )
                 }
                 getPropertyList()
             }
@@ -435,58 +431,67 @@ class ListDetailsViewModel(
             }
 
             is ListDetailsEvent.UpdateSelectedProperty -> {
-                viewModelScope.launch {
+                if (event.property != null) {
                     _state.update {
                         it.copy(
                             selectedProperty = event.property
                         )
                     }
-                }
-                Timber.tag("SELECTED_PROPERTY").d("${state.value.selectedProperty?.id}")
-            }
-
-            is ListDetailsEvent.UpdateSortedProperties -> {
-                viewModelScope.launch {
+                }else {
                     _state.update {
                         it.copy(
-                            sortedProperties = sortProperties()
+                            selectedProperty = null
                         )
                     }
                 }
-            }
 
-            is ListDetailsEvent.UpdateProperties -> {
-                _state.update {
-                    it.copy(
-                        properties = event.properties
-                    )
+
+
+                    Timber.tag("SELECTED_PROPERTY").d("${state.value.selectedProperty?.id}")
                 }
-                onEvent(ListDetailsEvent.UpdateSortedProperties)
-            }
 
-            is ListDetailsEvent.UpdateFilter -> {
-                _state.update {
-                    it.copy(
-                        sortType = event.filter.sortType,
-                        orderPrice = event.filter.orderPrice,
-                        orderDate = event.filter.orderDate,
-                        orderSurface = event.filter.orderSurface,
-                        rangePrice = event.filter.rangePrice,
-                        rangeDate = event.filter.rangeDate,
-                        soldRangeDate = event.filter.soldRangeDate,
-                        rangeSurface = event.filter.rangeSurface,
-                        soldStatus = event.filter.sellingStatus,
-                        schoolTag = event.filter.tagSchool,
-                        transportTag = event.filter.tagTransport,
-                        shopTag = event.filter.tagShop,
-                        parkTag = event.filter.tagPark,
-                        chosenAreaCode = event.filter.areaCodeFilter,
-                        minNbrPhotos = event.filter.minNbrPhotos,
-                    )
+                is ListDetailsEvent.UpdateSortedProperties -> {
+                    viewModelScope.launch {
+                        _state.update {
+                            it.copy(
+                                sortedProperties = sortProperties()
+                            )
+                        }
+                    }
                 }
-                onEvent(ListDetailsEvent.UpdateSortedProperties)
 
+                is ListDetailsEvent.UpdateProperties -> {
+                    _state.update {
+                        it.copy(
+                            properties = event.properties
+                        )
+                    }
+                    onEvent(ListDetailsEvent.UpdateSortedProperties)
+                }
+
+                is ListDetailsEvent.UpdateFilter -> {
+                    _state.update {
+                        it.copy(
+                            sortType = event.filter.sortType,
+                            orderPrice = event.filter.orderPrice,
+                            orderDate = event.filter.orderDate,
+                            orderSurface = event.filter.orderSurface,
+                            rangePrice = event.filter.rangePrice,
+                            rangeDate = event.filter.rangeDate,
+                            soldRangeDate = event.filter.soldRangeDate,
+                            rangeSurface = event.filter.rangeSurface,
+                            soldStatus = event.filter.sellingStatus,
+                            schoolTag = event.filter.tagSchool,
+                            transportTag = event.filter.tagTransport,
+                            shopTag = event.filter.tagShop,
+                            parkTag = event.filter.tagPark,
+                            chosenAreaCode = event.filter.areaCodeFilter,
+                            minNbrPhotos = event.filter.minNbrPhotos,
+                        )
+                    }
+                    onEvent(ListDetailsEvent.UpdateSortedProperties)
+
+                }
             }
         }
     }
-}
