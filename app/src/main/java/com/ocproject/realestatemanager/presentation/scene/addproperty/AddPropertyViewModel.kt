@@ -34,29 +34,6 @@ class AddPropertyViewModel(
     private val _state = MutableStateFlow(AddPropertyState())
     val state = _state.asStateFlow()
 
-//    var newProperty: Property = (
-//        Property(
-//            photoList = emptyList(),
-//            interestPoints = emptyList(),
-//            address = "",
-//            town = "",
-//            lat = 0.0,
-//            lng = 0.0,
-//            country = "",
-//            createdDate = null,
-//            areaCode = null,
-//            surfaceArea = null,
-//            price = null,
-//            id = 0L,
-//            sold = null,
-//        )
-//    )
-//        private set
-
-//    var photoList: MutableState<List<PhotoProperty>?> = mutableStateOf(null)
-//        private set
-
-
     init {
 
         getProperty()
@@ -153,11 +130,14 @@ class AddPropertyViewModel(
                     isMain = event.photoProperty.isMain,
                     photoBytes = event.photoProperty.photoBytes,
                     name = event.value,
+                    id = event.photoProperty.id
                 )
-                val list: List<PhotoProperty> = state.value.photoList
-                list.forEach {
+                val list: MutableList<PhotoProperty> = mutableListOf()
+                state.value.photoList.forEach {
                     if (it == event.photoProperty) {
-                        list[list.indexOf(it)].copy(photo.isMain, photo.name, photo.photoBytes)
+                         list.add(photo)
+                    } else {
+                        list.add(it)
                     }
                 }
                 Timber.tag("OnPhotoChangeList").d("${list.size}")
@@ -178,18 +158,19 @@ class AddPropertyViewModel(
                     )
                     cpt++
                 }
-                // Ajouter à la liste existante au lieu de la remplacer
+                // Ajouter à la liste existante
                 val currentList = state.value.photoList.toMutableList()
-//                    photoList.value?.toMutableList() ?: mutableListOf()
                 currentList.addAll(list)
                 onEvent(UpdatePhotos(currentList.toList()))
             }
 
             is UpdatePhotos -> {
-                _state.update {
-                    it.copy(
-                        photoList = event.photos
-                    )
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            photoList = event.photos
+                        )
+                    }
                 }
             }
 
