@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.LatLng
 import com.ocproject.realestatemanager.presentation.navigation.Screen
 import com.ocproject.realestatemanager.presentation.scene.addproperty.addPropertyScreen
-import com.ocproject.realestatemanager.core.ui.theme.RealestatemanagerTheme
+import com.ocproject.realestatemanager.core.ui.theme.RealEstateManagerTheme
 import com.ocproject.realestatemanager.presentation.scene.cameraScreen.cameraScreen
 import com.ocproject.realestatemanager.presentation.scene.funding.fundingScreen
 import com.ocproject.realestatemanager.presentation.scene.listdetails.listDetailsScreen
@@ -25,23 +25,23 @@ fun RealEstateManagerApp(
     darkTheme: Boolean,
     dynamicColor: Boolean,
 ) {
-    RealestatemanagerTheme(
+    RealEstateManagerTheme(
         darkTheme = darkTheme,
         dynamicColor = dynamicColor,
     ) {
 
         val navController = rememberNavController()
-        KoinContext {
-            NavHost(
-                navController = navController,
-                startDestination = Screen.ListDetailsScreen.route
-            ) {
-                listDetailsScreen(navController, currentLocation)
-                addPropertyScreen(navController)
-                mapOfPropertiesScreen(navController, currentLocation)
-                fundingScreen(navController)
-                cameraScreen(navController)
-            }
+
+        NavHost(
+            navController = navController,
+            startDestination = Screen.ListDetailsScreen.route
+        ) {
+            listDetailsScreen(navController, currentLocation)
+            addPropertyScreen(navController)
+            mapOfPropertiesScreen(navController, currentLocation)
+            fundingScreen(navController)
+            cameraScreen(navController)
         }
+
     }
 }

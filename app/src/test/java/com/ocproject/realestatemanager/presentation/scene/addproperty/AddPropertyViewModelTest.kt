@@ -3,6 +3,7 @@ package com.ocproject.realestatemanager.presentation.scene.addproperty
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.ocproject.realestatemanager.MainCoroutineRule
 import com.ocproject.realestatemanager.core.InterestPoint
+import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.domain.usecases.SavePropertyUseCase
@@ -26,7 +27,6 @@ import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddPropertyViewModelTest {
-    //goal 80% viewModel
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -78,26 +78,77 @@ class AddPropertyViewModelTest {
     }
 
     @Test
+    fun `get Property, new entry case`() = runTest {
+        //New property, so id is set to 0 and will be auto incremented in bdd.
+        val property1 = Property(
+            photoList = emptyList(),
+            interestPoints = emptyList(),
+            address = "Somewhere",
+            town = "NowhereCity",
+            lat = 120.5,
+            lng = 50.30,
+            country = "Faraway",
+            createdDate = 500,
+            areaCode = 18290,
+            surfaceArea = 150,
+            price = 150000,
+            sold = null,
+            id = 0L,
+        )
+        val viewModelTest = AddPropertyViewModel(0L, getPropertyDetails, saveProperty)
+        advanceUntilIdle()
+        viewModelTest.getProperty()
+        advanceUntilIdle()
+        coVerify { getPropertyDetails.invoke(any()) }
+        assert(viewModel.state.value.newProperty.id == 0L)
+    }
+
+    @Test
     fun `save property test`() = runTest {
+        val property1 = Property(
+            photoList = emptyList(),
+            interestPoints = emptyList(),
+            address = "Somewhere",
+            town = "Paris",
+            lat = 120.5,
+            lng = 50.30,
+            country = "France",
+            createdDate = 10000,
+            areaCode = 18290,
+            surfaceArea = 150,
+            price = 300000,
+            sold = null,
+            id = 2L,
+        )
+        val property2 = Property(
+            photoList = emptyList(),
+            interestPoints = emptyList(),
+            address = "Somewhere",
+            town = "Paris",
+            lat = 120.5,
+            lng = 50.30,
+            country = "France",
+            createdDate = null,
+            areaCode = 18290,
+            surfaceArea = 150,
+            price = 300000,
+            sold = null,
+            id = 5L,
+        )
         viewModel.saveProperty(
-            Property(
-                photoList = emptyList(),
-                interestPoints = emptyList(),
-                address = "Somewhere",
-                town = "Paris",
-                lat = 120.5,
-                lng = 50.30,
-                country = "France",
-                createdDate = 10000,
-                areaCode = 18290,
-                surfaceArea = 150,
-                price = 300000,
-                sold =null,
-                id = 2L,
-            )
+            property1
         )
         advanceUntilIdle()
-        coVerify { saveProperty(any()) }
+        coVerify { saveProperty(property1) }
+        viewModel.saveProperty(
+            property2
+        )
+        advanceUntilIdle()
+        coVerify {
+            saveProperty(
+                any()
+            )
+        }
     }
 
     @Test
@@ -158,5 +209,70 @@ class AddPropertyViewModelTest {
         advanceUntilIdle()
         val interestPoint = viewModelTest.state.value.newProperty.interestPoints
         assert(interestPoint.contains(InterestPoint.SCHOOL))
+    }
+
+    @Test
+    fun `remove photo test`() = runTest {
+        val photo1 = PhotoProperty(isMain = true, name="Photo 1", photoBytes = byteArrayOf())
+        val photo2 = PhotoProperty(isMain = false, name="Photo 2", photoBytes = byteArrayOf())
+        coEvery { getPropertyDetails(1L) } returns Property(
+            photoList = listOf(photo1, photo2),
+            interestPoints = emptyList(),
+            address = "",
+            town = "",
+            lat = 0.0,
+            lng = 0.0,
+            country = "",
+            createdDate = Calendar.getInstance().timeInMillis,
+            areaCode = null,
+            surfaceArea = null,
+            price = null,
+            id = 1L,
+            sold = null,
+        )
+        val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
+        advanceUntilIdle()
+        viewModelTest.removePhoto(photo1)
+        advanceUntilIdle()
+        assert(viewModelTest.state.value.photoList.size == 1)
+    }
+
+    @Test
+    fun `add photo from camera test`() = runTest {
+        val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
+        advanceUntilIdle()
+        // add a camera taken photo
+        viewModelTest.addPhotoFromCamera(byteArrayOf())
+        advanceUntilIdle()
+        // check previously empty photo list has now 1
+        assert(viewModelTest.state.value.photoList.size == 1)
+    }
+
+    @Test
+    fun `update photo & photo name change test`() = runTest {
+        val photo1 = PhotoProperty(isMain = true, name = "Photo 1", photoBytes = byteArrayOf())
+        val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
+        advanceUntilIdle()
+        // OnPhotoNameChanged apply on photo list so we populate it with one.
+        viewModelTest.onEvent(AddPropertyEvent.UpdatePhotos(listOf(photo1)))
+        advanceUntilIdle()
+        // Check photo list has now a photo
+        assert(viewModelTest.state.value.photoList.size == 1)
+        // Call function with new photo name
+        viewModelTest.onEvent(AddPropertyEvent.OnPhotoNameChanged(photo1, "Photo Test"))
+        advanceUntilIdle()
+        // Check that photo list has the photo with new name
+        assert(viewModelTest.state.value.photoList[0].name == "Photo Test")
+    }
+
+    @Test
+    fun `update photo from picker`() = runTest {
+        val photoByteFromPicker = byteArrayOf()
+        val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
+        advanceUntilIdle()
+        viewModelTest.onEvent(AddPropertyEvent.OnPhotoPicked(listOf(photoByteFromPicker)))
+        advanceUntilIdle()
+        // Check that photo list has a photo oh ByteArray corresponding
+        assert(viewModelTest.state.value.photoList[0].photoBytes.contentEquals(photoByteFromPicker))
     }
 }

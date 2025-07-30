@@ -73,6 +73,7 @@ fun PropertyListTopBar(
 
             IconButton(
                 onClick = { onNavigateToAddPropertyScreen(null) },
+                modifier.testTag("topBarAdd")
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,

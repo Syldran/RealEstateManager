@@ -9,7 +9,6 @@ import com.ocproject.realestatemanager.core.SellingStatus
 import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.models.Property
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.Calendar
 
 data class ListDetailsState(
@@ -21,22 +20,24 @@ data class ListDetailsState(
     val isLoadingProgressBar: Boolean = false,
     val isError: Boolean = false,
     val isFilterSheetOpen: Boolean = false,
-    val sortType: SortType = SortType.PRICE,
-    val orderPrice: Order = Order.ASC,
-    val orderDate: Order = Order.ASC,
-    val orderSurface: Order = Order.ASC,
-    val rangePrice: Range<Int> = Range<Int>(0, Int.MAX_VALUE),
-    val rangeDate: Range<Long> = Range<Long>(0L, Calendar.getInstance().timeInMillis + 12583060),
-    val soldRangeDate: Range<Long> = Range<Long>(0L, Calendar.getInstance().timeInMillis + 12583060),
-    val rangeSurface: Range<Int> = Range<Int>(0, Int.MAX_VALUE),
+    val filterSate: Filter = Filter(
+        sortType = SortType.PRICE,
+        priceOrder = Order.ASC,
+        dateOrder = Order.ASC,
+        surfaceOrder = Order.ASC,
+        priceRange = Range<Int>(0, Int.MAX_VALUE),
+        dateRange = Range<Long>(0L, Calendar.getInstance().timeInMillis + 12583060),
+        soldDateRange = Range<Long>(0L, Calendar.getInstance().timeInMillis + 12583060),
+        surfaceRange = Range<Int>(0, Int.MAX_VALUE),
+        sellingStatus = SellingStatus.ALL,
+        tagSchool = false,
+        tagTransport = false,
+        tagShop = false,
+        tagPark = false,
+        areaCodeFilter =  null,
+        minNbrPhotos = 0,
+    ),
     val maxPrice: Int = Int.MAX_VALUE,
     val maxSurface: Int = Int.MAX_VALUE,
-    val soldStatus: SellingStatus = SellingStatus.ALL,
-    val schoolTag: Boolean = false,
-    val transportTag: Boolean = false,
-    val parkTag: Boolean = false,
-    val shopTag: Boolean = false,
     val areaCodeList: List<Int> = emptyList(),
-    val chosenAreaCode: Int? = null,
-    val minNbrPhotos: Int = 0,
 )

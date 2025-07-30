@@ -15,6 +15,10 @@ class FakePropertiesDao : PropertiesDao {
         TODO("Not yet implemented")
     }
 
+    override fun getPropertyWithCursorById(id: Long): Cursor {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun upsertProperty(property: PropertyEntity): Long {
         val propertyWithPhoto = PropertyWithPhotosEntity(property, null)
         propertyList.add(property)

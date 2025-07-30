@@ -11,17 +11,8 @@ sealed interface ListDetailsEvent {
     data class DeleteProperty(val property: Property) : ListDetailsEvent
     data object GetProperties : ListDetailsEvent
     data class GetDetails(val propertyId: Long) : ListDetailsEvent
-    data class SetRangeSurface(val rangeSurface: Range<Float>) : ListDetailsEvent
-    data class SetRangePrice(val rangePrice: Range<Float>) : ListDetailsEvent
-    data class OnSchoolChecked(val value: Boolean) : ListDetailsEvent
-    data class OnParkChecked(val value: Boolean) : ListDetailsEvent
-    data class OnShopChecked(val value: Boolean) : ListDetailsEvent
-    data class OnTransportChecked(val value: Boolean) : ListDetailsEvent
-    data class OnAreaCodeChosen(val code: Int?) : ListDetailsEvent
-    data class OnDateRangeSelected(val startRange: Long, val endRange: Long) : ListDetailsEvent
-    data class OnSoldDateRangeSelected(val startRange: Long, val endRange: Long) : ListDetailsEvent
     data class UpdateSelectedProperty(val property: Property?) : ListDetailsEvent
     data object UpdateSortedProperties : ListDetailsEvent
-    data class UpdateProperties(val properties: List<Property>) : ListDetailsEvent
+//    data class UpdateProperties(val properties: List<Property>) : ListDetailsEvent
     data class UpdateFilter(val filter: Filter) : ListDetailsEvent
 }

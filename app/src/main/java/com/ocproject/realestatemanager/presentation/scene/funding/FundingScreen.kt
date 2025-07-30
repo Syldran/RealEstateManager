@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
 import org.koin.androidx.compose.koinViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +121,7 @@ fun FundingScreen(
                 border = BorderStroke(1.dp, colorResource(id = R.color.purple_200))
             ) {
                 //add notarial price
-                var monthlyPayment =
+                val monthlyPayment =
                     viewModel.calcMonthlyPayment(
                         price?.toFloat() ?: 0F,
                         state.chosenRate.ratio,
@@ -130,6 +131,7 @@ fun FundingScreen(
                     Text(
                         "Total Cost = ${
                             String.format(
+                                Locale.ROOT,
                                 "%.2f",
                                 viewModel.displayTotalCost(
                                     monthlyPayment,
@@ -138,16 +140,21 @@ fun FundingScreen(
                             )
                         }"
                     )
-                    Text("Monthly Payment = ${String.format("%.2f", monthlyPayment)}")
+                    Text(
+                        "Monthly Payment = ${
+                            String.format(
+                                Locale.ROOT,
+                                "%.2f",
+                                monthlyPayment
+                            )
+                        }"
+                    )
                     Text(
                         "Interest Payment = ${
-                            String.format(
-                                "%.2f",
-                                viewModel.displayInterest(
-                                    monthlyPayment,
-                                    state.chosenRate.yearsInMonths,
-                                    price?.toFloat() ?: 0F
-                                )
+                            viewModel.displayInterest(
+                                monthlyPayment,
+                                state.chosenRate.yearsInMonths,
+                                price?.toFloat() ?: 0F
                             )
                         }"
                     )
@@ -162,7 +169,9 @@ fun FundingScreen(
                 sheetState = sheetState
             ) {
                 Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState()).fillMaxSize(),
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -175,7 +184,7 @@ fun FundingScreen(
                                 viewModel.onEvent(
                                     FundingEvent.OnRateOptionChosen(
                                         FundingRate.SEVEN_YEARS,
-                                        "7 years ${viewModel.displayPercent(FundingRate.SEVEN_YEARS.ratio)} % "
+                                        "7 years ${viewModel.displayPercent(FundingRate.SEVEN_YEARS.ratio)}"
                                     )
                                 )
                                 showBottomSheet = false
@@ -191,7 +200,7 @@ fun FundingScreen(
                                 viewModel.onEvent(
                                     FundingEvent.OnRateOptionChosen(
                                         FundingRate.TEN_YEARS,
-                                        "10 years ${viewModel.displayPercent(FundingRate.TEN_YEARS.ratio)} % "
+                                        "10 years ${viewModel.displayPercent(FundingRate.TEN_YEARS.ratio)}"
                                     )
                                 )
                                 showBottomSheet = false
@@ -207,7 +216,7 @@ fun FundingScreen(
                                 viewModel.onEvent(
                                     FundingEvent.OnRateOptionChosen(
                                         FundingRate.FIFTEEN_YEARS,
-                                        "15 years ${viewModel.displayPercent(FundingRate.FIFTEEN_YEARS.ratio)} % "
+                                        "15 years ${viewModel.displayPercent(FundingRate.FIFTEEN_YEARS.ratio)}"
                                     )
                                 )
                                 showBottomSheet = false
@@ -223,7 +232,7 @@ fun FundingScreen(
                                 viewModel.onEvent(
                                     FundingEvent.OnRateOptionChosen(
                                         FundingRate.TWENTY_YEARS,
-                                        "20 years ${viewModel.displayPercent(FundingRate.TWENTY_YEARS.ratio)} % "
+                                        "20 years ${viewModel.displayPercent(FundingRate.TWENTY_YEARS.ratio)}"
                                     )
                                 )
                                 showBottomSheet = false
@@ -239,7 +248,7 @@ fun FundingScreen(
                                 viewModel.onEvent(
                                     FundingEvent.OnRateOptionChosen(
                                         FundingRate.TWENTY_FIVE_YEARS,
-                                        "25 years ${viewModel.displayPercent(FundingRate.TWENTY_FIVE_YEARS.ratio)} % "
+                                        "25 years ${viewModel.displayPercent(FundingRate.TWENTY_FIVE_YEARS.ratio)}"
                                     )
                                 )
                                 showBottomSheet = false

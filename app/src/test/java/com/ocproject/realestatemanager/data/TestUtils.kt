@@ -1,22 +1,23 @@
-package com.ocproject.realestatemanager.presentation.scene.addproperty
+package com.ocproject.realestatemanager.data
 
-import com.ocproject.realestatemanager.core.utils.Utils.convertDollarToEuro
-import com.ocproject.realestatemanager.core.utils.Utils.convertEuroToDollars
-import com.ocproject.realestatemanager.core.utils.Utils.getTodayDate
+import android.content.Context
+import com.ocproject.realestatemanager.core.utils.Utils
+import io.mockk.mockk
+import junit.framework.TestCase
 import kotlinx.coroutines.test.runTest
-import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import java.util.Calendar
 
 class TestUtils {
+
 
     @Test
     fun euroEuroDollarConversion() = runTest {
         val dollar: Double = 100.0
         val dollarInEuro: Double = 95.0
 
-        assertEquals(convertDollarToEuro(dollar), dollarInEuro)
-        assertEquals(convertEuroToDollars(dollarInEuro), dollar)
+        TestCase.assertEquals(Utils.convertDollarToEuro(dollar), dollarInEuro)
+        TestCase.assertEquals(Utils.convertEuroToDollars(dollarInEuro), dollar)
     }
 
     @Test
@@ -27,6 +28,6 @@ class TestUtils {
         val year: String = cal.get(Calendar.YEAR).toString()
         val expectedFormatDate = "$day/$month/$year"
 
-        assertEquals(expectedFormatDate, getTodayDate())
+        TestCase.assertEquals(expectedFormatDate, Utils.getTodayDate())
     }
 }

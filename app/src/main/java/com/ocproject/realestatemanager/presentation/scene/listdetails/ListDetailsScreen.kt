@@ -42,7 +42,7 @@ fun ListDetails(
     val navigator = rememberListDetailPaneScaffoldNavigator<Property>()
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(state) {
+    LaunchedEffect(state.properties) {
         viewModel.onEvent(ListDetailsEvent.GetProperties)
     }
     Column {

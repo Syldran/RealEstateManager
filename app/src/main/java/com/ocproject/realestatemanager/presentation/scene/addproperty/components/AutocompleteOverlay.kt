@@ -28,7 +28,9 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.ocproject.realestatemanager.core.utils.Globals.checkConnectivityForTest
 import com.ocproject.realestatemanager.core.utils.Utils
+import com.ocproject.realestatemanager.core.utils.Utils.isInternetAvailable
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,14 +82,13 @@ fun AutocompleteSearch(viewModel: AddPropertyViewModel, scope: CoroutineScope, s
 
 
     Column {
-        @VisibleForTesting
-        var checkConnectivityForTest: Boolean
+
         Button(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(vertical = 16.dp),
             onClick = {
-                if (Utils.isInternetAvailable(context)) {
+                if (isInternetAvailable(context)) {
                     checkConnectivityForTest = true
                     launchAutocompleteOverlay.invoke()
                 } else {

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.math.pow
 
 class FundingViewModel() : ViewModel() {
@@ -19,7 +20,7 @@ class FundingViewModel() : ViewModel() {
     fun onEvent(event: FundingEvent) {
         when (event) {
             is FundingEvent.OnPriceInput -> {
-                var intFormatter = IntFormatter()
+                val intFormatter = IntFormatter()
                 price = event.value?.let { intFormatter.cleanup(it) }?.toInt() ?: price
             }
 
@@ -37,7 +38,7 @@ class FundingViewModel() : ViewModel() {
                 viewModelScope.launch {
                     _state.update {
                         it.copy(
-                           isRatingSelectionSheetOpen = false,
+                            isRatingSelectionSheetOpen = false,
                         )
                     }
                 }
@@ -55,21 +56,34 @@ class FundingViewModel() : ViewModel() {
     }
 
     fun calcMonthlyPayment(amountToBorrow: Float, rate: Float, durationInMonth: Float): Float {
-        var monthlyPayment =
+        val monthlyPayment =
             (amountToBorrow * rate / 12) / (1 - (1 + rate / 12).pow(-durationInMonth))
         return monthlyPayment
     }
 
-    fun displayPercent(value : Float) : Float {
-        return value * 100F
+    fun displayPercent(value: Float): String {
+        return "${value * 100F} %"
     }
 
-    fun displayTotalCost(monthlyPayment : Float, durationOfChosenRateInMonth : Int): Float {
-        return monthlyPayment * durationOfChosenRateInMonth
+    fun displayTotalCost(monthlyPayment: Float, durationOfChosenRateInMonth: Int): String {
+        return String.format(
+            Locale.ROOT,
+            "%.2f",
+            monthlyPayment * durationOfChosenRateInMonth
+        )
+
     }
 
-    fun displayInterest(monthlyPayment : Float, durationChosenRateInMonths: Int, price : Float): Float {
-        return monthlyPayment * durationChosenRateInMonths -price
+    fun displayInterest(
+        monthlyPayment: Float,
+        durationChosenRateInMonths: Int,
+        price: Float
+    ): String {
+        return String.format(
+            Locale.ROOT,
+            "%.2f",
+            monthlyPayment * durationChosenRateInMonths - price
+        )
     }
 
 }

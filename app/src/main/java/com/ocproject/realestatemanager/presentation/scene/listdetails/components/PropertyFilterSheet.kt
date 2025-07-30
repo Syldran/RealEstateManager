@@ -121,27 +121,32 @@ fun PropertyFilterSheet(
                             )
                             RadioButton(
                                 modifier = Modifier,
-                                selected = state.soldStatus == SellingStatus.PURCHASABLE,
+                                selected = state.filterSate.sellingStatus == SellingStatus.PURCHASABLE,
                                 onClick = {
                                     onEvent(
                                         ListDetailsEvent.UpdateFilter(
-                                            filter = Filter(
-                                                SortType.PRICE,
-                                                state.orderPrice,
-                                                state.orderDate,
-                                                state.orderSurface,
-                                                state.rangePrice,
-                                                state.rangeDate,
-                                                state.soldRangeDate,
-                                                state.rangeSurface,
-                                                SellingStatus.PURCHASABLE,
-                                                state.schoolTag,
-                                                state.parkTag,
-                                                state.shopTag,
-                                                state.transportTag,
-                                                state.chosenAreaCode,
-                                                state.minNbrPhotos,
+                                            filter = state.filterSate.copy(
+                                                sellingStatus = SellingStatus.PURCHASABLE
                                             )
+                                            /*ListDetailsEvent.UpdateFilter(
+                                                filter = Filter(
+                                                    sortType = state.filterSate.sortType,
+                                                    priceOrder = state.filterSate.priceOrder,
+                                                    dateOrder = state.filterSate.dateOrder,
+                                                    surfaceOrder = state.filterSate.surfaceOrder,
+                                                    priceRange = state.filterSate.priceRange,
+                                                    dateRange = state.filterSate.dateRange,
+                                                    soldDateRange = state.filterSate.soldDateRange,
+                                                    surfaceRange = state.filterSate.surfaceRange,
+                                                    sellingStatus = SellingStatus.PURCHASABLE,
+                                                    tagSchool = state.filterSate.tagSchool,
+                                                    tagTransport = state.filterSate.tagTransport,
+                                                    tagShop = state.filterSate.tagShop,
+                                                    tagPark = state.filterSate.tagPark,
+                                                    areaCodeFilter = state.filterSate.areaCodeFilter,
+                                                    minNbrPhotos = state.filterSate.minNbrPhotos,
+                                                )
+                                            )*/
                                         )
                                     )
                                 }
@@ -157,27 +162,30 @@ fun PropertyFilterSheet(
                             )
                             RadioButton(
                                 modifier = Modifier,
-                                selected = state.soldStatus == SellingStatus.SOLD,
+                                selected = state.filterSate.sellingStatus == SellingStatus.SOLD,
                                 onClick = {
                                     onEvent(
                                         ListDetailsEvent.UpdateFilter(
-                                            filter = Filter(
-                                                state.sortType,
-                                                state.orderPrice,
-                                                state.orderDate,
-                                                state.orderSurface,
-                                                state.rangePrice,
-                                                state.rangeDate,
-                                                state.soldRangeDate,
-                                                state.rangeSurface,
-                                                SellingStatus.SOLD,
-                                                state.schoolTag,
-                                                state.parkTag,
-                                                state.shopTag,
-                                                state.transportTag,
-                                                state.chosenAreaCode,
-                                                state.minNbrPhotos,
+                                            filter = state.filterSate.copy(
+                                                sellingStatus = SellingStatus.SOLD
                                             )
+//                                            filter = Filter(
+//                                                sortType = state.filterSate.sortType,
+//                                                priceOrder = state.filterSate.priceOrder,
+//                                                dateOrder = state.filterSate.dateOrder,
+//                                                surfaceOrder = state.filterSate.surfaceOrder,
+//                                                priceRange = state.filterSate.priceRange,
+//                                                dateRange = state.filterSate.dateRange,
+//                                                soldDateRange = state.filterSate.soldDateRange,
+//                                                surfaceRange = state.filterSate.surfaceRange,
+//                                                sellingStatus = SellingStatus.SOLD,
+//                                                tagSchool = state.filterSate.tagSchool,
+//                                                tagTransport = state.filterSate.tagTransport,
+//                                                tagShop = state.filterSate.tagShop,
+//                                                tagPark = state.filterSate.tagPark,
+//                                                areaCodeFilter = state.filterSate.areaCodeFilter,
+//                                                minNbrPhotos = state.filterSate.minNbrPhotos,
+//                                            )
                                         )
                                     )
                                 }
@@ -193,27 +201,31 @@ fun PropertyFilterSheet(
                             )
                             RadioButton(
                                 modifier = Modifier,
-                                selected = state.soldStatus == SellingStatus.ALL,
+                                selected = state.filterSate.sellingStatus == SellingStatus.ALL,
                                 onClick = {
+
                                     onEvent(
                                         ListDetailsEvent.UpdateFilter(
-                                            filter = Filter(
-                                                state.sortType,
-                                                state.orderPrice,
-                                                state.orderDate,
-                                                state.orderSurface,
-                                                state.rangePrice,
-                                                state.rangeDate,
-                                                state.soldRangeDate,
-                                                state.rangeSurface,
-                                                SellingStatus.ALL,
-                                                state.schoolTag,
-                                                state.parkTag,
-                                                state.shopTag,
-                                                state.transportTag,
-                                                state.chosenAreaCode,
-                                                state.minNbrPhotos,
+                                            filter = state.filterSate.copy(
+                                                sellingStatus = SellingStatus.ALL
                                             )
+//                                            filter = Filter(
+//                                                sortType = state.filterSate.sortType,
+//                                                priceOrder = state.filterSate.priceOrder,
+//                                                dateOrder = state.filterSate.dateOrder,
+//                                                surfaceOrder = state.filterSate.surfaceOrder,
+//                                                priceRange = state.filterSate.priceRange,
+//                                                dateRange = state.filterSate.dateRange,
+//                                                soldDateRange = state.filterSate.soldDateRange,
+//                                                surfaceRange = state.filterSate.surfaceRange,
+//                                                sellingStatus = SellingStatus.ALL,
+//                                                tagSchool = state.filterSate.tagSchool,
+//                                                tagTransport = state.filterSate.tagTransport,
+//                                                tagShop = state.filterSate.tagShop,
+//                                                tagPark = state.filterSate.tagPark,
+//                                                areaCodeFilter = state.filterSate.areaCodeFilter,
+//                                                minNbrPhotos = state.filterSate.minNbrPhotos,
+//                                            )
                                         )
                                     )
                                 }
@@ -228,42 +240,51 @@ fun PropertyFilterSheet(
                         .fillMaxWidth()
                 ) {
                     Row(
-                        modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
 //                        Text(text = "Photos Minimum: ")
                         OutlinedTextField(
                             shape = RoundedCornerShape(size = 8.dp),
-                            colors = TextFieldDefaults.colors(focusedContainerColor = Color.White,),
+                            colors = TextFieldDefaults.colors(focusedContainerColor = Color.White),
                             modifier = Modifier,
-                            value = if (state.minNbrPhotos == 0) "" else state.minNbrPhotos.toString(),
+                            value = if (state.filterSate.minNbrPhotos == 0) "" else state.filterSate.minNbrPhotos.toString(),
                             placeholder = { Text("0") },
-                            label = {Text("Min Photos")},
+                            label = { Text("Min Photos") },
                             onValueChange = {
                                 onEvent(
                                     ListDetailsEvent.UpdateFilter(
-                                        filter = Filter(
-                                            state.sortType,
-                                            state.orderPrice,
-                                            state.orderDate,
-                                            state.orderSurface,
-                                            state.rangePrice,
-                                            state.rangeDate,
-                                            state.soldRangeDate,
-                                            state.rangeSurface,
-                                            state.soldStatus,
-                                            state.schoolTag,
-                                            state.parkTag,
-                                            state.shopTag,
-                                            state.transportTag,
-                                            state.chosenAreaCode,
-                                            if (it.isEmpty()) {
+                                        filter = state.filterSate.copy(
+                                            minNbrPhotos = if (it.isEmpty()) {
                                                 0
                                             } else {
                                                 it.toInt()
                                             },
                                         )
+//                                        filter = Filter(
+//                                            sortType = state.filterSate.sortType,
+//                                            priceOrder = state.filterSate.priceOrder,
+//                                            dateOrder = state.filterSate.dateOrder,
+//                                            surfaceOrder = state.filterSate.surfaceOrder,
+//                                            priceRange = state.filterSate.priceRange,
+//                                            dateRange = state.filterSate.dateRange,
+//                                            soldDateRange = state.filterSate.soldDateRange,
+//                                            surfaceRange = state.filterSate.surfaceRange,
+//                                            sellingStatus = state.filterSate.sellingStatus,
+//                                            tagSchool = state.filterSate.tagSchool,
+//                                            tagTransport = state.filterSate.tagTransport,
+//                                            tagShop = state.filterSate.tagShop,
+//                                            tagPark = state.filterSate.tagPark,
+//                                            areaCodeFilter = state.filterSate.areaCodeFilter,
+//                                            minNbrPhotos = if (it.isEmpty()) {
+//                                                0
+//                                            } else {
+//                                                it.toInt()
+//                                            },
+//                                        )
                                     )
                                 )
 
@@ -278,40 +299,43 @@ fun PropertyFilterSheet(
                 Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
                     Text("Price Range")
                     val maxPrice = state.maxPrice
-                    val sliderMax = if (maxPrice > state.rangePrice.upper) {
-                        state.rangePrice.upper
+                    val sliderMax = if (maxPrice > state.filterSate.priceRange.upper) {
+                        state.filterSate.priceRange.upper
                     } else {
                         maxPrice
                     }
-                    var sliderPosition by remember { mutableStateOf(state.rangePrice.lower.toFloat()..sliderMax.toFloat()) }
+                    var sliderPosition by remember { mutableStateOf(state.filterSate.priceRange.lower.toFloat()..sliderMax.toFloat()) }
+
                     RangeSlider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         value = sliderPosition,
                         steps = 0,
-                        onValueChange = { range ->
-                            sliderPosition = range
+                        onValueChange = { priceRange ->
+                            sliderPosition = priceRange
                         },
                         valueRange = 0F..maxPrice.toFloat(),
                         onValueChangeFinished = {
                             onEvent(
-                                ListDetailsEvent.SetRangePrice(
-                                    Range<Float>(
-                                        sliderPosition.start,
-                                        sliderPosition.endInclusive
+                                ListDetailsEvent.UpdateFilter(
+                                    filter = state.filterSate.copy(
+                                        priceRange = Range<Int>(
+                                            sliderPosition.start.toInt(),
+                                            sliderPosition.endInclusive.toInt(),
+                                        ),
                                     )
                                 )
                             )
                         },
                     )
-                    Text(text = "min: ${state.rangePrice.lower}    max:${sliderMax}")
+                    Text(text = "min: ${state.filterSate.priceRange.lower}    max:${sliderMax}")
                 }
 
                 //DATE
                 Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
                     val dateRangePickerState = rememberDateRangePickerState(
                         initialDisplayMode = DisplayMode.Input,
-                        initialSelectedStartDateMillis = state.rangeDate.lower,
-                        initialSelectedEndDateMillis = state.rangeDate.upper
+                        initialSelectedStartDateMillis = state.filterSate.dateRange.lower,
+                        initialSelectedEndDateMillis = state.filterSate.dateRange.upper
                     )
                     Text("Added Date Range")
                     DateRangePicker(
@@ -330,9 +354,13 @@ fun PropertyFilterSheet(
                             selectedDateEnd.add(Calendar.MILLISECOND, -1)
 
                             onEvent(
-                                ListDetailsEvent.OnDateRangeSelected(
-                                    dateRangePickerState.selectedStartDateMillis!!,
-                                    selectedDateEnd.timeInMillis
+                                ListDetailsEvent.UpdateFilter(
+                                    filter = state.filterSate.copy(
+                                        dateRange = Range<Long>(
+                                            dateRangePickerState.selectedStartDateMillis!!,
+                                            selectedDateEnd.timeInMillis
+                                        ),
+                                    )
                                 )
                             )
                         }
@@ -340,12 +368,12 @@ fun PropertyFilterSheet(
                         Text("Validate Date")
                     }
                 }
-                if (state.soldStatus == SellingStatus.SOLD) {
+                if (state.filterSate.sellingStatus == SellingStatus.SOLD) {
                     Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
                         val soldDateRangePickerState = rememberDateRangePickerState(
                             initialDisplayMode = DisplayMode.Input,
-                            initialSelectedStartDateMillis = state.soldRangeDate.lower,
-                            initialSelectedEndDateMillis = state.soldRangeDate.upper
+                            initialSelectedStartDateMillis = state.filterSate.soldDateRange.lower,
+                            initialSelectedEndDateMillis = state.filterSate.soldDateRange.upper
                         )
                         Text("Sold Date Range")
 
@@ -364,9 +392,13 @@ fun PropertyFilterSheet(
                                 selectedSoldDateEnd.add(Calendar.DAY_OF_YEAR, 1)
                                 selectedSoldDateEnd.add(Calendar.MILLISECOND, -1)
                                 onEvent(
-                                    ListDetailsEvent.OnSoldDateRangeSelected(
-                                        soldDateRangePickerState.selectedStartDateMillis!!,
-                                        selectedSoldDateEnd.timeInMillis
+                                    ListDetailsEvent.UpdateFilter(
+                                        filter = state.filterSate.copy(
+                                            soldDateRange = Range<Long>(
+                                                soldDateRangePickerState.selectedStartDateMillis!!,
+                                                soldDateRangePickerState.selectedStartDateMillis!!
+                                            )
+                                        )
                                     )
                                 )
                             }
@@ -378,33 +410,35 @@ fun PropertyFilterSheet(
 
                 Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
                     val maxSurface = state.maxSurface
-                    val surfaceSliderMax = if (maxSurface > state.rangeSurface.upper) {
-                        state.rangeSurface.upper
+                    val surfaceSliderMax = if (maxSurface > state.filterSate.surfaceRange.upper) {
+                        state.filterSate.surfaceRange.upper
                     } else {
                         maxSurface
                     }
-                    var surfaceSliderPosition by remember { mutableStateOf(state.rangeSurface.lower.toFloat()..surfaceSliderMax.toFloat()) }
+                    var surfaceSliderPosition by remember { mutableStateOf(state.filterSate.surfaceRange.lower.toFloat()..surfaceSliderMax.toFloat()) }
                     Text("Surface Area Range")
                     RangeSlider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         value = surfaceSliderPosition,
                         steps = 0,
-                        onValueChange = { range ->
-                            surfaceSliderPosition = range
+                        onValueChange = { surfaceRange ->
+                            surfaceSliderPosition = surfaceRange
                         },
                         valueRange = 0F..maxSurface.toFloat(),
                         onValueChangeFinished = {
                             onEvent(
-                                ListDetailsEvent.SetRangeSurface(
-                                    Range<Float>(
-                                        surfaceSliderPosition.start,
-                                        surfaceSliderPosition.endInclusive
+                                ListDetailsEvent.UpdateFilter(
+                                    filter = state.filterSate.copy(
+                                        surfaceRange = Range<Int>(
+                                            surfaceSliderPosition.start.toInt(),
+                                            surfaceSliderPosition.endInclusive.toInt()
+                                        ),
                                     )
                                 )
                             )
                         },
                     )
-                    Text(text = "min: ${state.rangeSurface.lower}    max:${surfaceSliderMax}")
+                    Text(text = "min: ${state.filterSate.surfaceRange.lower}    max:${surfaceSliderMax}")
                 }
 
 
@@ -430,7 +464,7 @@ fun PropertyFilterSheet(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Text(text = if (state.chosenAreaCode == null) "Area Code" else state.chosenAreaCode.toString())
+                            Text(text = if (state.filterSate.areaCodeFilter == null) "Area Code" else state.filterSate.areaCodeFilter.toString())
                             Icon(
                                 Icons.Default.KeyboardArrowDown,
                                 contentDescription = "More options"
@@ -444,7 +478,13 @@ fun PropertyFilterSheet(
                             DropdownMenuItem(
                                 text = { Text("Area Code") },
                                 onClick = {
-                                    onEvent(ListDetailsEvent.OnAreaCodeChosen(null))
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = state.filterSate.copy(
+                                                areaCodeFilter = null,
+                                            )
+                                        )
+                                    )
                                     isAreaCodeListExpended = false
                                 }
                             )
@@ -453,7 +493,13 @@ fun PropertyFilterSheet(
                                 DropdownMenuItem(
                                     text = { Text("$i") },
                                     onClick = {
-                                        onEvent(ListDetailsEvent.OnAreaCodeChosen(i))
+                                        onEvent(
+                                            ListDetailsEvent.UpdateFilter(
+                                                filter = state.filterSate.copy(
+                                                    areaCodeFilter = i,
+                                                )
+                                            )
+                                        )
                                         isAreaCodeListExpended = false
                                     }
                                 )
@@ -474,14 +520,19 @@ fun PropertyFilterSheet(
                         FilterChip(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
-                                onEvent(ListDetailsEvent.OnSchoolChecked(state.schoolTag))
-
+                                onEvent(
+                                    ListDetailsEvent.UpdateFilter(
+                                        filter = state.filterSate.copy(
+                                            tagSchool = !state.filterSate.tagSchool,
+                                        )
+                                    )
+                                )
                             },
                             label = {
                                 Text("School")
                             },
-                            selected = state.schoolTag,
-                            leadingIcon = if (state.schoolTag) {
+                            selected = state.filterSate.tagSchool,
+                            leadingIcon = if (state.filterSate.tagSchool) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,
@@ -498,14 +549,19 @@ fun PropertyFilterSheet(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.OnParkChecked(state.parkTag)
+                                    ListDetailsEvent.UpdateFilter(
+                                        filter = state.filterSate.copy(
+                                            tagPark = !state.filterSate.tagPark,
+                                        )
+                                    )
                                 )
+
                             },
                             label = {
                                 Text("Park")
                             },
-                            selected = state.parkTag,
-                            leadingIcon = if (state.parkTag) {
+                            selected = state.filterSate.tagPark,
+                            leadingIcon = if (state.filterSate.tagPark) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,
@@ -522,14 +578,18 @@ fun PropertyFilterSheet(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
                                 onEvent(
-                                    ListDetailsEvent.OnShopChecked(state.shopTag)
+                                    ListDetailsEvent.UpdateFilter(
+                                        filter = state.filterSate.copy(
+                                            tagShop = !state.filterSate.tagShop,
+                                        )
+                                    )
                                 )
                             },
                             label = {
                                 Text("Shop")
                             },
-                            selected = state.shopTag,
-                            leadingIcon = if (state.shopTag) {
+                            selected = state.filterSate.tagShop,
+                            leadingIcon = if (state.filterSate.tagShop) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,
@@ -545,13 +605,19 @@ fun PropertyFilterSheet(
                         FilterChip(
                             modifier = Modifier.padding(4.dp),
                             onClick = {
-                                onEvent(ListDetailsEvent.OnTransportChecked(state.transportTag))
+                                onEvent(
+                                    ListDetailsEvent.UpdateFilter(
+                                        filter = state.filterSate.copy(
+                                            tagTransport = !state.filterSate.tagTransport,
+                                        )
+                                    )
+                                )
                             },
                             label = {
                                 Text("Transport")
                             },
-                            selected = state.transportTag,
-                            leadingIcon = if (state.transportTag) {
+                            selected = state.filterSate.tagTransport,
+                            leadingIcon = if (state.filterSate.tagTransport) {
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Done,

@@ -64,7 +64,9 @@ fun PropertyList(
                         fontWeight = FontWeight.Bold
                     )
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Box {
@@ -76,22 +78,9 @@ fun PropertyList(
                                     Modifier.clickable {
                                         viewModel.onEvent(
                                             ListDetailsEvent.UpdateFilter(
-                                                filter = Filter(
-                                                    SortType.PRICE,
-                                                    Order.ASC,
-                                                    state.orderDate,
-                                                    state.orderSurface,
-                                                    state.rangePrice,
-                                                    state.rangeDate,
-                                                    state.soldRangeDate,
-                                                    state.rangeSurface,
-                                                    state.soldStatus,
-                                                    state.schoolTag,
-                                                    state.parkTag,
-                                                    state.shopTag,
-                                                    state.transportTag,
-                                                    state.chosenAreaCode,
-                                                    state.minNbrPhotos,
+                                                filter = state.filterSate.copy(
+                                                    sortType = SortType.PRICE,
+                                                    priceOrder = Order.ASC,
                                                 )
                                             )
                                         )
@@ -103,22 +92,9 @@ fun PropertyList(
                                     Modifier.clickable {
                                         viewModel.onEvent(
                                             ListDetailsEvent.UpdateFilter(
-                                                filter = Filter(
-                                                    SortType.PRICE,
-                                                    Order.DESC,
-                                                    state.orderDate,
-                                                    state.orderSurface,
-                                                    state.rangePrice,
-                                                    state.rangeDate,
-                                                    state.soldRangeDate,
-                                                    state.rangeSurface,
-                                                    state.soldStatus,
-                                                    state.schoolTag,
-                                                    state.parkTag,
-                                                    state.shopTag,
-                                                    state.transportTag,
-                                                    state.chosenAreaCode,
-                                                    state.minNbrPhotos,
+                                                filter = state.filterSate.copy(
+                                                    sortType = SortType.PRICE,
+                                                    priceOrder = Order.DESC,
                                                 )
                                             )
                                         )
@@ -138,22 +114,9 @@ fun PropertyList(
                                     Modifier.clickable {
                                         viewModel.onEvent(
                                             ListDetailsEvent.UpdateFilter(
-                                                filter = Filter(
-                                                    SortType.DATE,
-                                                    state.orderPrice,
-                                                    Order.ASC,
-                                                    state.orderSurface,
-                                                    state.rangePrice,
-                                                    state.rangeDate,
-                                                    state.soldRangeDate,
-                                                    state.rangeSurface,
-                                                    state.soldStatus,
-                                                    state.schoolTag,
-                                                    state.parkTag,
-                                                    state.shopTag,
-                                                    state.transportTag,
-                                                    state.chosenAreaCode,
-                                                    state.minNbrPhotos,
+                                                filter = state.filterSate.copy(
+                                                    sortType = SortType.DATE,
+                                                    dateOrder = Order.ASC,
                                                 )
                                             )
                                         )
@@ -165,22 +128,9 @@ fun PropertyList(
                                     Modifier.clickable {
                                         viewModel.onEvent(
                                             ListDetailsEvent.UpdateFilter(
-                                                filter = Filter(
-                                                    SortType.DATE,
-                                                    state.orderPrice,
-                                                    Order.DESC,
-                                                    state.orderSurface,
-                                                    state.rangePrice,
-                                                    state.rangeDate,
-                                                    state.soldRangeDate,
-                                                    state.rangeSurface,
-                                                    state.soldStatus,
-                                                    state.schoolTag,
-                                                    state.parkTag,
-                                                    state.shopTag,
-                                                    state.transportTag,
-                                                    state.chosenAreaCode,
-                                                    state.minNbrPhotos,
+                                                filter = state.filterSate.copy(
+                                                    sortType = SortType.DATE,
+                                                    dateOrder = Order.DESC,
                                                 )
                                             )
                                         )
@@ -197,57 +147,34 @@ fun PropertyList(
                                     Icons.Default.KeyboardArrowUp,
                                     contentDescription = "Surface Ascendant",
                                     modifier = Modifier.clickable {
-                                        viewModel.onEvent(
-                                            ListDetailsEvent.UpdateFilter(
-                                                filter = Filter(
-                                                    SortType.AREA,
-                                                    state.orderPrice,
-                                                    state.orderDate,
-                                                    Order.ASC,
-                                                    state.rangePrice,
-                                                    state.rangeDate,
-                                                    state.soldRangeDate,
-                                                    state.rangeSurface,
-                                                    state.soldStatus,
-                                                    state.schoolTag,
-                                                    state.parkTag,
-                                                    state.shopTag,
-                                                    state.transportTag,
-                                                    state.chosenAreaCode,
-                                                    state.minNbrPhotos,
-                                                )
+                                        if (state.filterSate.sortType != SortType.AREA || state.filterSate.surfaceOrder != Order.ASC) {
+                                            viewModel.onEvent(
+                                                ListDetailsEvent.UpdateFilter(
+                                                    filter = state.filterSate.copy(
+                                                        sortType = SortType.AREA,
+                                                        surfaceOrder = Order.ASC,
+                                                    )                                                )
                                             )
-                                        )
+                                        }
+
                                     }
                                 )
                                 Image(
                                     Icons.Default.KeyboardArrowDown,
                                     contentDescription = "Surface Descendant",
                                     modifier = Modifier.clickable {
-                                        viewModel.onEvent(
-                                            ListDetailsEvent.UpdateFilter(
-                                                filter = Filter(
-                                                    SortType.AREA,
-                                                    state.orderPrice,
-                                                    state.orderDate,
-                                                    Order.DESC,
-                                                    state.rangePrice,
-                                                    state.rangeDate,
-                                                    state.soldRangeDate,
-                                                    state.rangeSurface,
-                                                    state.soldStatus,
-                                                    state.schoolTag,
-                                                    state.parkTag,
-                                                    state.shopTag,
-                                                    state.transportTag,
-                                                    state.chosenAreaCode,
-                                                    state.minNbrPhotos,
+                                        if (state.filterSate.sortType != SortType.AREA || state.filterSate.surfaceOrder != Order.DESC) {
+                                            viewModel.onEvent(
+                                                ListDetailsEvent.UpdateFilter(
+                                                    filter = state.filterSate.copy(
+                                                        sortType = SortType.AREA,
+                                                        surfaceOrder = Order.DESC,
+                                                    )
                                                 )
                                             )
-                                        )
+                                        }
                                     }
                                 )
-
                             }
                         }
 

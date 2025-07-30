@@ -25,8 +25,6 @@ data class PropertyMarker(
 
 @KoinViewModel
 class MapOfPropertiesViewModel(
-    @InjectedParam
-    private val getPropertyListUseCase: GetPropertyListUseCase,
 ) : ViewModel() {
     private val _markers = MutableStateFlow<List<PropertyMarker>>(emptyList())
     val markers: StateFlow<List<PropertyMarker>> = _markers.asStateFlow()
@@ -48,7 +46,7 @@ class MapOfPropertiesViewModel(
     }
 
     private fun createMarkerIcon(property: Property): BitmapDescriptor? {
-        val firstPhoto = property.photoList?.firstOrNull()
+        val firstPhoto = property.photoList.firstOrNull()
         if (firstPhoto?.photoBytes != null) {
             val bitmap = BitmapFactory.decodeByteArray(
                 firstPhoto.photoBytes, 0,

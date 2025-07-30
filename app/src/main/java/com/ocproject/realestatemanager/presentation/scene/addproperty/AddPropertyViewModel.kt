@@ -35,10 +35,7 @@ class AddPropertyViewModel(
     val state = _state.asStateFlow()
 
     init {
-
         getProperty()
-        Timber.tag("afterGetProperty")
-            .d("PropertyId :${state.value.newProperty.id}, PhotoSize : ${state.value.photoList.size} ")
     }
 
     fun getProperty() {
@@ -59,15 +56,15 @@ class AddPropertyViewModel(
                     Property(
                         photoList = emptyList(),
                         interestPoints = emptyList(),
-                        address = "a",
-                        town = "a",
+                        address = "",
+                        town = "",
                         lat = 0.0,
                         lng = 0.0,
-                        country = "a",
+                        country = "",
                         createdDate = null,
-                        areaCode = 123,
-                        surfaceArea = 123,
-                        price = 123,
+                        areaCode = 0,
+                        surfaceArea = 0,
+                        price = 0,
                         id = 0L,
                         sold = null,
                     )
@@ -78,35 +75,25 @@ class AddPropertyViewModel(
 
 
     fun setPropertyFromPlace(place: Place) {
-        var listAddressComponents = place.addressComponents?.asList()?.toList()
+        val listAddressComponents = place.addressComponents?.asList()
+        Timber.tag("PLACETOADD").d(listAddressComponents.toString())
         var address: String = ""
         var town: String = ""
         var country: String = ""
         var code: String = ""
-        listAddressComponents?.forEach {
-            when (it.types.toString()) {
-                "[street_number]" -> {
-                    address += "${it.name} "
-                }
-
-                "[route]" -> {
-                    address += it.name
-                }
-
-                "[locality, political]" -> {
-                    town = it.name
-                }
-
-                "[country, political]" -> {
-                    country = it.name
-                }
-
-                "[postal_code]" -> {
-                    code = it.name
-                }
+    listAddressComponents?.forEach {
+            if (it.types.contains("street_number")) {
+                address += "${it.name} "
+            } else if (it.types.contains("route")) {
+                address += it.name
+            } else if (it.types.contains("locality")) {
+                town = it.name
+            } else if (it.types.contains("country")) {
+                country = it.name
+            } else if (it.types.contains("postal_code")){
+                code = it.name
             }
         }
-
         onEvent(
             AddPropertyEvent.UpdateForm(
                 address = address,
@@ -123,8 +110,11 @@ class AddPropertyViewModel(
         when (event) {
 
             SaveProperty -> saveProperty(state.value.newProperty)
+
             is UpdateForm -> updateForm(event)
+
             is UpdateTags -> updateTags(event)
+
             is OnPhotoNameChanged -> {
                 val photo = PhotoProperty(
                     isMain = event.photoProperty.isMain,
@@ -135,16 +125,16 @@ class AddPropertyViewModel(
                 val list: MutableList<PhotoProperty> = mutableListOf()
                 state.value.photoList.forEach {
                     if (it == event.photoProperty) {
-                         list.add(photo)
+                        list.add(photo)
                     } else {
                         list.add(it)
                     }
                 }
-                Timber.tag("OnPhotoChangeList").d("${list.size}")
                 onEvent(UpdatePhotos(list))
             }
 
             is OnChangeNavigationStatus -> onChangeNavStatus()
+
             is OnPhotoPicked -> {
                 var cpt = 0
                 val list = mutableListOf<PhotoProperty>()
@@ -403,7 +393,7 @@ class AddPropertyViewModel(
             AddPropertyEvent.UpdateNewProperty(
                 state.value.newProperty.copy(
                     interestPoints = list,
-                    )
+                )
             )
         )
     }

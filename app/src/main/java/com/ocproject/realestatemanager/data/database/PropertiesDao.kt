@@ -16,6 +16,9 @@ interface PropertiesDao {
     @Query("SELECT * FROM PropertyEntity")
     fun getPropertiesWithCursor(): Cursor
 
+    @Query("SELECT * FROM PropertyEntity WHERE id = :id")
+    fun getPropertyWithCursorById(id: Long): Cursor
+
     @Upsert
     suspend fun upsertProperty(property: PropertyEntity): Long
 

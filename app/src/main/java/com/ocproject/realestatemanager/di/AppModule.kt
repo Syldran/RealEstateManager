@@ -6,7 +6,6 @@ import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
 import com.ocproject.realestatemanager.domain.usecases.SavePropertyUseCase
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
-import com.ocproject.realestatemanager.presentation.scene.cameraScreen.CameraViewModel
 import com.ocproject.realestatemanager.presentation.scene.funding.FundingViewModel
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
 import com.ocproject.realestatemanager.presentation.scene.map.MapOfPropertiesViewModel
@@ -59,17 +58,9 @@ val appModule = org.koin.dsl.module {
     }
 
     viewModel {
-        MapOfPropertiesViewModel(
-            getPropertyListUseCase = get(),
-        )
+        MapOfPropertiesViewModel()
     }
     viewModel {
-        FundingViewModel(
-        )
-    }
-
-    viewModel {
-        CameraViewModel(
-        )
+        FundingViewModel()
     }
 }
