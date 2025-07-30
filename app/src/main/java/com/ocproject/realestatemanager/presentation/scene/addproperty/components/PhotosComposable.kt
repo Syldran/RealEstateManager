@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -88,8 +89,8 @@ fun PhotosComposable(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = "Add Photo",
+                imageVector = Icons.Rounded.Home,
+                contentDescription = "No Photos",
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.size(40.dp)
             )

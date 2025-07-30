@@ -1,8 +1,5 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.places.api.model.Place

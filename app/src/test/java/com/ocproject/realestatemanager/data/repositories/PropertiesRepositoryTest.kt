@@ -77,10 +77,12 @@ class PropertiesRepositoryTest {
     }
 
     @Test
-    fun getPropertyTest() = runTest {
+    fun getPropertyByIdTest() = runTest {
         val repo = LocalPropertiesRepository(FakePropertiesDao())
         repo.upsertProperty(property)
         repo.upsertProperty(property2)
-        assert(repo.getPropertyList().last().id == repo.getProperty(2L).id)
+        val propertyWithId = repo.getProperty(1L)
+        assert(repo.getPropertyList().first() == repo.getProperty(1L))
+        assert(repo.getPropertyList().last() == repo.getProperty(2L))
     }
 }

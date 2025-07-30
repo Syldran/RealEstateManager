@@ -9,7 +9,7 @@ import com.ocproject.realestatemanager.data.entities.PropertyWithPhotosEntity
 class FakePropertiesDao : PropertiesDao {
 
     private val propertyList = mutableListOf<PropertyEntity>()
-    val propertyWithPhotos = mutableListOf<PropertyWithPhotosEntity>()
+    val propertyWithPhotosList = mutableListOf<PropertyWithPhotosEntity>()
     val photosProperty = mutableListOf<PhotoPropertyEntity>()
     override fun getPropertiesWithCursor(): Cursor {
         TODO("Not yet implemented")
@@ -22,13 +22,13 @@ class FakePropertiesDao : PropertiesDao {
     override suspend fun upsertProperty(property: PropertyEntity): Long {
         val propertyWithPhoto = PropertyWithPhotosEntity(property, null)
         propertyList.add(property)
-        propertyWithPhotos.add(propertyWithPhoto)
+        propertyWithPhotosList.add(propertyWithPhoto)
         return property.id
     }
 
     override suspend fun deleteProperty(property: PropertyEntity) {
         propertyList.remove(property)
-        propertyWithPhotos.remove(PropertyWithPhotosEntity(property, null))
+        propertyWithPhotosList.remove(PropertyWithPhotosEntity(property, null))
     }
 
     override suspend fun upsertPhoto(photoProperty: PhotoPropertyEntity) {
@@ -40,10 +40,29 @@ class FakePropertiesDao : PropertiesDao {
     }
 
     override suspend fun getPropertyList(): List<PropertyWithPhotosEntity> {
-        return propertyWithPhotos
+        return propertyWithPhotosList
     }
 
     override suspend fun getPropertyDetail(selectedId: Long): PropertyWithPhotosEntity {
-        return propertyWithPhotos[selectedId.toInt()]
+        propertyWithPhotosList.forEach { p ->
+            if (p.property.id == selectedId) return p
+        }
+        return PropertyWithPhotosEntity(
+            PropertyEntity(
+                emptyList(),
+                "",
+                "",
+                0.0,
+                0.0,
+                "",
+                0L,
+                null,
+                0,
+                0,
+                null,
+                -1L
+            ),
+            null
+        )
     }
 }

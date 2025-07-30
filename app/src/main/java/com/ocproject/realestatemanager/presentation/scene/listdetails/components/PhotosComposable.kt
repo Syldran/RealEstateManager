@@ -85,19 +85,9 @@ fun PhotosDetailsComposable(
                             ).asImageBitmap(),
                             contentDescription = photo.name,
                             modifier = Modifier
-                                .size(150.dp)
-//                                .align(Alignment.CenterHorizontally)
-                            ,
+                                .size(150.dp),
                             contentScale = ContentScale.Crop
                         )
-//                        if (propertyWithPhotos.sold != null) {
-//                            Image(
-//                                painter = painterResource(id = R.drawable.sold_png_transparent),
-//                                contentDescription = "Your Image",
-//                                contentScale = ContentScale.Crop,
-//                                modifier = Modifier.size(150.dp)
-//                            )
-//                        }
                     }
                     Text(
                         textAlign = TextAlign.Center,
@@ -127,7 +117,7 @@ fun PhotosDetailsComposable(
         ) {
             Icon(
                 imageVector = Icons.Rounded.Home,
-                contentDescription = "Add Photo",
+                contentDescription = "No Photo",
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.size(40.dp)
             )
@@ -206,7 +196,7 @@ fun CardContent(page: Int, pagerState: PagerState, property: Property) {
             Text(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.wrapContentHeight()/*.background(Color.Green)*/,
-                text = property.photoList?.get(page)?.name ?: "",
+                text = property.photoList.get(page).name,
             )
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
@@ -260,8 +250,8 @@ fun PhotosComposable(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = "Add Photo",
+                imageVector = Icons.Rounded.Home,
+                contentDescription = "No Photos",
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.size(40.dp)
             )
@@ -301,7 +291,7 @@ fun PhotoItem(
                 if (photo.isMain) {
                     Icon(
                         imageVector = Icons.Filled.Star,
-                        contentDescription = "Photo principale",
+                        contentDescription = "Main Photo",
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(4.dp)
@@ -315,7 +305,7 @@ fun PhotoItem(
                 }
             }
         }
-        // Champ de texte pour le nom de la photo (en dessous)
+        // Text under Photo
         Text(
             modifier = Modifier
                 .width(150.dp)

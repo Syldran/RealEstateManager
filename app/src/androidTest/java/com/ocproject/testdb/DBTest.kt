@@ -59,7 +59,7 @@ class DBTest {
             id = 50L,
         )
         propertiesDao.upsertProperty(property.toPropertyEntity())
-        assert(propertiesDao.getPropertyDetail(50L).toProperty() == property)
+        assert(propertiesDao.getPropertyDetail(50L)?.toProperty() == property)
     }
 
     @Test
@@ -80,7 +80,7 @@ class DBTest {
             id = 50L,
         )
         propertiesDao.upsertProperty(property.toPropertyEntity())
-        assert(propertiesDao.getPropertyDetail(50L).toProperty() == property)
+        assert(propertiesDao.getPropertyDetail(50L)?.toProperty() == property)
 
         propertiesDao.deleteProperty(property.toPropertyEntity())
         assert(propertiesDao.getPropertyList() == emptyList<PropertyWithPhotosEntity>())
@@ -187,7 +187,7 @@ class DBTest {
             ).toPhotoPropertyEntity(2L)
         )
         assert(
-            propertiesDao.getPropertyDetail(2L).toProperty().photoList.size == 3
+            propertiesDao.getPropertyDetail(2L)?.toProperty()?.photoList?.size == 3
         )
     }
 

@@ -1,14 +1,21 @@
 package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DisplayMode
@@ -39,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDateRangePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,13 +57,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.core.SellingStatus
 import com.ocproject.realestatemanager.core.SortType
+import com.ocproject.realestatemanager.core.ui.theme.RealEstateManagerTheme
 import com.ocproject.realestatemanager.core.utils.Range
+import com.ocproject.realestatemanager.presentation.scene.funding.FundingEvent
+import com.ocproject.realestatemanager.presentation.scene.funding.FundingRate
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsState
 import kotlinx.coroutines.CoroutineScope
@@ -70,6 +84,8 @@ fun PropertyFilterSheet(
     scope: CoroutineScope,
 ) {
     var isAreaCodeListExpended by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
 
     ModalBottomSheet(
         onDismissRequest = {
@@ -128,25 +144,6 @@ fun PropertyFilterSheet(
                                             filter = state.filterSate.copy(
                                                 sellingStatus = SellingStatus.PURCHASABLE
                                             )
-                                            /*ListDetailsEvent.UpdateFilter(
-                                                filter = Filter(
-                                                    sortType = state.filterSate.sortType,
-                                                    priceOrder = state.filterSate.priceOrder,
-                                                    dateOrder = state.filterSate.dateOrder,
-                                                    surfaceOrder = state.filterSate.surfaceOrder,
-                                                    priceRange = state.filterSate.priceRange,
-                                                    dateRange = state.filterSate.dateRange,
-                                                    soldDateRange = state.filterSate.soldDateRange,
-                                                    surfaceRange = state.filterSate.surfaceRange,
-                                                    sellingStatus = SellingStatus.PURCHASABLE,
-                                                    tagSchool = state.filterSate.tagSchool,
-                                                    tagTransport = state.filterSate.tagTransport,
-                                                    tagShop = state.filterSate.tagShop,
-                                                    tagPark = state.filterSate.tagPark,
-                                                    areaCodeFilter = state.filterSate.areaCodeFilter,
-                                                    minNbrPhotos = state.filterSate.minNbrPhotos,
-                                                )
-                                            )*/
                                         )
                                     )
                                 }
@@ -169,23 +166,6 @@ fun PropertyFilterSheet(
                                             filter = state.filterSate.copy(
                                                 sellingStatus = SellingStatus.SOLD
                                             )
-//                                            filter = Filter(
-//                                                sortType = state.filterSate.sortType,
-//                                                priceOrder = state.filterSate.priceOrder,
-//                                                dateOrder = state.filterSate.dateOrder,
-//                                                surfaceOrder = state.filterSate.surfaceOrder,
-//                                                priceRange = state.filterSate.priceRange,
-//                                                dateRange = state.filterSate.dateRange,
-//                                                soldDateRange = state.filterSate.soldDateRange,
-//                                                surfaceRange = state.filterSate.surfaceRange,
-//                                                sellingStatus = SellingStatus.SOLD,
-//                                                tagSchool = state.filterSate.tagSchool,
-//                                                tagTransport = state.filterSate.tagTransport,
-//                                                tagShop = state.filterSate.tagShop,
-//                                                tagPark = state.filterSate.tagPark,
-//                                                areaCodeFilter = state.filterSate.areaCodeFilter,
-//                                                minNbrPhotos = state.filterSate.minNbrPhotos,
-//                                            )
                                         )
                                     )
                                 }
@@ -209,23 +189,6 @@ fun PropertyFilterSheet(
                                             filter = state.filterSate.copy(
                                                 sellingStatus = SellingStatus.ALL
                                             )
-//                                            filter = Filter(
-//                                                sortType = state.filterSate.sortType,
-//                                                priceOrder = state.filterSate.priceOrder,
-//                                                dateOrder = state.filterSate.dateOrder,
-//                                                surfaceOrder = state.filterSate.surfaceOrder,
-//                                                priceRange = state.filterSate.priceRange,
-//                                                dateRange = state.filterSate.dateRange,
-//                                                soldDateRange = state.filterSate.soldDateRange,
-//                                                surfaceRange = state.filterSate.surfaceRange,
-//                                                sellingStatus = SellingStatus.ALL,
-//                                                tagSchool = state.filterSate.tagSchool,
-//                                                tagTransport = state.filterSate.tagTransport,
-//                                                tagShop = state.filterSate.tagShop,
-//                                                tagPark = state.filterSate.tagPark,
-//                                                areaCodeFilter = state.filterSate.areaCodeFilter,
-//                                                minNbrPhotos = state.filterSate.minNbrPhotos,
-//                                            )
                                         )
                                     )
                                 }
@@ -264,27 +227,6 @@ fun PropertyFilterSheet(
                                                 it.toInt()
                                             },
                                         )
-//                                        filter = Filter(
-//                                            sortType = state.filterSate.sortType,
-//                                            priceOrder = state.filterSate.priceOrder,
-//                                            dateOrder = state.filterSate.dateOrder,
-//                                            surfaceOrder = state.filterSate.surfaceOrder,
-//                                            priceRange = state.filterSate.priceRange,
-//                                            dateRange = state.filterSate.dateRange,
-//                                            soldDateRange = state.filterSate.soldDateRange,
-//                                            surfaceRange = state.filterSate.surfaceRange,
-//                                            sellingStatus = state.filterSate.sellingStatus,
-//                                            tagSchool = state.filterSate.tagSchool,
-//                                            tagTransport = state.filterSate.tagTransport,
-//                                            tagShop = state.filterSate.tagShop,
-//                                            tagPark = state.filterSate.tagPark,
-//                                            areaCodeFilter = state.filterSate.areaCodeFilter,
-//                                            minNbrPhotos = if (it.isEmpty()) {
-//                                                0
-//                                            } else {
-//                                                it.toInt()
-//                                            },
-//                                        )
                                     )
                                 )
 
@@ -331,7 +273,9 @@ fun PropertyFilterSheet(
                 }
 
                 //DATE
-                Card(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+                Card(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                ) {
                     val dateRangePickerState = rememberDateRangePickerState(
                         initialDisplayMode = DisplayMode.Input,
                         initialSelectedStartDateMillis = state.filterSate.dateRange.lower,
@@ -342,30 +286,37 @@ fun PropertyFilterSheet(
                         showModeToggle = false,
                         state = dateRangePickerState,
                     )
-                    TextButton(
-                        onClick = {
-                            val selectedDateEnd = Calendar.getInstance()
-                            selectedDateEnd.setTimeInMillis(dateRangePickerState.selectedEndDateMillis!!)
-                            selectedDateEnd.set(Calendar.HOUR_OF_DAY, 0)
-                            selectedDateEnd.set(Calendar.MINUTE, 0)
-                            selectedDateEnd.set(Calendar.SECOND, 0)
-                            selectedDateEnd.set(Calendar.MILLISECOND, 0)
-                            selectedDateEnd.add(Calendar.DAY_OF_YEAR, 1)
-                            selectedDateEnd.add(Calendar.MILLISECOND, -1)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        TextButton(
+                            border = BorderStroke(color = MaterialTheme.colorScheme.primary, width = 1.dp),
+//                            colors = ButtonDefaults.textButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                            onClick = {
+                                val selectedDateEnd = Calendar.getInstance()
+                                selectedDateEnd.setTimeInMillis(dateRangePickerState.selectedEndDateMillis!!)
+                                selectedDateEnd.set(Calendar.HOUR_OF_DAY, 0)
+                                selectedDateEnd.set(Calendar.MINUTE, 0)
+                                selectedDateEnd.set(Calendar.SECOND, 0)
+                                selectedDateEnd.set(Calendar.MILLISECOND, 0)
+                                selectedDateEnd.add(Calendar.DAY_OF_YEAR, 1)
+                                selectedDateEnd.add(Calendar.MILLISECOND, -1)
 
-                            onEvent(
-                                ListDetailsEvent.UpdateFilter(
-                                    filter = state.filterSate.copy(
-                                        dateRange = Range<Long>(
-                                            dateRangePickerState.selectedStartDateMillis!!,
-                                            selectedDateEnd.timeInMillis
-                                        ),
+                                onEvent(
+                                    ListDetailsEvent.UpdateFilter(
+                                        filter = state.filterSate.copy(
+                                            dateRange = Range<Long>(
+                                                dateRangePickerState.selectedStartDateMillis!!,
+                                                selectedDateEnd.timeInMillis
+                                            ),
+                                        )
                                     )
                                 )
-                            )
+                            }
+                        ) {
+                            Text("Validate Range")
                         }
-                    ) {
-                        Text("Validate Date")
                     }
                 }
                 if (state.filterSate.sellingStatus == SellingStatus.SOLD) {
@@ -381,29 +332,35 @@ fun PropertyFilterSheet(
                             showModeToggle = false,
                             state = soldDateRangePickerState,
                         )
-                        TextButton(
-                            onClick = {
-                                val selectedSoldDateEnd = Calendar.getInstance()
-                                selectedSoldDateEnd.setTimeInMillis(soldDateRangePickerState.selectedEndDateMillis!!)
-                                selectedSoldDateEnd.set(Calendar.HOUR_OF_DAY, 0)
-                                selectedSoldDateEnd.set(Calendar.MINUTE, 0)
-                                selectedSoldDateEnd.set(Calendar.SECOND, 0)
-                                selectedSoldDateEnd.set(Calendar.MILLISECOND, 0)
-                                selectedSoldDateEnd.add(Calendar.DAY_OF_YEAR, 1)
-                                selectedSoldDateEnd.add(Calendar.MILLISECOND, -1)
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = state.filterSate.copy(
-                                            soldDateRange = Range<Long>(
-                                                soldDateRangePickerState.selectedStartDateMillis!!,
-                                                soldDateRangePickerState.selectedStartDateMillis!!
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            TextButton(
+                                border = BorderStroke(color = MaterialTheme.colorScheme.primary, width = 1.dp),
+                                onClick = {
+                                    val selectedSoldDateEnd = Calendar.getInstance()
+                                    selectedSoldDateEnd.setTimeInMillis(soldDateRangePickerState.selectedEndDateMillis!!)
+                                    selectedSoldDateEnd.set(Calendar.HOUR_OF_DAY, 0)
+                                    selectedSoldDateEnd.set(Calendar.MINUTE, 0)
+                                    selectedSoldDateEnd.set(Calendar.SECOND, 0)
+                                    selectedSoldDateEnd.set(Calendar.MILLISECOND, 0)
+                                    selectedSoldDateEnd.add(Calendar.DAY_OF_YEAR, 1)
+                                    selectedSoldDateEnd.add(Calendar.MILLISECOND, -1)
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = state.filterSate.copy(
+                                                soldDateRange = Range<Long>(
+                                                    soldDateRangePickerState.selectedStartDateMillis!!,
+                                                    soldDateRangePickerState.selectedStartDateMillis!!
+                                                )
                                             )
                                         )
                                     )
-                                )
+                                }
+                            ) {
+                                Text("Validate Sold Range")
                             }
-                        ) {
-                            Text("Validate Sold Date Range")
                         }
                     }
                 }
@@ -469,41 +426,6 @@ fun PropertyFilterSheet(
                                 Icons.Default.KeyboardArrowDown,
                                 contentDescription = "More options"
                             )
-                        }
-                        // replace with bottom sheet.
-                        DropdownMenu(
-                            expanded = isAreaCodeListExpended,
-                            onDismissRequest = { isAreaCodeListExpended = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Area Code") },
-                                onClick = {
-                                    onEvent(
-                                        ListDetailsEvent.UpdateFilter(
-                                            filter = state.filterSate.copy(
-                                                areaCodeFilter = null,
-                                            )
-                                        )
-                                    )
-                                    isAreaCodeListExpended = false
-                                }
-                            )
-                            for (i in state.areaCodeList) {
-                                HorizontalDivider()
-                                DropdownMenuItem(
-                                    text = { Text("$i") },
-                                    onClick = {
-                                        onEvent(
-                                            ListDetailsEvent.UpdateFilter(
-                                                filter = state.filterSate.copy(
-                                                    areaCodeFilter = i,
-                                                )
-                                            )
-                                        )
-                                        isAreaCodeListExpended = false
-                                    }
-                                )
-                            }
                         }
                     }
                 }
@@ -650,6 +572,54 @@ fun PropertyFilterSheet(
                 )
             ) {
                 Icon(imageVector = Icons.Rounded.Close, contentDescription = "Close")
+            }
+            if (isAreaCodeListExpended) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        isAreaCodeListExpended = false
+                    },
+                    sheetState = sheetState
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .fillMaxWidth()
+                            .height(LocalWindowInfo.current.containerSize.height.dp),
+                    ) {
+                        item() {
+                            HorizontalDivider()
+                        }
+                        items(state.areaCodeList) { areaCode ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(
+                                        onClick = {
+                                            onEvent(
+                                                ListDetailsEvent.UpdateFilter(
+                                                    filter = state.filterSate.copy(
+                                                        areaCodeFilter = areaCode,
+                                                    )
+                                                )
+                                            )
+                                            isAreaCodeListExpended = false
+                                        }
+                                    ),
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "$areaCode",
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
+                                }
+
+                            }
+                        }
+                    }
+                }
             }
         }
     }

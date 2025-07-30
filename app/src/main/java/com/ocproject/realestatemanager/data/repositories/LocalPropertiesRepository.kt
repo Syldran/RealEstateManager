@@ -26,7 +26,7 @@ class LocalPropertiesRepository(
     private val dao: PropertiesDao,
 ) : PropertiesRepository {
     override suspend fun upsertProperty(property: Property): Long {
-        var propertyToAdd = dao.upsertProperty(property.toPropertyEntity())
+        var propertyToAdd:Long = dao.upsertProperty(property.toPropertyEntity())
         // upsert return -1 for replacing existing data
         if (propertyToAdd < 0L) {
             propertyToAdd = property.id
@@ -52,12 +52,12 @@ class LocalPropertiesRepository(
     }
 
     override suspend fun getPropertyList(): List<Property> {
-        val properties = dao.getPropertyList().map { it.toProperty() }
+        val properties:List<Property> = dao.getPropertyList().map { it.toProperty() }
         return properties
     }
 
     override suspend fun getProperty(id: Long): Property {
-        val propertyDetails = dao.getPropertyDetail(id).toProperty()
-        return propertyDetails
+        val propertyDetails = dao.getPropertyDetail(id)
+        return propertyDetails.toProperty()
     }
 }
