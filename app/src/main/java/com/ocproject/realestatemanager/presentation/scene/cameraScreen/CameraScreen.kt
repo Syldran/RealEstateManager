@@ -3,7 +3,6 @@ package com.ocproject.realestatemanager.presentation.scene.cameraScreen
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,20 +30,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.ocproject.realestatemanager.R
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CameraScreen(
-//    viewModel: CameraViewModel = koinViewModel(),
     onPhotoCaptured: (ByteArray) -> Unit = {}
 ) {
-//    val state by viewModel.state.collectAsState()
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -56,9 +55,8 @@ fun CameraScreen(
     val imageCapture = remember {
         ImageCapture.Builder().build()
     }
-    var bitmap: Bitmap? = null
 
-    // État pour la permission
+    // state for permissions
     var hasCameraPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -68,7 +66,7 @@ fun CameraScreen(
         )
     }
 
-    // Launcher pour demander la permission
+    // Launcher for asking permissions
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -80,7 +78,7 @@ fun CameraScreen(
             val cameraProvider = context.getCameraProvider()
             cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageCapture)
-            preview.setSurfaceProvider(previewView.surfaceProvider)
+            preview.surfaceProvider = previewView.surfaceProvider
         }
     }
 
@@ -97,7 +95,7 @@ fun CameraScreen(
                     },
                     modifier = Modifier.padding(vertical = 8.dp)
                 ) {
-                    Text(text = "Capture Image")
+                    Text(text = stringResource(R.string.capture_image))
                 }
             }
         } else {
@@ -108,11 +106,11 @@ fun CameraScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Permission de caméra requise")
+                    Text(stringResource(R.string.permissions_camera_required))
                     Button(
                         onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }
                     ) {
-                        Text("Demander la permission")
+                        Text(stringResource(R.string.ask_permissions))
                     }
                 }
             }
@@ -148,14 +146,16 @@ private fun captureImage(
             // Return photo by Callback
             onPhotoCaptured(bytes)
 
-            val toast = Toast.makeText(context, "Photo capturée avec succès", Toast.LENGTH_LONG)
+            val toast = Toast.makeText(context,
+                context.getString(R.string.photo_captured_successfully), Toast.LENGTH_LONG)
             toast.show()
             super.onCaptureSuccess(image)
             image.close()
         }
 
         override fun onError(exception: ImageCaptureException) {
-            val toast = Toast.makeText(context, "Erreur lors de la capture", Toast.LENGTH_LONG)
+            val toast = Toast.makeText(context,
+                context.getString(R.string.capture_failed), Toast.LENGTH_LONG)
             toast.show()
             super.onError(exception)
         }

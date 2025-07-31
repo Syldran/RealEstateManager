@@ -9,7 +9,6 @@ import com.ocproject.realestatemanager.presentation.navigation.Screen
 fun NavGraphBuilder.mapOfPropertiesScreen(navController: NavController, currentPosition: LatLng?) {
     composable(
         route = Screen.MapOfPropertiesScreen.route,
-//        arguments =
     ) {
 
         MapOfProperties(

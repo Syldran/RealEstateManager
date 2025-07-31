@@ -58,6 +58,7 @@ class AddPropertyViewModelTest {
         val property = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "NowhereCity",
             lat = 120.5,
@@ -83,6 +84,7 @@ class AddPropertyViewModelTest {
         val property1 = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "NowhereCity",
             lat = 120.5,
@@ -108,6 +110,7 @@ class AddPropertyViewModelTest {
         val property1 = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "Paris",
             lat = 120.5,
@@ -123,6 +126,7 @@ class AddPropertyViewModelTest {
         val property2 = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "Paris",
             lat = 120.5,
@@ -156,6 +160,7 @@ class AddPropertyViewModelTest {
         coEvery { getPropertyDetails(1L) } returns Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "",
             address = "",
             town = "",
             lat = 0.0,
@@ -183,6 +188,7 @@ class AddPropertyViewModelTest {
         coEvery { getPropertyDetails(1L) } returns Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "",
             address = "",
             town = "",
             lat = 0.0,
@@ -218,6 +224,7 @@ class AddPropertyViewModelTest {
         coEvery { getPropertyDetails(1L) } returns Property(
             photoList = listOf(photo1, photo2),
             interestPoints = emptyList(),
+            description = "",
             address = "",
             town = "",
             lat = 0.0,

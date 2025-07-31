@@ -51,24 +51,6 @@ class ListDetailsViewModelTest {
     val mockRangeLong = Range(0L, Calendar.getInstance().timeInMillis + 12583060)
 
     val testDispatcher = StandardTestDispatcher()
-    var filter = Filter(
-        sortType = SortType.PRICE,
-        priceOrder = Order.ASC,
-        dateOrder = Order.ASC,
-        priceRange = mockRangeInt,
-        dateRange = mockRangeLong,
-        sellingStatus = SellingStatus.PURCHASABLE,
-        tagSchool = false,
-        tagTransport = false,
-        tagShop = false,
-        tagPark = false,
-        surfaceOrder = Order.ASC,
-        soldDateRange = mockRangeLong,
-        surfaceRange = mockRangeInt,
-        areaCodeFilter = null,
-        minNbrPhotos = 0,
-    )
-
     val getPropertyList = mockk<GetPropertyListUseCase>(relaxed = true)
     val deleteProperty = mockk<DeletePropertyUseCase>(relaxed = true)
     val getPropertyDetails = mockk<GetPropertyDetailsUseCase>(relaxed = true)
@@ -99,6 +81,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "NowhereCity",
                             lat = 120.5,
@@ -114,6 +97,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "Paris",
                             lat = 120.5,
@@ -192,7 +176,6 @@ class ListDetailsViewModelTest {
 
     @Test
     fun `getPropertyList sorted by price`() = runTest {
-        // separate test on date & price
         coEvery { getPropertyList.invoke() } returns flow {
             emit(
                 DataState.Success(
@@ -200,6 +183,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "NowhereCity",
                             lat = 120.5,
@@ -215,6 +199,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "Paris",
                             lat = 120.5,
@@ -230,6 +215,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "There",
                             town = "London",
                             lat = 120.5,
@@ -253,7 +239,7 @@ class ListDetailsViewModelTest {
         }
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                viewModel.state.value.filterSate.copy(
+                viewModel.state.value.filterState.copy(
                     sortType = SortType.PRICE,
                     priceOrder = Order.ASC,
                 )
@@ -272,7 +258,7 @@ class ListDetailsViewModelTest {
 
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                viewModel.state.value.filterSate.copy(
+                viewModel.state.value.filterState.copy(
                     sortType = SortType.PRICE,
                     priceOrder = Order.DESC,
                 )
@@ -297,6 +283,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "NowhereCity",
                             lat = 120.5,
@@ -312,6 +299,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "Paris",
                             lat = 120.5,
@@ -327,6 +315,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "There",
                             town = "London",
                             lat = 120.5,
@@ -351,7 +340,7 @@ class ListDetailsViewModelTest {
 
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                viewModel.state.value.filterSate.copy(
+                viewModel.state.value.filterState.copy(
                     sortType = SortType.DATE,
                     dateOrder = Order.DESC,
                 )
@@ -376,7 +365,7 @@ class ListDetailsViewModelTest {
 
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                viewModel.state.value.filterSate.copy(
+                viewModel.state.value.filterState.copy(
                     sortType = SortType.DATE,
                     dateOrder = Order.ASC,
                 )
@@ -402,6 +391,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = listOf(InterestPoint.SCHOOL),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "NowhereCity",
                             lat = 120.5,
@@ -417,6 +407,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = listOf(InterestPoint.TRANSPORT),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "Paris",
                             lat = 120.5,
@@ -432,6 +423,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = listOf(InterestPoint.SCHOOL),
+                            description = "Description of a Somewhere",
                             address = "There",
                             town = "London",
                             lat = 120.5,
@@ -454,14 +446,16 @@ class ListDetailsViewModelTest {
             viewModel.state.toList(emittedStates)
         }
 
-        viewModel.onEvent(ListDetailsEvent.UpdateFilter(
-            filter = viewModel.state.value.filterSate.copy(
-                tagTransport = false,
-                tagSchool = true,
-                tagShop = false,
-                tagPark = false,
+        viewModel.onEvent(
+            ListDetailsEvent.UpdateFilter(
+                filter = viewModel.state.value.filterState.copy(
+                    tagTransport = false,
+                    tagSchool = true,
+                    tagShop = false,
+                    tagPark = false,
+                )
             )
-        ))
+        )
         viewModel.onEvent(ListDetailsEvent.GetProperties)
         advanceUntilIdle()
         coVerify { getPropertyList.invoke() }
@@ -472,7 +466,7 @@ class ListDetailsViewModelTest {
         assert(viewModel.state.value.sortedProperties.size == 2)
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                viewModel.state.value.filterSate.copy(
+                viewModel.state.value.filterState.copy(
                     tagTransport = true,
                     tagSchool = false
                 )
@@ -486,7 +480,7 @@ class ListDetailsViewModelTest {
     }
 
     @Test
-    fun `getPropertyList sorted by surfaceArea`() = runTest {
+    fun `getPropertyList sorted by Sold Status`() = runTest {
         coEvery { getPropertyList.invoke() } returns flow {
             emit(
                 DataState.Success(
@@ -494,6 +488,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "NowhereCity",
                             lat = 120.5,
@@ -503,12 +498,13 @@ class ListDetailsViewModelTest {
                             areaCode = 21550,
                             surfaceArea = 25,
                             price = 150000,
-                            sold = null,
+                            sold = 500L,
                             id = 1L,
                         ),
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "Paris",
                             lat = 120.5,
@@ -524,6 +520,115 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
+                            address = "There",
+                            town = "London",
+                            lat = 120.5,
+                            lng = 50.30,
+                            country = "France",
+                            createdDate = 3000,
+                            areaCode = 18290,
+                            surfaceArea = 150,
+                            price = 250000,
+                            sold = 1500L,
+                            id = 3L,
+                        )
+                    )
+                )
+            )
+        }
+        val emittedStates = mutableListOf<ListDetailsState>()
+
+        val job = launch {
+            viewModel.state.toList(emittedStates)
+        }
+
+//      Now Filtering sold properties.
+//      Should be 2.
+        viewModel.onEvent(
+            ListDetailsEvent.UpdateFilter(
+                filter = viewModel.state.value.filterState.copy(
+                    sellingStatus = SellingStatus.SOLD
+                )
+            )
+        )
+        viewModel.onEvent(ListDetailsEvent.GetProperties)
+        advanceUntilIdle()
+        coVerify { getPropertyList.invoke() }
+        assert(viewModel.state.value.sortedProperties.size == 2)
+
+//      Now Filtering purchasable properties.
+//      Should be only one.
+        viewModel.onEvent(
+            ListDetailsEvent.UpdateFilter(
+                filter = viewModel.state.value.filterState.copy(
+                    sellingStatus = SellingStatus.PURCHASABLE
+                )
+            )
+        )
+        viewModel.onEvent(ListDetailsEvent.GetProperties)
+        advanceUntilIdle()
+        coVerify { getPropertyList.invoke() }
+        assert(viewModel.state.value.sortedProperties.size == 1)
+
+//      Now Filtering regardless of selling status.
+//      Should be our 3 properties.
+        viewModel.onEvent(
+            ListDetailsEvent.UpdateFilter(
+                filter = viewModel.state.value.filterState.copy(
+                    sellingStatus = SellingStatus.ALL
+                )
+            )
+        )
+        viewModel.onEvent(ListDetailsEvent.GetProperties)
+        advanceUntilIdle()
+        coVerify { getPropertyList.invoke() }
+        assert(viewModel.state.value.sortedProperties.size == 3)
+        job.cancel()
+    }
+
+    @Test
+    fun `getPropertyList sorted by surfaceArea`() = runTest {
+        coEvery { getPropertyList.invoke() } returns flow {
+            emit(
+                DataState.Success(
+                    listOf(
+                        Property(
+                            photoList = emptyList(),
+                            interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
+                            address = "Somewhere",
+                            town = "NowhereCity",
+                            lat = 120.5,
+                            lng = 50.30,
+                            country = "Faraway",
+                            createdDate = 500,
+                            areaCode = 21550,
+                            surfaceArea = 25,
+                            price = 150000,
+                            sold = null,
+                            id = 1L,
+                        ),
+                        Property(
+                            photoList = emptyList(),
+                            interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
+                            address = "Somewhere",
+                            town = "Paris",
+                            lat = 120.5,
+                            lng = 50.30,
+                            country = "France",
+                            createdDate = 10000,
+                            areaCode = 73110,
+                            surfaceArea = 300,
+                            price = 300000,
+                            sold = null,
+                            id = 2L,
+                        ),
+                        Property(
+                            photoList = emptyList(),
+                            interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "There",
                             town = "London",
                             lat = 120.5,
@@ -548,7 +653,7 @@ class ListDetailsViewModelTest {
 
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                filter = viewModel.state.value.filterSate.copy(
+                filter = viewModel.state.value.filterState.copy(
                     sortType = SortType.AREA,
                     surfaceOrder = Order.ASC
                 )
@@ -566,7 +671,7 @@ class ListDetailsViewModelTest {
 
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                filter = viewModel.state.value.filterSate.copy(
+                filter = viewModel.state.value.filterState.copy(
                     sortType = SortType.AREA,
                     surfaceOrder = Order.DESC
                 )
@@ -591,6 +696,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "NowhereCity",
                             lat = 120.5,
@@ -606,6 +712,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "Somewhere",
                             town = "Paris",
                             lat = 120.5,
@@ -621,6 +728,7 @@ class ListDetailsViewModelTest {
                         Property(
                             photoList = emptyList(),
                             interestPoints = emptyList(),
+                            description = "Description of a Somewhere",
                             address = "There",
                             town = "London",
                             lat = 120.5,
@@ -644,7 +752,7 @@ class ListDetailsViewModelTest {
         }
         viewModel.onEvent(
             ListDetailsEvent.UpdateFilter(
-                viewModel.state.value.filterSate.copy(
+                viewModel.state.value.filterState.copy(
                     areaCodeFilter = 18290,
                 )
             )
@@ -665,6 +773,7 @@ class ListDetailsViewModelTest {
                 Property(
                     photoList = emptyList(),
                     interestPoints = emptyList(),
+                    description = "Description of a Somewhere",
                     address = "There",
                     town = "London",
                     lat = 120.5,
@@ -710,7 +819,7 @@ class ListDetailsViewModelTest {
         )
 
 
-        assert(viewModel.state.value.filterSate == filterToTest)
+        assert(viewModel.state.value.filterState == filterToTest)
     }
 
     @Test
@@ -741,6 +850,7 @@ class ListDetailsViewModelTest {
         val property1 = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "NowhereCity",
             lat = 120.5,
@@ -756,6 +866,7 @@ class ListDetailsViewModelTest {
         val property2 = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "Paris",
             lat = 120.5,
@@ -799,6 +910,7 @@ class ListDetailsViewModelTest {
         val property1 = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "NowhereCity",
             lat = 120.5,
@@ -814,6 +926,7 @@ class ListDetailsViewModelTest {
         val property2 = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "Paris",
             lat = 120.5,
@@ -852,11 +965,4 @@ class ListDetailsViewModelTest {
             viewModel.state.value.properties.size == result - 1
         )
     }
-
-    @Test
-    fun `sort list test`() = runTest {
-        val listProperty = mutableListOf<Property>()
-    }
-
-
 }

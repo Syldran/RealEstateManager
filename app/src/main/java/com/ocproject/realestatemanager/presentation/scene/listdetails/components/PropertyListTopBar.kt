@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent.OnClickPropertyDisplayMode
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsState
@@ -47,7 +49,7 @@ fun PropertyListTopBar(
             ),
         title = {
             Text(
-                text = "Real Estate Manager"
+                text = stringResource(R.string.top_bar_title)
             )
         },
         navigationIcon = {
@@ -59,12 +61,12 @@ fun PropertyListTopBar(
                 if (state.mapMode) {
                     Icon(
                         imageVector = Icons.Rounded.Info,
-                        contentDescription = "detailMode"
+                        contentDescription = stringResource(R.string.details_displayed)
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Rounded.LocationOn,
-                        contentDescription = "mapMode"
+                        contentDescription = stringResource(R.string.map_displayed)
                     )
                 }
             }
@@ -73,20 +75,20 @@ fun PropertyListTopBar(
 
             IconButton(
                 onClick = { onNavigateToAddPropertyScreen(null) },
-                modifier.testTag("topBarAdd")
+                modifier.testTag(stringResource(R.string.topbar_add_test_tag))
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Add Property",
+                    contentDescription = stringResource(R.string.icon_add_content_description),
                 )
             }
             IconButton(
                 onClick = { menuExpanded = true },
-                modifier = Modifier.testTag("topBarMenuIcon")
+                modifier = Modifier.testTag(stringResource(R.string.topbar_menu_icon_test_tag))
             ) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "AppBarMenu",
+                    contentDescription = stringResource(R.string.appbar_menu_icon_content_description),
                 )
             }
             DropdownMenu(
@@ -95,7 +97,12 @@ fun PropertyListTopBar(
             ) {
                 DropdownMenuItem(
                     text = {
-                        Text("Map Geolocation")
+                        Text(
+                            text = stringResource(R.string.map_geolocation_item_menu_appbar),
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                            fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                            fontFamily = MaterialTheme.typography.bodyMedium.fontFamily
+                        )
                     },
                     onClick = {
                         onNavigateToMapOfProperties()
@@ -104,7 +111,12 @@ fun PropertyListTopBar(
                 )
                 DropdownMenuItem(
                     text = {
-                        Text("Display Criteria")
+                        Text(
+                            stringResource(R.string.display_criteria_item_menu_appbar),
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                            fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                            fontFamily = MaterialTheme.typography.bodyMedium.fontFamily
+                        )
                     },
                     onClick = {
                         onEvent(ListDetailsEvent.OpenFilter)
@@ -113,7 +125,12 @@ fun PropertyListTopBar(
                 )
                 DropdownMenuItem(
                     text = {
-                        Text("Funding")
+                        Text(
+                            stringResource(R.string.funding_item_menu_appbar),
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                            fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                            fontFamily = MaterialTheme.typography.bodyMedium.fontFamily
+                        )
                     },
                     onClick = {
                         onNavigateToFundingScreen()

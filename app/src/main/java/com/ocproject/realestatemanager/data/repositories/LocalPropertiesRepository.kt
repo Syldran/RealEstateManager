@@ -1,25 +1,13 @@
 package com.ocproject.realestatemanager.data.repositories
 
-import android.app.Application
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
-import androidx.test.core.app.ActivityScenario.launch
 import com.ocproject.realestatemanager.data.database.PropertiesDao
-import com.ocproject.realestatemanager.data.entities.PhotoPropertyEntity
 import com.ocproject.realestatemanager.data.toPhotoPropertyEntity
 import com.ocproject.realestatemanager.data.toProperty
 import com.ocproject.realestatemanager.data.toPropertyEntity
-import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import okhttp3.internal.wait
-import org.koin.compose.getKoin
-import timber.log.Timber
-import kotlin.coroutines.coroutineContext
 
 
 class LocalPropertiesRepository(

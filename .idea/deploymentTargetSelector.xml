@@ -13,7 +13,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="deletePhotosOfPropertyTest()">
+      <SelectionState runConfigName="testInternetOnAutocomplete()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

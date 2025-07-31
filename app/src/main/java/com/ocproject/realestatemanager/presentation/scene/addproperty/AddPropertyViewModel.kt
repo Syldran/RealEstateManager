@@ -8,7 +8,15 @@ import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
 import com.ocproject.realestatemanager.domain.usecases.SavePropertyUseCase
-import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.*
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.OnChangeNavigationStatus
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.OnPhotoNameChanged
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.OnPhotoPicked
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.SaveProperty
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateForm
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateNewProperty
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdatePhotos
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateSoldState
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateTags
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.DecimalFormatter
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.IntFormatter
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.PropertyValidator
@@ -18,7 +26,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
-import timber.log.Timber
 import java.util.Calendar
 
 @KoinViewModel
@@ -38,12 +45,12 @@ class AddPropertyViewModel(
     fun getProperty() {
         if (propertyId != null && propertyId != 0L) {
             viewModelScope.launch {
-                onEvent(AddPropertyEvent.UpdateNewProperty(getPropertyDetailsUseCase(propertyId)))
-                onEvent(AddPropertyEvent.UpdatePhotos(state.value.newProperty.photoList))
+                onEvent(UpdateNewProperty(getPropertyDetailsUseCase(propertyId)))
+                onEvent(UpdatePhotos(state.value.newProperty.photoList))
                 if (state.value.newProperty.sold != null) {
-                    onEvent(AddPropertyEvent.UpdateSoldState(true))
+                    onEvent(UpdateSoldState(true))
                 } else {
-                    onEvent(AddPropertyEvent.UpdateSoldState(false))
+                    onEvent(UpdateSoldState(false))
                 }
             }
 
@@ -53,6 +60,7 @@ class AddPropertyViewModel(
                     Property(
                         photoList = emptyList(),
                         interestPoints = emptyList(),
+                        description = "",
                         address = "",
                         town = "",
                         lat = 0.0,
@@ -73,11 +81,10 @@ class AddPropertyViewModel(
 
     fun setPropertyFromPlace(place: Place) {
         val listAddressComponents = place.addressComponents?.asList()
-        Timber.tag("PLACETOADD").d(listAddressComponents.toString())
-        var address: String = ""
-        var town: String = ""
-        var country: String = ""
-        var code: String = ""
+        var address = ""
+        var town = ""
+        var country = ""
+        var code = ""
     listAddressComponents?.forEach {
             if (it.types.contains("street_number")) {
                 address += "${it.name} "
@@ -92,7 +99,7 @@ class AddPropertyViewModel(
             }
         }
         onEvent(
-            AddPropertyEvent.UpdateForm(
+            UpdateForm(
                 address = address,
                 town = town,
                 country = country,
@@ -145,7 +152,7 @@ class AddPropertyViewModel(
                     )
                     cpt++
                 }
-                // Ajouter à la liste existante
+                // Add existing list.
                 val currentList = state.value.photoList.toMutableList()
                 currentList.addAll(list)
                 onEvent(UpdatePhotos(currentList.toList()))
@@ -181,7 +188,7 @@ class AddPropertyViewModel(
 
     }
 
-    // Méthode pour ajouter une photo depuis la caméra
+    // Function to add photo from camera.
     fun addPhotoFromCamera(photoBytes: ByteArray) {
         val photo = PhotoProperty(
             isMain = state.value.photoList.isEmpty(),
@@ -191,21 +198,21 @@ class AddPropertyViewModel(
 
         val currentList = state.value.photoList.toMutableList()
         currentList.add(photo)
-        onEvent(AddPropertyEvent.UpdatePhotos(currentList.toList()))
+        onEvent(UpdatePhotos(currentList.toList()))
     }
 
-    // Méthode pour supprimer une photo spécifique
+    // Function to delete specific photo.
     fun removePhoto(photoToRemove: PhotoProperty) {
         val currentList = state.value.photoList.toMutableList()
         currentList.remove(photoToRemove)
 
-        // Si on supprime la photo principale et qu'il reste des photos,
-        // marquer la première comme principale
+        // If main photo deleted while still others photos,
+        // mark new first one as main.
         if (photoToRemove.isMain && currentList.isNotEmpty()) {
             currentList[0] = currentList[0].copy(isMain = true)
         }
 
-        onEvent(AddPropertyEvent.UpdatePhotos(currentList))
+        onEvent(UpdatePhotos(currentList))
     }
 
     private fun onChangeNavStatus() {
@@ -287,11 +294,11 @@ class AddPropertyViewModel(
         }
     }
 
-    fun updateForm(event: AddPropertyEvent.UpdateForm) {
-        var decimalFormatter = DecimalFormatter()
-        var intFormatter = IntFormatter()
+    fun updateForm(event: UpdateForm) {
+        val decimalFormatter = DecimalFormatter()
+        val intFormatter = IntFormatter()
         onEvent(
-            AddPropertyEvent.UpdateNewProperty(
+            UpdateNewProperty(
                 state.value.newProperty.copy(
                     address = event.address ?: state.value.newProperty.address,
                     town = event.town ?: state.value.newProperty.town,
@@ -312,8 +319,8 @@ class AddPropertyViewModel(
 
     }
 
-    fun updateTags(event: AddPropertyEvent.UpdateTags) {
-        val list: MutableList<InterestPoint> = mutableListOf<InterestPoint>()
+    fun updateTags(event: UpdateTags) {
+        val list: MutableList<InterestPoint> = mutableListOf()
         //if newProperty interestPoints aren't null we set temp list to it's current state.
         state.value.newProperty.interestPoints.let {
             list += it
@@ -387,7 +394,7 @@ class AddPropertyViewModel(
 
         // Update newProperty interestPoints state with new values from temp list
         onEvent(
-            AddPropertyEvent.UpdateNewProperty(
+            UpdateNewProperty(
                 state.value.newProperty.copy(
                     interestPoints = list,
                 )

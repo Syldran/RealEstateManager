@@ -47,6 +47,7 @@ class DBTest {
             photoList = emptyList(),
             interestPoints = emptyList(),
             address = "Somewhere",
+            description = "Description of a Somewhere",
             town = "NowhereCity",
             lat = 120.5,
             lng = 50.30,
@@ -67,6 +68,7 @@ class DBTest {
         val property = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "NowhereCity",
             lat = 120.5,
@@ -92,6 +94,7 @@ class DBTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = emptyList(),
+                description = "Description of a Somewhere",
                 address = "Somewhere",
                 town = "NowhereCity",
                 lat = 120.5,
@@ -109,6 +112,7 @@ class DBTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = emptyList(),
+                description = "Description of a Somewhere",
                 address = "Somewhere",
                 town = "Paris",
                 lat = 120.5,
@@ -126,6 +130,7 @@ class DBTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = emptyList(),
+                description = "Description of a Somewhere",
                 address = "There",
                 town = "London",
                 lat = 120.5,
@@ -149,6 +154,7 @@ class DBTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = emptyList(),
+                description = "Description of a Somewhere",
                 address = "Somewhere",
                 town = "Paris",
                 lat = 120.5,
@@ -197,6 +203,7 @@ class DBTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = emptyList(),
+                description = "Description of a Somewhere",
                 address = "Somewhere",
                 town = "Paris",
                 lat = 120.5,

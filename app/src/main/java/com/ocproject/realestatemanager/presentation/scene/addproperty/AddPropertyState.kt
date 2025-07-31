@@ -1,9 +1,7 @@
 package com.ocproject.realestatemanager.presentation.scene.addproperty
 
-import androidx.compose.ui.graphics.ImageBitmap
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
-import java.util.Calendar
 
 data class AddPropertyState(
     val addressError: String? = null,
@@ -20,6 +18,7 @@ data class AddPropertyState(
     val newProperty : Property = Property(
         photoList = emptyList(),
         interestPoints = emptyList(),
+        description = "",
         address = "",
         town = "",
         lat = 0.0,

@@ -3,7 +3,6 @@ package com.ocproject.realestatemanager.di
 import android.app.Application
 import com.google.android.libraries.places.api.Places
 import com.ocproject.realestatemanager.BuildConfig
-
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext
@@ -15,7 +14,7 @@ class RealEstateManager: Application() {
         super.onCreate()
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree());
+            Timber.plant(Timber.DebugTree())
         }
 
         GlobalContext.startKoin {

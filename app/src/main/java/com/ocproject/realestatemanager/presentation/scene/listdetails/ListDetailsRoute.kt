@@ -11,7 +11,6 @@ fun NavGraphBuilder.listDetailsScreen(navController: NavController, currentPosit
     composable(route = Screen.ListDetailsScreen.route){
         val navOptions = NavOptions.Builder()
             .setRestoreState(true)
-            .setPopUpTo(Screen.PropertyListScreen.route, inclusive = false, saveState = true)
             .build()
 
         ListDetails(

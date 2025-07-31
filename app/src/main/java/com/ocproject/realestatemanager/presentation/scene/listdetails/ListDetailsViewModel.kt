@@ -3,14 +3,12 @@ package com.ocproject.realestatemanager.presentation.scene.listdetails
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ocproject.realestatemanager.core.DataState
 import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.core.InterestPoint
 import com.ocproject.realestatemanager.core.Order
 import com.ocproject.realestatemanager.core.SellingStatus
 import com.ocproject.realestatemanager.core.SortType
-import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.usecases.DeletePropertyUseCase
 import com.ocproject.realestatemanager.domain.usecases.GetPropertyDetailsUseCase
@@ -22,10 +20,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
-import java.text.DateFormat
-import java.util.Date
-import kotlin.collections.addAll
-import kotlin.compareTo
 
 class ListDetailsViewModel(
     @InjectedParam
@@ -82,28 +76,28 @@ class ListDetailsViewModel(
 
     private fun addTags() {
         val currentTags = emptyList<InterestPoint>().toMutableList()
-        if (state.value.filterSate.tagTransport) {
+        if (state.value.filterState.tagTransport) {
             currentTags.add(InterestPoint.TRANSPORT)
         } else {
             if (currentTags.contains(InterestPoint.TRANSPORT)) {
                 currentTags.remove(InterestPoint.TRANSPORT)
             }
         }
-        if (state.value.filterSate.tagSchool) {
+        if (state.value.filterState.tagSchool) {
             currentTags.add(InterestPoint.SCHOOL)
         } else {
             if (currentTags.contains(InterestPoint.SCHOOL)) {
                 currentTags.remove(InterestPoint.SCHOOL)
             }
         }
-        if (state.value.filterSate.tagShop) {
+        if (state.value.filterState.tagShop) {
             currentTags.add(InterestPoint.SHOP)
         } else {
             if (currentTags.contains(InterestPoint.SHOP)) {
                 currentTags.remove(InterestPoint.SHOP)
             }
         }
-        if (state.value.filterSate.tagPark) {
+        if (state.value.filterState.tagPark) {
             currentTags.add(InterestPoint.PARK)
         } else {
             if (currentTags.contains(InterestPoint.PARK)) {
@@ -113,84 +107,10 @@ class ListDetailsViewModel(
         state.value.selectedTags.value = currentTags
     }
 
-//    fun getPropertyList() {
-//
-//        getPropertyListUseCase().onEach { propertiesDataState ->
-//            when (propertiesDataState) {
-//                is DataState.Error -> {
-//                    _state.update {
-//                        it.copy(
-//                            isError = true,
-//                        )
-//                    }
-//                }
-//
-//                is DataState.Loading -> {
-//                    _state.update {
-//                        it.copy(
-//                            isLoadingProgressBar = propertiesDataState.isLoading
-//                        )
-//                    }
-//                }
-//
-//                is DataState.Success -> {
-//                    _state.update {
-//                        it.copy(
-//                            isError = false,
-//                        )
-//                    }
-//                    onEvent(ListDetailsEvent.UpdateProperties(propertiesDataState.data))
-//                    setMaxPrice()
-//                    setMaxSurface()
-//                    getAreaCodes()
-//                }
-//            }
-//        }.launchIn(viewModelScope)
-//
-//    }
-
-   /* fun sortProperties(): List<Property> {
-        addTags()
-        var filteredProperties: MutableList<Property> = emptyList<Property>().toMutableList()
-        filteredProperties.addAll(
-            state.value.properties
-                .filter { property ->
-                    state.value.selectedTags.value.isEmpty() ||
-                            state.value.selectedTags.value.all { it in property.interestPoints }
-                }
-                .filter { it.price!! >= state.value.filterSate.priceRange.lower && it.price <= state.value.filterSate.priceRange.upper }
-                .filter { it.surfaceArea!! >= state.value.filterSate.surfaceRange.lower && it.surfaceArea <= state.value.filterSate.surfaceRange.upper }
-                .filter { it.photoList.size >= state.value.filterSate.minNbrPhotos }
-                .filter { it.createdDate!! >= state.value.filterSate.dateRange.lower && it.createdDate <= state.value.filterSate.dateRange.upper }
-        )
-
-        filteredProperties = sortByAreaCode(filteredProperties.toList()).toMutableList()
-        return when (state.value.filterSate.sellingStatus) {
-            SellingStatus.SOLD -> {
-                subFilter(
-                    filteredProperties
-                        .filter { it.sold != null && it.sold >= state.value.filterSate.soldDateRange.lower && it.sold <= state.value.filterSate.soldDateRange.upper }
-                )
-
-            }
-
-            SellingStatus.ALL -> {
-                subFilter(
-                    filteredProperties
-                )
-
-            }
-
-            SellingStatus.PURCHASABLE -> {
-                subFilter(filteredProperties.filter { it.sold == null })
-            }
-        }
-    }*/
-
     private fun sortByPrice(
         properties: List<Property>,
     ): List<Property> {
-        return when (state.value.filterSate.priceOrder) {
+        return when (state.value.filterState.priceOrder) {
             Order.ASC -> {
                 properties
                     .sortedBy { it.price }
@@ -208,7 +128,7 @@ class ListDetailsViewModel(
     private fun sortBySurface(
         properties: List<Property>,
     ): List<Property> {
-        return when (state.value.filterSate.surfaceOrder) {
+        return when (state.value.filterState.surfaceOrder) {
             Order.ASC -> {
                 properties
                     .sortedBy { it.surfaceArea }
@@ -224,7 +144,7 @@ class ListDetailsViewModel(
     private fun sortByDate(
         properties: List<Property>,
     ): List<Property> {
-        return when (state.value.filterSate.dateOrder) {
+        return when (state.value.filterState.dateOrder) {
             Order.ASC ->
                 properties
                     .sortedBy { it.createdDate }
@@ -238,8 +158,8 @@ class ListDetailsViewModel(
     private fun sortByAreaCode(
         properties: List<Property>,
     ): List<Property> {
-        return if (state.value.filterSate.areaCodeFilter != null) {
-            properties.filter { it.areaCode == state.value.filterSate.areaCodeFilter }
+        return if (state.value.filterState.areaCodeFilter != null) {
+            properties.filter { it.areaCode == state.value.filterState.areaCodeFilter }
         } else {
             properties
         }
@@ -248,7 +168,7 @@ class ListDetailsViewModel(
     private fun subFilter(
         properties: List<Property>,
     ): List<Property> {
-        return when (state.value.filterSate.sortType) {
+        return when (state.value.filterState.sortType) {
             SortType.PRICE -> {
                 sortByPrice(properties)
             }
@@ -265,12 +185,7 @@ class ListDetailsViewModel(
         }
     }
 
-    fun datePresentation(property: Property): String {
-        val date = Date(property.createdDate!!)
-        val formatter: DateFormat =
-            DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
-        return formatter.format(date)
-    }
+
 
     @OptIn(ExperimentalMaterial3AdaptiveApi::class)
     fun onEvent(event: ListDetailsEvent) {
@@ -320,7 +235,6 @@ class ListDetailsViewModel(
                                     properties = propertiesDataState.data
                                 )
                             }
-//                            onEvent(ListDetailsEvent.UpdateProperties(propertiesDataState.data))
                             setMaxPrice()
                             setMaxSurface()
                             getAreaCodes()
@@ -390,21 +304,21 @@ class ListDetailsViewModel(
                             state.value.selectedTags.value.isEmpty() ||
                                     state.value.selectedTags.value.all { it in property.interestPoints }
                         }
-                        .filter { it.price!! >= state.value.filterSate.priceRange.lower && it.price <= state.value.filterSate.priceRange.upper }
-                        .filter { it.surfaceArea!! >= state.value.filterSate.surfaceRange.lower && it.surfaceArea <= state.value.filterSate.surfaceRange.upper }
-                        .filter { it.photoList.size >= state.value.filterSate.minNbrPhotos }
-                        .filter { it.createdDate!! >= state.value.filterSate.dateRange.lower && it.createdDate <= state.value.filterSate.dateRange.upper }
+                                    .filter { it.price!! >= state.value.filterState.priceRange.lower && it.price <= state.value.filterState.priceRange.upper }
+            .filter { it.surfaceArea!! >= state.value.filterState.surfaceRange.lower && it.surfaceArea <= state.value.filterState.surfaceRange.upper }
+            .filter { it.photoList.size >= state.value.filterState.minNbrPhotos }
+            .filter { it.createdDate!! >= state.value.filterState.dateRange.lower && it.createdDate <= state.value.filterState.dateRange.upper }
                 )
 
                 filteredProperties = sortByAreaCode(filteredProperties.toList()).toMutableList()
                 viewModelScope.launch {
-                    _state.update {
-                        it.copy(
-                            sortedProperties = when (state.value.filterSate.sellingStatus) {
+                    _state.update { listDetailsState ->
+                        listDetailsState.copy(
+                            sortedProperties = when (state.value.filterState.sellingStatus) {
                                 SellingStatus.SOLD -> {
                                     subFilter(
                                         filteredProperties
-                                            .filter { it.sold != null && it.sold >= state.value.filterSate.soldDateRange.lower && it.sold <= state.value.filterSate.soldDateRange.upper }
+                                            .filter { it.sold != null && it.sold >= state.value.filterState.soldDateRange.lower && it.sold <= state.value.filterState.soldDateRange.upper }
                                     )
 
                                 }
@@ -428,7 +342,7 @@ class ListDetailsViewModel(
             is ListDetailsEvent.UpdateFilter -> {
                 _state.update {
                     it.copy(
-                        filterSate = Filter(
+                        filterState = Filter(
                             sortType = event.filter.sortType,
                             priceOrder = event.filter.priceOrder,
                             dateOrder = event.filter.dateOrder,

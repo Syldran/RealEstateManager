@@ -9,13 +9,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MarkerState
 import com.ocproject.realestatemanager.domain.models.Property
-import com.ocproject.realestatemanager.domain.usecases.GetPropertyListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
-import org.koin.core.annotation.InjectedParam
 
 data class PropertyMarker(
     val state: MarkerState,

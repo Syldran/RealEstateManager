@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager.domain.models
 import android.os.Parcelable
 import com.ocproject.realestatemanager.core.InterestPoint
 import kotlinx.parcelize.Parcelize
+import org.hamcrest.Description
 import java.util.Date
 
 @Parcelize
@@ -9,6 +10,7 @@ data class Property(
     val id: Long,
     val photoList: List<PhotoProperty>,
     val interestPoints: List<InterestPoint>,
+    val description: String,
     val address: String,
     val town: String,
     val lat: Double,

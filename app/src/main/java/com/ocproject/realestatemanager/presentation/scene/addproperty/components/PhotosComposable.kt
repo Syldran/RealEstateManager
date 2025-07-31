@@ -14,17 +14,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.Card
@@ -35,7 +30,6 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,8 +37,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent
@@ -55,8 +50,6 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropert
 fun PhotosComposable(
     viewModel: AddPropertyViewModel,
     property: Property,
-    modifier: Modifier = Modifier,
-    iconSize: Dp = 25.dp,
 ) {
 
     if (!property.photoList.isEmpty()) {
@@ -116,7 +109,7 @@ fun PhotoItem(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                // Afficher l'image
+                // Display Image
                 Image(
                     bitmap = BitmapFactory.decodeByteArray(
                         photo.photoBytes,
@@ -127,11 +120,11 @@ fun PhotoItem(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                // Indicateur si c'est la photo principale
+                // Shows if photo is main.
                 if (photo.isMain) {
                     Icon(
                         imageVector = Icons.Filled.Star,
-                        contentDescription = "Photo principale",
+                        contentDescription = stringResource(R.string.photo_main),
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(4.dp)
@@ -160,7 +153,7 @@ fun PhotoItem(
                 }
             }
         }
-        // Champ de texte pour le nom de la photo (en dessous)
+        // Text under photo.
         OutlinedTextField(
             modifier = Modifier
                 .width(150.dp)
@@ -175,7 +168,7 @@ fun PhotoItem(
                 )
             },
             singleLine = true,
-            placeholder = { Text("Nom de la photo") },
+            placeholder = { Text(stringResource(R.string.photo_name)) },
             colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,

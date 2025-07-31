@@ -47,6 +47,7 @@ class MapOfPropertiesViewModelTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = listOf(InterestPoint.SCHOOL),
+                description = "Description of a Somewhere",
                 address = "Somewhere",
                 town = "NowhereCity",
                 lat = 120.5,
@@ -62,6 +63,7 @@ class MapOfPropertiesViewModelTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = listOf(InterestPoint.TRANSPORT),
+                description = "Description of a Somewhere",
                 address = "Somewhere",
                 town = "Paris",
                 lat = 120.5,
@@ -77,6 +79,7 @@ class MapOfPropertiesViewModelTest {
             Property(
                 photoList = emptyList(),
                 interestPoints = listOf(InterestPoint.SCHOOL),
+                description = "Description of a Somewhere",
                 address = "There",
                 town = "London",
                 lat = 120.5,

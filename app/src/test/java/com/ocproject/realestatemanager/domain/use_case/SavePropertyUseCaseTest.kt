@@ -29,6 +29,7 @@ class SavePropertyUseCaseTest {
         val property =    Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "Description of a Somewhere",
             address = "Somewhere",
             town = "NowhereCity",
             lat = 120.5,

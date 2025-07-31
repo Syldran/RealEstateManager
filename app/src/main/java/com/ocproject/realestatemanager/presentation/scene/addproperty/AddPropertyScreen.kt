@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -80,10 +81,11 @@ fun AddPropertyScreen(
 
     val state by viewModel.state.collectAsState()
 
-    // État pour la BottomSheet
+    // State for BottomSheet
     var showPhotoOptionsBottomSheet by remember { mutableStateOf(false) }
 
-    // Fonction pour gérer la photo capturée depuis la caméra
+
+    // Manage captured photo from camera
     fun handlePhotoCaptured(photoBytes: ByteArray) {
         viewModel.addPhotoFromCamera(photoBytes)
     }
@@ -99,7 +101,6 @@ fun AddPropertyScreen(
             }
     }
 
-//    var soldChecked by remember { mutableStateOf(false) }
     var schoolChecked by remember { mutableStateOf(false) }
     var parkChecked by remember { mutableStateOf(false) }
     var transportChecked by remember { mutableStateOf(false) }
@@ -141,31 +142,27 @@ fun AddPropertyScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(contentPadding)
-            /*.nestedScroll(nestedScrollConnection)*/,
+                .padding(contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(60.dp))
 
-            // Affichage des photos déjà ajoutées
+
+            // Display already added photos
             PhotosComposable(
                 property = state.newProperty.copy(photoList = state.photoList),
                 viewModel = viewModel,
-//                modifier = Modifier
-//                    .clickable {
-//                        showPhotoOptionsBottomSheet = true
-//                    },
             )
 
-            // Bouton "Ajouter une photo"
+            // Add photos button
             Button(
                 onClick = { showPhotoOptionsBottomSheet = true },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
-                Text("Ajouter une photo")
+                Text(stringResource(R.string.add_a_photo))
             }
 
-            // BottomSheet pour les options de photo
+            // BottomSheet for photos source.
             if (showPhotoOptionsBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = { showPhotoOptionsBottomSheet = false },
@@ -177,17 +174,17 @@ fun AddPropertyScreen(
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Choisir une photo",
+                            text = stringResource(R.string.choose_a_photo),
                             style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
 
                         ListItem(
-                            headlineContent = { Text("Prendre une photo") },
+                            headlineContent = { Text(stringResource(R.string.take_a_photo)) },
                             leadingContent = {
                                 Icon(
                                     imageVector = Icons.Filled.Call,
-                                    contentDescription = "Camera"
+                                    contentDescription = stringResource(R.string.camera)
                                 )
                             },
                             modifier = Modifier.clickable {
@@ -199,11 +196,11 @@ fun AddPropertyScreen(
                         )
 
                         ListItem(
-                            headlineContent = { Text("Choisir depuis la galerie") },
+                            headlineContent = { Text(stringResource(R.string.choose_from_gallery)) },
                             leadingContent = {
                                 Icon(
                                     imageVector = Icons.Filled.Star,
-                                    contentDescription = "Gallery"
+                                    contentDescription = stringResource(R.string.gallery)
                                 )
                             },
                             modifier = Modifier.clickable {
@@ -228,7 +225,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(address = it))
                 },
                 keyboardType = KeyboardType.Text,
-                labelValue = "Address",
+                labelValue = stringResource(R.string.address),
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
@@ -239,7 +236,7 @@ fun AddPropertyScreen(
 
                 },
                 keyboardType = KeyboardType.Text,
-                labelValue = "Town"
+                labelValue = stringResource(R.string.town)
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
@@ -249,7 +246,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(areaCode = it))
                 },
                 keyboardType = KeyboardType.Number,
-                labelValue = "Area Code"
+                labelValue = stringResource(R.string.area_code)
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
@@ -259,7 +256,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(country = it))
                 },
                 keyboardType = KeyboardType.Text,
-                labelValue = "Country"
+                labelValue = stringResource(R.string.country)
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
@@ -269,7 +266,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(price = it))
                 },
                 keyboardType = KeyboardType.Number,
-                labelValue = "Price"
+                labelValue = stringResource(R.string.price)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -280,7 +277,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(surfaceArea = it))
                 },
                 keyboardType = KeyboardType.Number,
-                labelValue = "Surface Area"
+                labelValue = stringResource(R.string.surface_area)
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
@@ -290,7 +287,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(latitude = it))
                 },
                 keyboardType = KeyboardType.Decimal,
-                labelValue = "Latitude"
+                labelValue = stringResource(R.string.latitude)
             )
             Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
@@ -300,7 +297,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(longitude = it))
                 },
                 keyboardType = KeyboardType.Decimal,
-                labelValue = "Longitude"
+                labelValue = stringResource(R.string.longitude)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -322,14 +319,14 @@ fun AddPropertyScreen(
 
                     },
                     label = {
-                        Text("School")
+                        Text(stringResource(R.string.school))
                     },
                     selected = schoolChecked,
                     leadingIcon = if (schoolChecked) {
                         {
                             Icon(
                                 imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
+                                contentDescription = stringResource(R.string.done_icon_content_description),
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )
                         }
@@ -352,14 +349,14 @@ fun AddPropertyScreen(
                         )
                     },
                     label = {
-                        Text("Park")
+                        Text(stringResource(R.string.park))
                     },
                     selected = parkChecked,
                     leadingIcon = if (parkChecked) {
                         {
                             Icon(
                                 imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
+                                contentDescription = stringResource(R.string.done_icon_content_description),
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )
                         }
@@ -383,14 +380,14 @@ fun AddPropertyScreen(
 
                     },
                     label = {
-                        Text("Shop")
+                        Text(stringResource(R.string.shop))
                     },
                     selected = shopChecked,
                     leadingIcon = if (shopChecked) {
                         {
                             Icon(
                                 imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
+                                contentDescription = stringResource(R.string.done_icon_content_description),
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )
                         }
@@ -413,14 +410,14 @@ fun AddPropertyScreen(
                         )
                     },
                     label = {
-                        Text("Transport")
+                        Text(stringResource(R.string.transport))
                     },
                     selected = transportChecked,
                     leadingIcon = if (transportChecked) {
                         {
                             Icon(
                                 imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
+                                contentDescription = stringResource(R.string.done_icon_content_description),
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )
                         }
@@ -452,20 +449,18 @@ fun AddPropertyScreen(
                                     )
                                 )
                             )
-
-
                         }
 
                     },
                     label = {
-                        Text("SOLD!")
+                        Text(stringResource(R.string.sold))
                     },
                     selected = state.soldState,
                     leadingIcon = if (state.soldState) {
                         {
                             Icon(
                                 imageVector = Icons.Filled.Done,
-                                contentDescription = "Done icon",
+                                contentDescription = stringResource(R.string.done_icon_content_description),
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )
                         }
@@ -481,7 +476,7 @@ fun AddPropertyScreen(
                     viewModel.onEvent(AddPropertyEvent.OnChangeNavigationStatus(true))
                 }
             }) {
-                Text(text = "Save property")
+                Text(text = stringResource(R.string.save_property))
             }
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -498,7 +493,7 @@ fun AddPropertyScreen(
                 disabledContentColor = MaterialTheme.colorScheme.secondaryContainer
             )
         ) {
-            Icon(imageVector = Icons.Rounded.Close, contentDescription = "Close")
+            Icon(imageVector = Icons.Rounded.Close, contentDescription = stringResource(R.string.close))
         }
     }
 }

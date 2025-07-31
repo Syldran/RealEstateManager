@@ -1,7 +1,6 @@
 package com.ocproject.realestatemanager.domain.usecases
 
 
-import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.domain.repositories.PropertiesRepository
 

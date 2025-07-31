@@ -1,6 +1,5 @@
 package com.ocproject.realestatemanager.domain.repositories
 
-import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 
 interface PropertiesRepository {

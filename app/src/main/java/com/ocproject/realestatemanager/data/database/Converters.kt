@@ -20,7 +20,7 @@ class Converters {
 
     @TypeConverter
     fun fromListInterestPoint(listInterestPoint: List<InterestPoint>?): String {
-        var returnString:String = ""
+        var returnString = ""
         var cpt = 0
         listInterestPoint?.forEach {
             returnString += if (cpt ==0) it.name else ",${it.name}"

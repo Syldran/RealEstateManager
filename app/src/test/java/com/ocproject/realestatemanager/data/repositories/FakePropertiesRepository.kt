@@ -15,6 +15,7 @@ class FakePropertiesRepository : PropertiesRepository {
                     Property(
                         photoList = emptyList(),
                         interestPoints = emptyList(),
+                        description = "Description of a Somewhere",
                         address = "Somewhere",
                         town = "NowhereCity",
                         lat = 120.5,
@@ -30,6 +31,7 @@ class FakePropertiesRepository : PropertiesRepository {
                     Property(
                         photoList = emptyList(),
                         interestPoints = emptyList(),
+                        description = "Description of a Somewhere",
                         address = "Somewhere",
                         town = "Paris",
                         lat = 120.5,
@@ -45,6 +47,7 @@ class FakePropertiesRepository : PropertiesRepository {
                     Property(
                         photoList = emptyList(),
                         interestPoints = emptyList(),
+                        description = "Description of a Somewhere",
                         address = "Somewhere",
                         town = "Londres",
                         lat = 120.5,
@@ -80,6 +83,7 @@ class FakePropertiesRepository : PropertiesRepository {
         var propertyToReturn: Property = Property(
             photoList = emptyList(),
             interestPoints = emptyList(),
+            description = "",
             address = "",
             town = "",
             lat = 0.0,

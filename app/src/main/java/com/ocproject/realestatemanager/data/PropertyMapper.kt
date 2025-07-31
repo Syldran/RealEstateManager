@@ -19,6 +19,7 @@ fun PropertyWithPhotosEntity.toProperty(): Property {
     return Property(
         photoList = this.photoList?.map {it.toPhotoProperty()} ?: emptyList(),
         interestPoints = this.property.interestPoints,
+        description = this.property.description,
         address = this.property.address,
         town = this.property.town,
         lat = this.property.lat,
@@ -46,6 +47,7 @@ fun PhotoProperty.toPhotoPropertyEntity(idProperty: Long): PhotoPropertyEntity {
 fun Property.toPropertyEntity(): PropertyEntity {
     return PropertyEntity(
         interestPoints = this.interestPoints,
+        description = this.description,
         address = this.address,
         town = this.town,
         lat = this.lat,

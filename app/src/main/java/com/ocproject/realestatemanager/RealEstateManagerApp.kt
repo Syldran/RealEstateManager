@@ -7,14 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.LatLng
+import com.ocproject.realestatemanager.core.ui.theme.RealEstateManagerTheme
 import com.ocproject.realestatemanager.presentation.navigation.Screen
 import com.ocproject.realestatemanager.presentation.scene.addproperty.addPropertyScreen
-import com.ocproject.realestatemanager.core.ui.theme.RealEstateManagerTheme
 import com.ocproject.realestatemanager.presentation.scene.cameraScreen.cameraScreen
 import com.ocproject.realestatemanager.presentation.scene.funding.fundingScreen
 import com.ocproject.realestatemanager.presentation.scene.listdetails.listDetailsScreen
 import com.ocproject.realestatemanager.presentation.scene.map.mapOfPropertiesScreen
-import org.koin.compose.KoinContext
 
 
 @RequiresApi(Build.VERSION_CODES.O)

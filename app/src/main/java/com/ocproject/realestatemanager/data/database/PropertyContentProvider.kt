@@ -27,6 +27,7 @@ class PropertyContentProvider : ContentProvider() {
         
         // Column names
         const val COLUMN_ID = "id"
+        const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_ADDRESS = "address"
         const val COLUMN_TOWN = "town"
         const val COLUMN_LAT = "lat"
@@ -45,6 +46,7 @@ class PropertyContentProvider : ContentProvider() {
         const val CREATE_DB_TABLE =
             (" CREATE TABLE " + TABLE_NAME
                     + " (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + " description TEXT NOT NULL"
                     + " address TEXT NOT NULL, "
                     + " town TEXT NOT NULL, "
                     + " lat REAL NOT NULL, "
@@ -192,6 +194,7 @@ class PropertyContentProvider : ContentProvider() {
     private fun contentValuesToPropertyEntity(values: ContentValues, id: Long = 0L): PropertyEntity {
         return PropertyEntity(
             id = id,
+            description = values.getAsString(COLUMN_DESCRIPTION) ?: "",
             address = values.getAsString(COLUMN_ADDRESS) ?: "",
             town = values.getAsString(COLUMN_TOWN) ?: "",
             lat = values.getAsDouble(COLUMN_LAT) ?: 0.0,
@@ -202,7 +205,7 @@ class PropertyContentProvider : ContentProvider() {
             surfaceArea = values.getAsInteger(COLUMN_SURFACE_AREA),
             price = values.getAsInteger(COLUMN_PRICE),
             sold = values.getAsLong(COLUMN_SOLD),
-            interestPoints = emptyList() // Convert from string if needed
+            interestPoints = emptyList()
         )
     }
 }

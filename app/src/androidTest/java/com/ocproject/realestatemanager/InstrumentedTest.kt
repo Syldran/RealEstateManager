@@ -12,7 +12,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.gms.maps.model.LatLng
 import com.ocproject.realestatemanager.core.ui.theme.RealEstateManagerTheme
-import com.ocproject.realestatemanager.core.utils.Globals
 import com.ocproject.realestatemanager.core.utils.Globals.checkConnectivityForTest
 import org.junit.Assert.*
 import org.junit.Rule
@@ -25,7 +24,7 @@ import org.junit.runner.RunWith
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class InstrumentedTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 

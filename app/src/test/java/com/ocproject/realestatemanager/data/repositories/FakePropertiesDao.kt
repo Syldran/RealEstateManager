@@ -52,6 +52,7 @@ class FakePropertiesDao : PropertiesDao {
                 emptyList(),
                 "",
                 "",
+                "",
                 0.0,
                 0.0,
                 "",

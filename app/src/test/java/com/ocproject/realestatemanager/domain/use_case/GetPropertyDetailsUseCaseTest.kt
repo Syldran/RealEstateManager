@@ -38,6 +38,7 @@ class GetPropertyDetailsUseCaseTest {
                 photoList = emptyList(),
                 interestPoints = emptyList(),
                 address = "Somewhere",
+                description = "Description of a Somewhere",
                 town = "NowhereCity",
                 lat = 120.5,
                 lng = 50.30,
