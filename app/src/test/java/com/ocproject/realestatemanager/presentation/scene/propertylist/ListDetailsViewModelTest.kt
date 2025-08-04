@@ -3,6 +3,7 @@ package com.ocproject.realestatemanager.presentation.scene.propertylist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
 import com.ocproject.realestatemanager.MainCoroutineRule
 import com.ocproject.realestatemanager.core.DataState
 import com.ocproject.realestatemanager.core.Filter
@@ -73,6 +74,7 @@ class ListDetailsViewModelTest {
         tagShop = false,
         tagTransport = false,
         areaCodeFilter = null,
+        typeHousing = null,
         minNbrPhotos = 0,
     )
 
@@ -110,6 +112,9 @@ class ListDetailsViewModelTest {
                 price = 150000,
                 sold = -1,
                 id = 1L,
+                type = "House",
+                nbrRoom = 3,
+                realEstateAgent = "Agent 1",
             ),
             Property(
                 photoList = emptyList(),
@@ -126,6 +131,9 @@ class ListDetailsViewModelTest {
                 price = 300000,
                 sold = -1,
                 id = 2L,
+                type = "Apartment",
+                nbrRoom = 2,
+                realEstateAgent = "Agent 2",
             )
         )
 
@@ -217,6 +225,7 @@ class ListDetailsViewModelTest {
             tagShop = true,
             tagPark = false,
             areaCodeFilter = 12345,
+            typeHousing = "Apartment",
             minNbrPhotos = 2,
         )
 
@@ -224,6 +233,33 @@ class ListDetailsViewModelTest {
         advanceUntilIdle()
 
         assert(viewModel.state.value.filterState == newFilter)
+    }
+
+    @Test
+    fun `updateFilter correctly handles typeHousing filter`() = runTest {
+        val newFilter = Filter(
+            sortType = SortType.PRICE,
+            priceOrder = Order.ASC,
+            dateOrder = Order.ASC,
+            surfaceOrder = Order.ASC,
+            priceRange = Range(0, Int.MAX_VALUE),
+            dateRange = Range(0L, Long.MAX_VALUE),
+            soldDateRange = Range(0L, Long.MAX_VALUE),
+            surfaceRange = Range(0, Int.MAX_VALUE),
+            sellingStatus = SellingStatus.ALL,
+            tagSchool = false,
+            tagTransport = false,
+            tagShop = false,
+            tagPark = false,
+            areaCodeFilter = null,
+            typeHousing = "House",
+            minNbrPhotos = 0,
+        )
+
+        viewModel.onEvent(ListDetailsEvent.UpdateFilter(newFilter))
+        advanceUntilIdle()
+
+        assertEquals("House", viewModel.state.value.filterState.typeHousing)
     }
 
     @Test
@@ -243,6 +279,9 @@ class ListDetailsViewModelTest {
             price = 200000,
             sold = -1,
             id = 1L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
 
         viewModel.onEvent(ListDetailsEvent.UpdateSelectedProperty(testProperty))
@@ -295,6 +334,9 @@ class ListDetailsViewModelTest {
             price = 200000,
             sold = -1,
             id = 2L,
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Test Agent",
         )
 
         coEvery { getPropertyDetails.invoke(2L) } returns testProperty
@@ -323,6 +365,9 @@ class ListDetailsViewModelTest {
             price = 200000,
             sold = -1,
             id = 1L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
 
         viewModel.onEvent(ListDetailsEvent.DeleteProperty(testProperty))
@@ -348,6 +393,9 @@ class ListDetailsViewModelTest {
             price = 200000,
             sold = -1,
             id = 1L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Agent 1",
         )
 
         val testProperty2 = Property(
@@ -365,6 +413,9 @@ class ListDetailsViewModelTest {
             price = 300000,
             sold = -1,
             id = 2L,
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Agent 2",
         )
 
         // Initially no property should be selected

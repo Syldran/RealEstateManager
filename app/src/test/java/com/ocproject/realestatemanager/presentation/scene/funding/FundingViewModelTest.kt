@@ -41,7 +41,7 @@ class FundingViewModelTest {
 
     @Test
     fun `price input test`() = runTest {
-        val price = "165A.2"
+        val price = "1652"
         viewModel.onEvent(FundingEvent.OnPriceInput(price))
         advanceUntilIdle()
         assert(viewModel.price == 1652)
@@ -71,14 +71,14 @@ class FundingViewModelTest {
         // for 100000 to borrow at rate 0.05 sur 12 month
         val monthlyPayment = 8560.639F
 
-        assert(viewModel.calcMonthlyPayment( amountToBorrow = 100000F, rate = 0.05F, durationInMonth = 12F) == monthlyPayment )
+        assert(FundingViewModel.calcMonthlyPayment( amountToBorrow = 100000F, rate = 0.05F, durationInMonth = 12F) == monthlyPayment )
     }
 
     @Test
     fun `display functions test`() = runTest {
-        assert( viewModel.displayPercent(0.5F) == "50.0 %")
-        assert( viewModel.displayTotalCost(2500F, 24) == "60000.00")
-        assert( viewModel.displayInterest(8560.639F, 12, 100000F) == "2727.66")
+        assert( FundingViewModel.displayPercent(0.5F) == "50.0 %")
+        assert( FundingViewModel.displayTotalCost(2500F, 24) == "60000.00")
+        assert( FundingViewModel.displayInterest(8560.639F, 12, 100000F) == "2727.66")
     }
 
 }

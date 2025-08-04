@@ -74,11 +74,11 @@ fun PropertyListItemContent(
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.wrapContentWidth()) {
 
-            Text("$: ${propertyWithPhotos.price}")
+            Text("Type: ${propertyWithPhotos.type}")
             Text(
                 "City: ${propertyWithPhotos.town}"
             )
-            Text("surface: ${propertyWithPhotos.surfaceArea}")
+            Text("$: ${propertyWithPhotos.price}")
         }
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -115,6 +115,9 @@ fun PreviewItem() {
             surfaceArea = 150,
             areaCode = 18290,
             sold = 2500L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "John Doe",
         ),
         onEvent = {},
         selectedProperty = null

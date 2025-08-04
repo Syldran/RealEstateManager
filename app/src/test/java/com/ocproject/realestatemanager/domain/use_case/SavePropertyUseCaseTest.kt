@@ -42,6 +42,9 @@ class SavePropertyUseCaseTest {
             price = 150000,
             sold = -1,
             id = -1L, // New property
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
         
         val resultId = saveProperty.invoke(newProperty)
@@ -69,6 +72,9 @@ class SavePropertyUseCaseTest {
             price = 300000,
             sold = 1,
             id = 1L, // Existing property
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Updated Agent",
         )
         
         val resultId = saveProperty.invoke(existingProperty)
@@ -96,6 +102,9 @@ class SavePropertyUseCaseTest {
             price = 100000,
             sold = -1,
             id = -1L,
+            type = "House",
+            nbrRoom = 4,
+            realEstateAgent = "First Agent",
         )
         
         val resultId = saveProperty.invoke(newProperty)
@@ -122,6 +131,9 @@ class SavePropertyUseCaseTest {
             surfaceArea = 100,
             price = 100000,
             sold = -1,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Agent 1",
             id = -1L,
         )
         
@@ -139,6 +151,9 @@ class SavePropertyUseCaseTest {
             surfaceArea = 200,
             price = 200000,
             sold = -1,
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Agent 2",
             id = -1L,
         )
         

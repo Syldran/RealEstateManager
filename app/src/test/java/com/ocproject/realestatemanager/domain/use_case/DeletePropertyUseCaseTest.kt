@@ -32,6 +32,9 @@ class DeletePropertyUseCaseTest {
         price = 150000,
         sold = -1,
         id = 1L,
+        type = "House",
+        nbrRoom = 3,
+        realEstateAgent = "Test Agent",
     )
 
     @Before
@@ -78,6 +81,9 @@ class DeletePropertyUseCaseTest {
             price = 200000,
             sold = -1,
             id = 2L,
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Another Agent",
         )
         
         val initialCount = fakePropertyRepository.getPropertiesCount()

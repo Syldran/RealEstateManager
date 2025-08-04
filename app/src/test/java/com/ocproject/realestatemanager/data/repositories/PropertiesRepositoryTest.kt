@@ -163,6 +163,22 @@ class PropertiesRepositoryTest {
     }
 
     @Test
+    fun `getPropertyListFiltered should filter by type housing`() = runTest {
+        // Given
+        fakeRepository.shouldHaveFilledList(true)
+        val filter = createTestFilter(typeHousing = "House")
+
+        // When
+        val properties = fakeRepository.getPropertyListFiltered(filter)
+
+        // Then
+        assertTrue(properties.isNotEmpty())
+        properties.forEach { property ->
+            assertEquals("House", property.type)
+        }
+    }
+
+    @Test
     fun `getPropertyListFiltered should filter by interest points`() = runTest {
         // Given
         fakeRepository.shouldHaveFilledList(true)
@@ -345,6 +361,27 @@ class PropertiesRepositoryTest {
         }
     }
 
+    @Test
+    fun `getPropertyListFiltered should handle typeHousing with other filters`() = runTest {
+        // Given
+        fakeRepository.shouldHaveFilledList(true)
+        val filter = createTestFilter(
+            sellingStatus = SellingStatus.PURCHASABLE,
+            typeHousing = "House",
+            priceRange = Range(300000, 600000)
+        )
+
+        // When
+        val properties = fakeRepository.getPropertyListFiltered(filter)
+
+        // Then
+        properties.forEach { property ->
+            assertEquals(-1L, property.sold) // Purchasable
+            assertEquals("House", property.type) // House type
+            assertTrue(property.price in 300000..600000) // Price range
+        }
+    }
+
     // Helper methods
     private fun createTestProperty(
         id: Long = 1L,
@@ -366,7 +403,10 @@ class PropertiesRepositoryTest {
             areaCode = 75001,
             surfaceArea = 100,
             price = price,
-            sold = sold
+            sold = sold,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent"
         )
     }
 
@@ -385,6 +425,7 @@ class PropertiesRepositoryTest {
         tagShop: Boolean = false,
         tagPark: Boolean = false,
         areaCodeFilter: Int? = null,
+        typeHousing: String? = null,
         minNbrPhotos: Int = 0
     ): Filter {
         return Filter(
@@ -402,6 +443,7 @@ class PropertiesRepositoryTest {
             tagShop = tagShop,
             tagPark = tagPark,
             areaCodeFilter = areaCodeFilter,
+            typeHousing = typeHousing,
             minNbrPhotos = minNbrPhotos
         )
     }

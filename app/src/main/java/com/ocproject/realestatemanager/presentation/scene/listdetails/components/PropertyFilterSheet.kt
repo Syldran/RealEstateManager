@@ -215,9 +215,8 @@ fun PropertyFilterSheet(
                         horizontalArrangement = Arrangement.Center
                     ) {
 //                        Text(text = "Photos Minimum: ")
-                        val focusRequester = remember { FocusRequester() }
                         val focusManager = LocalFocusManager.current
-                        
+
                         OutlinedTextField(
                             shape = RoundedCornerShape(size = 8.dp),
                             colors = TextFieldDefaults.colors(focusedContainerColor = Color.White),
@@ -246,8 +245,63 @@ fun PropertyFilterSheet(
                             ),
                             keyboardActions = KeyboardActions(
                                 onDone = {
-                                    focusRequester.freeFocus()
                                     focusManager.clearFocus()
+                                }
+                            ),
+                        )
+                    }
+                }
+
+                Card(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    // Type Housing
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        val focusManager2 = LocalFocusManager.current
+
+                        OutlinedTextField(
+                            shape = RoundedCornerShape(size = 8.dp),
+                            colors = TextFieldDefaults.colors(focusedContainerColor = Color.White),
+                            modifier = Modifier,
+                            value = state.filterState.typeHousing ?: "",
+                            placeholder = { Text("") },
+                            label = { Text("Type Housing") },
+                            onValueChange = {
+                                if (it.isEmpty()) {
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = state.filterState.copy(
+                                                typeHousing = null,
+                                            )
+                                        )
+                                    )
+                                } else {
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = state.filterState.copy(
+                                                typeHousing = it,
+                                            )
+                                        )
+                                    )
+                                }
+
+
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    focusManager2.clearFocus()
                                 }
                             ),
                         )

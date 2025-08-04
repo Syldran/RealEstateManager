@@ -59,6 +59,9 @@ class MapOfPropertiesViewModelTest {
                 price = 150000,
                 sold = -1,
                 id = 1L,
+                type = "House",
+                nbrRoom = 3,
+                realEstateAgent = "Agent 1",
             ),
             Property(
                 photoList = emptyList(),
@@ -75,6 +78,9 @@ class MapOfPropertiesViewModelTest {
                 price = 300000,
                 sold = -1,
                 id = 2L,
+                type = "Apartment",
+                nbrRoom = 2,
+                realEstateAgent = "Agent 2",
             ),
             Property(
                 photoList = emptyList(),
@@ -91,6 +97,9 @@ class MapOfPropertiesViewModelTest {
                 price = 250000,
                 sold = -1,
                 id = 2L,
+                type = "House",
+                nbrRoom = 4,
+                realEstateAgent = "Agent 3",
             )
         )
         viewModel.createMarkers(propertyList)

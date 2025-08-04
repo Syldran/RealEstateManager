@@ -85,6 +85,9 @@ class AddPropertyViewModel(
                         price = 0,
                         id = 0L,
                         sold = -1,
+                        type = "",
+                        nbrRoom = 0,
+                        realEstateAgent = "",
                     )
                 )
             )
@@ -99,7 +102,7 @@ class AddPropertyViewModel(
         var country = ""
         var code = ""
         listAddressComponents?.forEach {
-            Timber.tag("AddressComponents").d("${it.name}")
+            Timber.tag("AddressComponent").d("${it.name} in : ${it.types}")
             if (it.types.contains("street_number")) {
                 address += "${it.name} "
             } else if (it.types.contains("route")) {
@@ -287,6 +290,8 @@ class AddPropertyViewModel(
                 result.surfaceAreaError,
                 result.latError,
                 result.lngError,
+                result.typeError,
+                result.nbrRoomError,
             )
 
             if (errors.isEmpty()) {
@@ -300,6 +305,9 @@ class AddPropertyViewModel(
                         surfaceAreaError = null,
                         latError = null,
                         lngError = null,
+                        typeError = null,
+                        nbrRoomError = null,
+                        realEstateAgentError = null,
                         navToPropertyListScreen = false,
                     )
                 }
@@ -350,7 +358,8 @@ class AddPropertyViewModel(
                         surfaceAreaError = result.surfaceAreaError,
                         latError = result.latError,
                         lngError = result.lngError,
-                        navToPropertyListScreen = false,
+                        typeError = result.typeError,
+                        nbrRoomError = result.nbrRoomError,
                     )
                 }
             }
@@ -371,6 +380,9 @@ class AddPropertyViewModel(
                         ?: state.value.newProperty.surfaceArea,
                     lat = event.latitude?.toDoubleOrNull() ?: state.value.newProperty.lat,
                     lng = event.longitude?.toDoubleOrNull() ?: state.value.newProperty.lng,
+                    type = event.type ?: state.value.newProperty.type,
+                    nbrRoom = event.nbrRoom?.toIntOrNull() ?: state.value.newProperty.nbrRoom,
+                    realEstateAgent = event.realEstateAgent ?: state.value.newProperty.realEstateAgent,
                 )
             )
         )

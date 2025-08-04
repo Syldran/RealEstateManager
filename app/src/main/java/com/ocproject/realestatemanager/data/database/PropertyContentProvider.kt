@@ -37,6 +37,9 @@ class PropertyContentProvider : ContentProvider() {
         const val PROPERTY_SURFACE_AREA = "surfaceArea"
         const val PROPERTY_PRICE = "price"
         const val PROPERTY_SOLD_DATE = "soldDate"
+        const val PROPERTY_TYPE = "type"
+        const val PROPERTY_NBR_ROOM = "nbrRoom"
+        const val PROPERTY_REAL_ESTATE_AGENT = "realEstateAgent"
 
         const val PHOTO_ID = "id"
         const val PHOTO_IS_MAIN = "isMain"
@@ -230,7 +233,10 @@ class PropertyContentProvider : ContentProvider() {
             areaCode = values.getAsInteger(PROPERTY_AREA_CODE) ?: 0,
             surfaceArea = values.getAsInteger(PROPERTY_SURFACE_AREA) ?: 0,
             price = values.getAsInteger(PROPERTY_PRICE) ?: 0,
-            soldDate = values.getAsLong(PROPERTY_SOLD_DATE) ?: 0L
+            soldDate = values.getAsLong(PROPERTY_SOLD_DATE) ?: 0L,
+            type = values.getAsString(PROPERTY_TYPE) ?: "",
+            nbrRoom = values.getAsInteger(PROPERTY_NBR_ROOM) ?: 0,
+            realEstateAgent = values.getAsString(PROPERTY_REAL_ESTATE_AGENT) ?: ""
         )
     }
 

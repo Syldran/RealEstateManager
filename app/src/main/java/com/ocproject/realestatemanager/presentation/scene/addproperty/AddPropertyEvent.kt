@@ -17,6 +17,9 @@ sealed interface AddPropertyEvent {
         val price: String? = null,
         val latitude: String? = null,
         val longitude: String? = null,
+        val type: String? = null,
+        val nbrRoom: String? = null,
+        val realEstateAgent: String? = null,
     ) : AddPropertyEvent
 
     data class UpdateLatitudeInput(val input: String) : AddPropertyEvent

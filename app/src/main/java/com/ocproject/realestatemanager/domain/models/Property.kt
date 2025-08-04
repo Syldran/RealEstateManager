@@ -19,4 +19,7 @@ data class Property(
     val surfaceArea: Int,
     val price: Int,
     val sold: Long,
+    val type: String,
+    val nbrRoom: Int,
+    val realEstateAgent: String,
 ): Parcelable

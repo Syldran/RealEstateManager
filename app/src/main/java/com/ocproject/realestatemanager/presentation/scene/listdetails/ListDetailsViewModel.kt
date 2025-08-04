@@ -174,6 +174,7 @@ class ListDetailsViewModel(
                             tagShop = event.filter.tagShop,
                             tagPark = event.filter.tagPark,
                             areaCodeFilter = event.filter.areaCodeFilter,
+                            typeHousing = event.filter.typeHousing,
                             minNbrPhotos = event.filter.minNbrPhotos,
                         )
                     )

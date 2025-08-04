@@ -131,7 +131,6 @@ fun PropertyDetailsPortrait(
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                         contentDescription = "Back",
-//                    tint = Color.Green
                     )
                 }
                 FilledTonalIconButton(
@@ -187,6 +186,120 @@ fun PropertyDetailsPortrait(
                 ) {
                     Row(
                         modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(4.dp),
+                            imageVector = Icons.Filled.LocationOn,
+                            contentDescription = "Location Icon",
+                        )
+                        Column {
+                            Text(
+                                "Location :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                state.selectedProperty?.address ?: "",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                text = state.selectedProperty?.areaCode?.toString() ?: "0",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                state.selectedProperty?.town ?: "",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                state.selectedProperty?.country ?: "",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.outline_add_home_24),
+                            contentDescription = "Date Added Icon",
+                        )
+                        Column {
+                            Text(
+                                "Date added :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                "${dateFormat.format(state.selectedProperty?.createdDate)}",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
+                    if (state.selectedProperty?.sold != -1L) {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                                painter = painterResource(R.drawable.outline_sell_24),
+                                contentDescription = "Surface Icon",
+                            )
+                            Column {
+                                Text(
+                                    "Date Sold :",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                                Text(
+                                    "${dateFormat.format(state.selectedProperty?.sold)}",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                            }
+                        }
+
+                    }
+
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.outline_man_24),
+                            contentDescription = "Real Estate Agent Icon",
+                        )
+                        Column {
+                            Text(
+                                "Real estate agent :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                "${state.selectedProperty?.realEstateAgent}",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(0.5F)
+                ) {
+
+                    Row(
+                        modifier = Modifier.padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -235,90 +348,42 @@ fun PropertyDetailsPortrait(
                     ) {
                         Icon(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            painter = painterResource(R.drawable.outline_add_home_24),
-                            contentDescription = "Date Added Icon",
+                            painter = painterResource(R.drawable.baseline_home_24),
+                            contentDescription = "Type Icon",
                         )
                         Column {
                             Text(
-                                "Date added :",
+                                "Type :",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
                             Text(
-                                "${dateFormat.format(state.selectedProperty?.createdDate)}",
+                                "${state.selectedProperty?.type}",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
                         }
                     }
-
-                }
-                VerticalDivider(Modifier.padding(8.dp))
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .weight(0.5F)
-                ) {
-
                     Row(
                         modifier = Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.Top
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.padding(4.dp),
-                            imageVector = Icons.Filled.LocationOn,
-                            contentDescription = "Location Icon",
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.baseline_meeting_room_24),
+                            contentDescription = "Number of Rooms Icon",
                         )
                         Column {
                             Text(
-                                "Location :",
+                                "Number of rooms :",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
                             Text(
-                                state.selectedProperty?.address ?: "",
+                                "${state.selectedProperty?.nbrRoom}",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
-                            Text(
-                                text = state.selectedProperty?.areaCode?.toString() ?: "0",
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                            )
-                            Text(
-                                state.selectedProperty?.town ?: "",
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                            )
-                            Text(
-                                state.selectedProperty?.country ?: "",
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                            )
-                        }
-                    }
-                    if (state.selectedProperty?.sold != -1L) {
-                        Row(
-                            modifier = Modifier.padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.padding(horizontal = 4.dp),
-                                painter = painterResource(R.drawable.outline_sell_24),
-                                contentDescription = "Surface Icon",
-                            )
-                            Column {
-                                Text(
-                                    "Date Sold :",
-                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                                )
-                                Text(
-                                    "${dateFormat.format(state.selectedProperty?.sold)}",
-                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                                )
-                            }
                         }
                     }
                 }
@@ -465,11 +530,125 @@ fun PropertyDetailsLandscape(
                 ) {
                     Row(
                         modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(4.dp),
+                            imageVector = Icons.Filled.LocationOn,
+                            contentDescription = "Location Icon",
+                        )
+                        Column {
+                            Text(
+                                "Location :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                state.selectedProperty?.address ?: "",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                text = state.selectedProperty?.areaCode?.toString() ?: "0",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                state.selectedProperty?.town ?: "",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                state.selectedProperty?.country ?: "",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            painter = painterResource(R.drawable.outline_add_home_24),
+                            contentDescription = "Date Added Icon",
+                        )
+                        Column {
+                            Text(
+                                "Date added :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                "${dateFormat.format(state.selectedProperty?.createdDate)}",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
+                    if (state.selectedProperty?.sold != -1L) {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                                painter = painterResource(R.drawable.outline_sell_24),
+                                contentDescription = "Surface Icon",
+                            )
+                            Column {
+                                Text(
+                                    "Date Sold :",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                                Text(
+                                    "${dateFormat.format(state.selectedProperty?.sold)}",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                            }
+                        }
+
+                    }
+
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.outline_man_24),
+                            contentDescription = "Real Estate Agent Icon",
+                        )
+                        Column {
+                            Text(
+                                "Real estate agent :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                "${state.selectedProperty?.realEstateAgent}",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(0.5F)
+                ) {
+
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.baseline_settings_overscan_24),
                             contentDescription = "Surface Icon",
                         )
                         Column {
@@ -513,84 +692,42 @@ fun PropertyDetailsLandscape(
                     ) {
                         Icon(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            painter = painterResource(R.drawable.outline_add_home_24),
-                            contentDescription = "Date Added Icon",
+                            painter = painterResource(R.drawable.baseline_home_24),
+                            contentDescription = "Type Icon",
                         )
                         Column {
                             Text(
-                                "Date added :",
+                                "Type :",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
                             Text(
-                                "${dateFormat.format(state.selectedProperty?.createdDate)}",
+                                "${state.selectedProperty?.type}",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
                         }
                     }
-                }
-                VerticalDivider(Modifier.padding(8.dp))
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .weight(0.5F)
-                ) {
-
                     Row(
                         modifier = Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.Top
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.padding(4.dp),
-                            imageVector = Icons.Filled.LocationOn,
-                            contentDescription = "Location Icon",
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.baseline_meeting_room_24),
+                            contentDescription = "Number of Rooms Icon",
                         )
                         Column {
                             Text(
-                                "Location :",
+                                "Number of rooms :",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
                             Text(
-                                state.selectedProperty?.address ?: "",
+                                "${state.selectedProperty?.nbrRoom}",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
-                            Text(
-                                state.selectedProperty?.town ?: "",
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                            )
-                            Text(
-                                state.selectedProperty?.country ?: "",
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                            )
-                        }
-                    }
-                    if (state.selectedProperty?.sold != -1L) {
-                        Row(
-                            modifier = Modifier.padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.padding(horizontal = 4.dp),
-                                painter = painterResource(R.drawable.outline_sell_24),
-                                contentDescription = "Surface Icon",
-                            )
-                            Column {
-                                Text(
-                                    "Date Sold :",
-                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                                )
-                                Text(
-                                    "${dateFormat.format(state.selectedProperty?.sold)}",
-                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
-                                )
-                            }
                         }
                     }
                 }
@@ -674,9 +811,12 @@ fun PropertyDetailsPreview() {
         surfaceArea = 150,
         areaCode = 18290,
         sold = 1000L,
+        type = "House",
+        nbrRoom = 3,
+        realEstateAgent = "John Doe",
     )
     val sampleState = ListDetailsState(selectedProperty = sampleProperty)
-    PropertyDetailsPortrait(
+    PropertyDetailsLandscape(
         state = sampleState,
         navigateBack = {},
         onNavigateToAddPropertyScreen = {}

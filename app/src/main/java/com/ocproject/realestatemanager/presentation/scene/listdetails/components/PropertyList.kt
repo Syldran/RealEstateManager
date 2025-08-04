@@ -268,6 +268,9 @@ fun MyListPreview() {
             surfaceArea = 150,
             areaCode = 18290,
             sold = 1000L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "John Doe",
         ),
         Property(
             id = 2L,
@@ -284,7 +287,10 @@ fun MyListPreview() {
             surfaceArea = 150,
             areaCode = 18290,
             sold = -1,
-        ), Property(
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Jane Smith",
+        ),         Property(
             id = 3L,
             photoList = emptyList(),
             interestPoints = listOf(InterestPoint.SCHOOL),
@@ -299,6 +305,9 @@ fun MyListPreview() {
             surfaceArea = 150,
             areaCode = 18290,
             sold = 2500L,
+            type = "Studio",
+            nbrRoom = 1,
+            realEstateAgent = "Bob Wilson",
         )
     )
     val statePreview = ListDetailsState(properties = propertyList)

@@ -18,6 +18,7 @@ data class Filter(
     val tagShop: Boolean,
     val tagPark: Boolean,
     val areaCodeFilter: Int?,
+    val typeHousing: String?,
     val minNbrPhotos: Int,
 )
 

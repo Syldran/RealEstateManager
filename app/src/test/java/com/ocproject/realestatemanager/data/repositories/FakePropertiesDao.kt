@@ -58,6 +58,7 @@ class FakePropertiesDao : PropertiesDao {
 
     override suspend fun getPropertyListPriceASC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -74,11 +75,12 @@ class FakePropertiesDao : PropertiesDao {
     }
 
     override suspend fun deletePicturesOfPropertyByIdProperty(propertyId: Long) {
-
+        photosProperty.removeIf{it.propertyId == propertyId}
     }
 
     override suspend fun getPropertyListPriceDESC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -96,6 +98,7 @@ class FakePropertiesDao : PropertiesDao {
 
     override suspend fun getPropertyListDateASC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -113,6 +116,7 @@ class FakePropertiesDao : PropertiesDao {
 
     override suspend fun getPropertyListDateDESC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -130,6 +134,7 @@ class FakePropertiesDao : PropertiesDao {
 
     override suspend fun getPropertyListSurfaceASC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -147,6 +152,7 @@ class FakePropertiesDao : PropertiesDao {
 
     override suspend fun getPropertyListSurfaceDESC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -184,8 +190,10 @@ class FakePropertiesDao : PropertiesDao {
                 0,
                 0,
                 0,
-                -1,
-                -1L
+                -1L,
+                "",
+                0,
+                ""
             ),
             null
         )

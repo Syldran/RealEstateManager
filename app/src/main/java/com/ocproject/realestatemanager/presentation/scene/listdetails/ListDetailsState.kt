@@ -34,6 +34,7 @@ data class ListDetailsState(
         tagShop = false,
         tagTransport = false,
         areaCodeFilter = null,
+        typeHousing = null,
         minNbrPhotos = 0,
     ),
     val maxPrice: Int = 0,

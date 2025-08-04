@@ -30,6 +30,9 @@ fun PropertyWithPhotosEntity.toProperty(): Property {
         surfaceArea = this.property.surfaceArea,
         price = this.property.price,
         sold = this.property.soldDate,
+        type = this.property.type,
+        nbrRoom = this.property.nbrRoom,
+        realEstateAgent = this.property.realEstateAgent,
         id = this.property.id,
     )
 }
@@ -58,6 +61,9 @@ fun Property.toPropertyEntity(): PropertyEntity {
         surfaceArea = this.surfaceArea,
         price = this.price,
         soldDate = this.sold,
+        type = this.type,
+        nbrRoom = this.nbrRoom,
+        realEstateAgent = this.realEstateAgent,
         id = this.id,
     )
 }

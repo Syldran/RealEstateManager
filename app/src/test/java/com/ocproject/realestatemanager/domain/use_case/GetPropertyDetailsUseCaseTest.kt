@@ -46,6 +46,9 @@ class GetPropertyDetailsUseCaseTest {
                 price = 450000,
                 sold = -1, // Purchasable
                 id = 1L,
+                type = "House",
+                nbrRoom = 4,
+                realEstateAgent = "John Doe",
             ),
         )
     }

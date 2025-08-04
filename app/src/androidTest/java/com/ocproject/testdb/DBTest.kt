@@ -43,6 +43,9 @@ class DBTest {
             price = 150000,
             sold = 5000L,
             id = 1L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Agent 1",
         ).toPropertyEntity(),
         Property(
             photoList = emptyList(),
@@ -59,6 +62,9 @@ class DBTest {
             price = 300000,
             sold = -1,
             id = 2L,
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Agent 2",
         ).toPropertyEntity(),
         Property(
             photoList = emptyList(),
@@ -75,6 +81,9 @@ class DBTest {
             price = 250000,
             sold = 1500000L,
             id = 3L,
+            type = "House",
+            nbrRoom = 4,
+            realEstateAgent = "Agent 3",
         ).toPropertyEntity(),
         Property(
             photoList = emptyList(),
@@ -91,6 +100,9 @@ class DBTest {
             price = 150000,
             sold = 1000000L,
             id = 4L,
+            type = "Studio",
+            nbrRoom = 1,
+            realEstateAgent = "Agent 4",
         ).toPropertyEntity(),
 
         )
@@ -148,6 +160,9 @@ class DBTest {
             price = 150000,
             sold = -1,
             id = 50L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
         propertiesDao.upsertProperty(property.toPropertyEntity())
         assert(propertiesDao.getPropertyDetail(50L).toProperty() == property)
@@ -170,6 +185,9 @@ class DBTest {
             price = 150000,
             sold = -1,
             id = 50L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
         propertiesDao.upsertProperty(property.toPropertyEntity())
         assert(propertiesDao.getPropertyDetail(50L).toProperty() == property)
@@ -186,6 +204,7 @@ class DBTest {
 
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null,
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 450L,
@@ -210,6 +229,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null,
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -237,6 +257,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null,
+            type = null,
             interestPoints = null,
             minPhotos = 1,
             minAddedDate = 0L,
@@ -261,6 +282,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = 92720,
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -279,12 +301,40 @@ class DBTest {
     }
 
     @Test
+    fun typeParamTest() = runTest {
+        propertiesToAdd.forEach {
+            propertiesDao.upsertProperty(it)
+        }
+        val result = propertiesDao.getPropertyListPriceASC(
+            areaCode = null,
+            type = "Apartment",
+            interestPoints = null,
+            minPhotos = 0,
+            minAddedDate = 0L,
+            maxAddedDate = Long.MAX_VALUE,
+            minSoldDate = 0L,
+            maxSoldDate = Long.MAX_VALUE,
+            sellingStatus = null, // SellingStatus.ALL
+            minPrice = 0,
+            maxPrice = Int.MAX_VALUE,
+            minSurface = 0,
+            maxSurface = Int.MAX_VALUE,
+        )
+        // In our 4 properties only one (id = 4 ) has code 92720
+        assert(result.size == 1)
+        assert(result[0].property.type == "Apartment")
+    }
+
+    
+
+    @Test
     fun getPropertiesPriceAscTest() = runTest {
         propertiesToAdd.forEach {
             propertiesDao.upsertProperty(it)
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null, // Any area codes
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -310,6 +360,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceDESC(
             areaCode = null, // Any area codes
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -336,6 +387,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListDateASC(
             areaCode = null, // Any area codes
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -361,6 +413,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListDateDESC(
             areaCode = null, // Any area codes
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -386,6 +439,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListSurfaceASC(
             areaCode = null, // Any area codes
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -411,6 +465,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListSurfaceDESC(
             areaCode = null, // Any area codes
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -473,6 +528,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null,
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -497,6 +553,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null,
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -521,6 +578,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null,
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,
@@ -545,6 +603,7 @@ class DBTest {
         }
         val result = propertiesDao.getPropertyListPriceASC(
             areaCode = null,
+            type = null,
             interestPoints = null,
             minPhotos = 0,
             minAddedDate = 0L,

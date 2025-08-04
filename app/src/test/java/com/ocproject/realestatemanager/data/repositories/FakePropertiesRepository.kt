@@ -31,6 +31,9 @@ class FakePropertiesRepository : PropertiesRepository {
                         surfaceArea = 150,
                         price = 450000,
                         sold = -1, // Purchasable
+                        type = "House",
+                        nbrRoom = 4,
+                        realEstateAgent = "John Doe",
                         id = 1L,
                     ),
                     Property(
@@ -47,6 +50,9 @@ class FakePropertiesRepository : PropertiesRepository {
                         surfaceArea = 80,
                         price = 280000,
                         sold = 1, // Sold
+                        type = "Apartment",
+                        nbrRoom = 2,
+                        realEstateAgent = "Jane Smith",
                         id = 2L,
                     ),
                     Property(
@@ -63,6 +69,9 @@ class FakePropertiesRepository : PropertiesRepository {
                         surfaceArea = 200,
                         price = 650000,
                         sold = -1, // Purchasable
+                        type = "House",
+                        nbrRoom = 5,
+                        realEstateAgent = "Bob Wilson",
                         id = 3L,
                     ),
                     Property(
@@ -79,6 +88,9 @@ class FakePropertiesRepository : PropertiesRepository {
                         surfaceArea = 120,
                         price = 380000,
                         sold = -1, // Purchasable
+                        type = "Loft",
+                        nbrRoom = 2,
+                        realEstateAgent = "Alice Brown",
                         id = 4L,
                     ),
                     Property(
@@ -95,6 +107,9 @@ class FakePropertiesRepository : PropertiesRepository {
                         surfaceArea = 45,
                         price = 180000,
                         sold = 1, // Sold
+                        type = "Studio",
+                        nbrRoom = 1,
+                        realEstateAgent = "Charlie Davis",
                         id = 5L,
                     )
                 )
@@ -158,6 +173,12 @@ class FakePropertiesRepository : PropertiesRepository {
         if (filter.areaCodeFilter != null) {
             filteredProperties =
                 filteredProperties.filter { it.areaCode == filter.areaCodeFilter }.toMutableList()
+        }
+
+        // Filter by type housing
+        if (filter.typeHousing != null) {
+            filteredProperties =
+                filteredProperties.filter { it.type == filter.typeHousing }.toMutableList()
         }
 
         // Filter by interest points
@@ -239,6 +260,9 @@ class FakePropertiesRepository : PropertiesRepository {
             surfaceArea = 0,
             price = 1,
             sold = -1,
+            type = "",
+            nbrRoom = 0,
+            realEstateAgent = "",
             id = -1L
         )
     }

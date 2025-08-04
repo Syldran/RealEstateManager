@@ -72,4 +72,7 @@
     <string name="select_location">Select Location</string>
     <string name="property_saved_successfully">Property saved successfully!</string>
     <string name="property_save_failed">Failed to save property. Please try again.</string>
+    <string name="type">Type</string>
+    <string name="number_of_rooms">Number of rooms</string>
+    <string name="real_estate_agent">Real estate agent</string>
 </resources>

@@ -91,6 +91,7 @@ class LocalPropertiesRepository(
                 if (filter.priceOrder == Order.ASC) {
                     properties = dao.getPropertyListPriceASC(
                         areaCode = filter.areaCodeFilter,
+                        type = filter.typeHousing,
                         interestPoints = list,
                         minPhotos = filter.minNbrPhotos,
                         minAddedDate = filter.dateRange.lower,
@@ -106,6 +107,7 @@ class LocalPropertiesRepository(
                 } else {
                     properties = dao.getPropertyListPriceDESC(
                         areaCode = filter.areaCodeFilter,
+                        type = filter.typeHousing,
                         interestPoints = list,
                         minPhotos = filter.minNbrPhotos,
                         minAddedDate = filter.dateRange.lower,
@@ -125,6 +127,7 @@ class LocalPropertiesRepository(
                 if (filter.dateOrder == Order.ASC) {
                     properties = dao.getPropertyListDateASC(
                         areaCode = filter.areaCodeFilter,
+                        type = filter.typeHousing,
                         interestPoints = list,
                         minPhotos = filter.minNbrPhotos,
                         minAddedDate = filter.dateRange.lower,
@@ -140,6 +143,7 @@ class LocalPropertiesRepository(
                 } else {
                     properties = dao.getPropertyListDateDESC(
                         areaCode = filter.areaCodeFilter,
+                        type = filter.typeHousing,
                         interestPoints = list,
                         minPhotos = filter.minNbrPhotos,
                         minAddedDate = filter.dateRange.lower,
@@ -159,6 +163,7 @@ class LocalPropertiesRepository(
                 if (filter.surfaceOrder == Order.ASC) {
                     properties = dao.getPropertyListSurfaceASC(
                         areaCode = filter.areaCodeFilter,
+                        type = filter.typeHousing,
                         interestPoints = list,
                         minPhotos = filter.minNbrPhotos,
                         minAddedDate = filter.dateRange.lower,
@@ -174,6 +179,7 @@ class LocalPropertiesRepository(
                 } else {
                     properties = dao.getPropertyListSurfaceDESC(
                         areaCode = filter.areaCodeFilter,
+                        type = filter.typeHousing,
                         interestPoints = list,
                         minPhotos = filter.minNbrPhotos,
                         minAddedDate = filter.dateRange.lower,

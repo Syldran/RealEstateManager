@@ -259,26 +259,6 @@ fun AddPropertyScreen(
             )
             PropertyTextField(
                 modifier = Modifier.padding(8.dp),
-                value = if (state.newProperty.price == 0) "" else state.newProperty.price.toString(),
-                error = state.priceError,
-                onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.UpdateForm(price = it))
-                },
-                keyboardType = KeyboardType.Number,
-                labelValue = stringResource(R.string.price)
-            )
-            PropertyTextField(
-                modifier = Modifier.padding(8.dp),
-                value = if (state.newProperty.surfaceArea == 0) "" else state.newProperty.surfaceArea.toString(),
-                error = state.surfaceAreaError,
-                onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.UpdateForm(surfaceArea = it))
-                },
-                keyboardType = KeyboardType.Number,
-                labelValue = stringResource(R.string.surface_area)
-            )
-            PropertyTextField(
-                modifier = Modifier.padding(8.dp),
                 value = if (state.latitudeInput.isNotEmpty()) state.latitudeInput else if (state.newProperty.lat == 0.0) "" else state.newProperty.lat.toString(),
                 error = state.latError,
                 onValueChanged = {
@@ -299,6 +279,27 @@ fun AddPropertyScreen(
             )
             PropertyTextField(
                 modifier = Modifier.padding(8.dp),
+                value = if (state.newProperty.price == 0) "" else state.newProperty.price.toString(),
+                error = state.priceError,
+                onValueChanged = {
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(price = it))
+                },
+                keyboardType = KeyboardType.Number,
+                labelValue = stringResource(R.string.price)
+            )
+            PropertyTextField(
+                modifier = Modifier.padding(8.dp),
+                value = if (state.newProperty.surfaceArea == 0) "" else state.newProperty.surfaceArea.toString(),
+                error = state.surfaceAreaError,
+                onValueChanged = {
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(surfaceArea = it))
+                },
+                keyboardType = KeyboardType.Number,
+                labelValue = stringResource(R.string.surface_area)
+            )
+
+            PropertyTextField(
+                modifier = Modifier.padding(8.dp),
                 value = state.newProperty.description,
                 error = state.descriptionError,
                 onValueChanged = {
@@ -306,6 +307,36 @@ fun AddPropertyScreen(
                 },
                 keyboardType = KeyboardType.Text,
                 labelValue = stringResource(R.string.description),
+            )
+            PropertyTextField(
+                modifier = Modifier.padding(8.dp),
+                value = state.newProperty.type,
+                error = state.typeError,
+                onValueChanged = {
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(type = it))
+                },
+                keyboardType = KeyboardType.Text,
+                labelValue = stringResource(R.string.type),
+            )
+            PropertyTextField(
+                modifier = Modifier.padding(8.dp),
+                value = if (state.newProperty.nbrRoom == 0) "" else state.newProperty.nbrRoom.toString(),
+                error = state.nbrRoomError,
+                onValueChanged = {
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(nbrRoom = it))
+                },
+                keyboardType = KeyboardType.Number,
+                labelValue = stringResource(R.string.number_of_rooms),
+            )
+            PropertyTextField(
+                modifier = Modifier.padding(8.dp),
+                value = state.newProperty.realEstateAgent,
+                error = state.realEstateAgentError,
+                onValueChanged = {
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(realEstateAgent = it))
+                },
+                keyboardType = KeyboardType.Text,
+                labelValue = stringResource(R.string.real_estate_agent),
             )
 
             Row {

@@ -18,6 +18,9 @@ data class PropertyEntity(
     val surfaceArea: Int,
     val price: Int,
     val soldDate: Long,
+    val type: String,
+    val nbrRoom: Int,
+    val realEstateAgent: String,
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
 )

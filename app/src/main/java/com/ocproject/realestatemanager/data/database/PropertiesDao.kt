@@ -49,6 +49,7 @@ interface PropertiesDao {
         "SELECT * FROM PropertyEntity as prop " +
                 "LEFT JOIN PhotoPropertyEntity as photo ON prop.id = photo.propertyId " +
                 "WHERE (:areaCode IS NULL OR prop.areaCode = :areaCode) " +
+                "AND (:type IS NULL OR prop.type LIKE :type) " +
                 "AND (:interestPoints IS NULL OR prop.interestPoints LIKE :interestPoints) " +
                 "AND prop.createdDate >= :minAddedDate AND prop.createdDate <= :maxAddedDate "+
                 "AND (:sellingStatus IS NULL " +
@@ -62,6 +63,7 @@ interface PropertiesDao {
     )
     suspend fun getPropertyListPriceASC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -83,6 +85,7 @@ interface PropertiesDao {
         "SELECT * FROM PropertyEntity as prop " +
                 "LEFT JOIN PhotoPropertyEntity as photo ON prop.id = photo.propertyId " +
                 "WHERE (:areaCode IS NULL OR prop.areaCode = :areaCode) " +
+                "AND (:type IS NULL OR prop.type LIKE :type) " +
                 "AND (:interestPoints IS NULL OR prop.interestPoints LIKE :interestPoints) " +
                 "AND prop.createdDate >= :minAddedDate AND prop.createdDate <= :maxAddedDate "+
                 "AND (:sellingStatus IS NULL " +
@@ -96,6 +99,7 @@ interface PropertiesDao {
     )
     suspend fun getPropertyListPriceDESC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -117,6 +121,7 @@ interface PropertiesDao {
         "SELECT * FROM PropertyEntity as prop " +
                 "LEFT JOIN PhotoPropertyEntity as photo ON prop.id = photo.propertyId " +
                 "WHERE (:areaCode IS NULL OR prop.areaCode = :areaCode) " +
+                "AND (:type IS NULL OR prop.type LIKE :type) " +
                 "AND (:interestPoints IS NULL OR prop.interestPoints LIKE :interestPoints) " +
                 "AND prop.createdDate >= :minAddedDate AND prop.createdDate <= :maxAddedDate "+
                 "AND (:sellingStatus IS NULL " +
@@ -130,6 +135,7 @@ interface PropertiesDao {
     )
     suspend fun getPropertyListDateASC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -147,6 +153,7 @@ interface PropertiesDao {
         "SELECT * FROM PropertyEntity as prop " +
                 "LEFT JOIN PhotoPropertyEntity as photo ON prop.id = photo.propertyId " +
                 "WHERE (:areaCode IS NULL OR prop.areaCode = :areaCode) " +
+                "AND (:type IS NULL OR prop.type LIKE :type) " +
                 "AND (:interestPoints IS NULL OR prop.interestPoints LIKE :interestPoints) " +
                 "AND prop.createdDate >= :minAddedDate AND prop.createdDate <= :maxAddedDate "+
                 "AND (:sellingStatus IS NULL " +
@@ -160,6 +167,7 @@ interface PropertiesDao {
     )
     suspend fun getPropertyListDateDESC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -180,6 +188,7 @@ interface PropertiesDao {
         "SELECT * FROM PropertyEntity as prop " +
                 "LEFT JOIN PhotoPropertyEntity as photo ON prop.id = photo.propertyId " +
                 "WHERE (:areaCode IS NULL OR prop.areaCode = :areaCode) " +
+                "AND (:type IS NULL OR prop.type LIKE :type) " +
                 "AND (:interestPoints IS NULL OR prop.interestPoints LIKE :interestPoints) " +
                 "AND prop.createdDate >= :minAddedDate AND prop.createdDate <= :maxAddedDate "+
                 "AND (:sellingStatus IS NULL " +
@@ -193,6 +202,7 @@ interface PropertiesDao {
     )
     suspend fun getPropertyListSurfaceASC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,
@@ -210,6 +220,7 @@ interface PropertiesDao {
         "SELECT * FROM PropertyEntity as prop " +
                 "LEFT JOIN PhotoPropertyEntity as photo ON prop.id = photo.propertyId " +
                 "WHERE (:areaCode IS NULL OR prop.areaCode = :areaCode) " +
+                "AND (:type IS NULL OR prop.type LIKE :type) " +
                 "AND (:interestPoints IS NULL OR prop.interestPoints LIKE :interestPoints) " +
                 "AND prop.createdDate >= :minAddedDate AND prop.createdDate <= :maxAddedDate "+
                 "AND (:sellingStatus IS NULL " +
@@ -223,6 +234,7 @@ interface PropertiesDao {
     )
     suspend fun getPropertyListSurfaceDESC(
         areaCode: Int?,
+        type: String?,
         interestPoints: String?,
         minPhotos: Int,
         minAddedDate: Long,

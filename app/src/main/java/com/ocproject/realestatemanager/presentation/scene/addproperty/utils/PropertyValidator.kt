@@ -41,6 +41,14 @@ object PropertyValidator {
             result = result.copy(countryError = "Country can't be empty.")
         }
 
+        if (property.type.isBlank()) {
+            result = result.copy(typeError = "Type can't be empty.")
+        }
+
+        if (property.nbrRoom == 0) {
+            result = result.copy(nbrRoomError = "Number of rooms can't be empty.")
+        }
+
         return result
     }
 
@@ -54,6 +62,7 @@ object PropertyValidator {
         val areaCodeError: String? = null,
         val priceError: String? = null,
         val countryError: String? = null,
-
+        val typeError: String? = null,
+        val nbrRoomError: String? = null,
         )
 }

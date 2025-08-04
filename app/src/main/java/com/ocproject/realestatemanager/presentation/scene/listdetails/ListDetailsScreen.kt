@@ -217,6 +217,9 @@ fun ListDetailsPreview() {
             surfaceArea = 150,
             areaCode = 18290,
             sold = 1000L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "John Doe",
         ),
         Property(
             id = 2L,
@@ -233,7 +236,10 @@ fun ListDetailsPreview() {
             surfaceArea = 150,
             areaCode = 18290,
             sold = -1,
-        ), Property(
+            type = "Apartment",
+            nbrRoom = 2,
+            realEstateAgent = "Jane Smith",
+        ),         Property(
             id = 3L,
             photoList = emptyList(),
             interestPoints = listOf(InterestPoint.SCHOOL),
@@ -248,6 +254,9 @@ fun ListDetailsPreview() {
             surfaceArea = 150,
             areaCode = 18290,
             sold = 2500L,
+            type = "Studio",
+            nbrRoom = 1,
+            realEstateAgent = "Bob Wilson",
         )
     )
 
@@ -269,6 +278,7 @@ fun ListDetailsPreview() {
             tagShop = false,
             tagPark = false,
             areaCodeFilter =  null,
+            typeHousing = null,
             minNbrPhotos = 0,
         ),
         areaCodeList = emptyList()

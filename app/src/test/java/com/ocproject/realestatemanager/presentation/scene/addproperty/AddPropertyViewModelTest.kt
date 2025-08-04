@@ -70,6 +70,9 @@ class AddPropertyViewModelTest {
             price = 150000,
             sold = -1,
             id = 1L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
         coEvery { getPropertyDetails.invoke(any()) } returns property
         viewModel.getProperty()
@@ -96,6 +99,9 @@ class AddPropertyViewModelTest {
             price = 150000,
             sold = -1,
             id = 0L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
         val viewModelTest = AddPropertyViewModel(0L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
@@ -122,6 +128,9 @@ class AddPropertyViewModelTest {
             price = 300000,
             sold = -1,
             id = 2L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
         val property2 = Property(
             photoList = emptyList(),
@@ -138,6 +147,9 @@ class AddPropertyViewModelTest {
             price = 300000,
             sold = -1,
             id = 5L,
+            type = "House",
+            nbrRoom = 3,
+            realEstateAgent = "Test Agent",
         )
         viewModel.saveProperty(
             property1,
@@ -174,6 +186,9 @@ class AddPropertyViewModelTest {
             price = 0,
             id = 1L,
             sold = -1,
+            type = "",
+            nbrRoom = 0,
+            realEstateAgent = "",
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
@@ -202,6 +217,9 @@ class AddPropertyViewModelTest {
             price = 0,
             id = 1L,
             sold = -1,
+            type = "",
+            nbrRoom = 0,
+            realEstateAgent = "",
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
@@ -238,6 +256,9 @@ class AddPropertyViewModelTest {
             price = 0,
             id = 1L,
             sold = -1,
+            type = "",
+            nbrRoom = 0,
+            realEstateAgent = "",
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
