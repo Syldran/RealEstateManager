@@ -59,162 +59,6 @@ import com.ocproject.realestatemanager.domain.models.Property
 import kotlin.math.absoluteValue
 
 @Composable
-fun PhotosDetailsComposable(
-    propertyWithPhotos: Property?,
-) {
-    if (!propertyWithPhotos?.photoList.isNullOrEmpty()) {
-        LazyVerticalGrid(
-            modifier = Modifier
-                .heightIn(max = 1000.dp)
-                .padding(horizontal = 8.dp),
-            horizontalArrangement =
-                if (propertyWithPhotos.photoList.size == 1) Arrangement.spacedBy(8000.dp)
-                else Arrangement.spacedBy(8.dp),
-            columns = GridCells.Adaptive(minSize = 128.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            userScrollEnabled = false,
-        ) {
-            items(propertyWithPhotos.photoList) { photo: PhotoProperty ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box {
-                        Image(
-                            bitmap = BitmapFactory.decodeByteArray(
-                                photo.photoBytes,
-                                0,
-                                photo.photoBytes.size
-                            ).asImageBitmap(),
-                            contentDescription = photo.name,
-                            modifier = Modifier
-                                .size(150.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    Text(
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .width(150.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = propertyWithPhotos.photoList[propertyWithPhotos.photoList.indexOf(
-                            photo
-                        )].name,
-                    )
-                }
-            }
-
-        }
-    } else {
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-                .clip(RoundedCornerShape(40))
-                .background(MaterialTheme.colorScheme.secondaryContainer)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    shape = RoundedCornerShape(40)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Home,
-                contentDescription = "No Photo",
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.size(40.dp)
-            )
-            if (propertyWithPhotos?.sold != null) {
-                Image(
-                    painter = painterResource(id = R.drawable.sold_png_transparent),
-                    contentDescription = "Your Image",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun PagerPhotoDetails(property: Property) {
-    val pagerState = rememberPagerState(pageCount = {
-        property.photoList?.size ?: 0
-    })
-    HorizontalPager(
-        state = pagerState,
-        modifier = Modifier
-            .height(250.dp),
-//            .background(Color.Yellow),
-        contentPadding = PaddingValues(horizontal = 64.dp),
-    ) { page ->
-
-        CardContent(page, pagerState, property)
-
-    }
-    Row(
-        Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        repeat(pagerState.pageCount) { iteration ->
-            val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
-            Box(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .clip(CircleShape)
-                    .background(color)
-                    .size(16.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun CardContent(page: Int, pagerState: PagerState, property: Property) {
-    val pageOffset = (
-            (pagerState.currentPage - page) + pagerState
-                .currentPageOffsetFraction
-            ).absoluteValue
-    val scale = lerp(
-        start = 0.8f,
-        stop = 1f,
-        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-    )
-    Card(
-        Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                textAlign = TextAlign.Center,
-                modifier = Modifier.wrapContentHeight()/*.background(Color.Green)*/,
-                text = property.photoList.get(page).name,
-            )
-            AsyncImage(
-                modifier = Modifier.fillMaxSize(),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(property.photoList?.get(page)?.photoBytes)
-                    .crossfade(true)
-                    .scale(Scale.FILL)
-                    .build(),
-                contentDescription = "image",
-                contentScale = ContentScale.Crop
-            )
-
-        }
-    }
-}
-
-
-@Composable
 fun PhotosComposable(
     property: Property,
     modifier: Modifier = Modifier,
@@ -276,7 +120,7 @@ fun PhotoItem(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                // Afficher l'image
+                // Show property Image
                 Image(
                     bitmap = BitmapFactory.decodeByteArray(
                         photo.photoBytes,
@@ -287,7 +131,7 @@ fun PhotoItem(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                // Indicateur si c'est la photo principale
+                // Mark if photo is Main
                 if (photo.isMain) {
                     Icon(
                         imageVector = Icons.Filled.Star,

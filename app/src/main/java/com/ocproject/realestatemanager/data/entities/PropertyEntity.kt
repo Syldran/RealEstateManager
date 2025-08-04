@@ -14,10 +14,10 @@ data class PropertyEntity(
     val lng: Double,
     val country: String,
     val createdDate: Long,
-    val areaCode: Int?,
-    val surfaceArea: Int?,
-    val price: Int?,
-    val sold: Long?,
+    val areaCode: Int,
+    val surfaceArea: Int,
+    val price: Int,
+    val soldDate: Long,
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
 )

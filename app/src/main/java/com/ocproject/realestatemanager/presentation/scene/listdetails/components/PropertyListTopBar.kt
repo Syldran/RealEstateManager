@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
+import android.content.res.Configuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.ocproject.realestatemanager.R
@@ -95,20 +97,23 @@ fun PropertyListTopBar(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(R.string.map_geolocation_item_menu_appbar),
-                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                            fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                            fontFamily = MaterialTheme.typography.bodyMedium.fontFamily
-                        )
-                    },
-                    onClick = {
-                        onNavigateToMapOfProperties()
-                        menuExpanded = false
-                    },
-                )
+                val configuration = LocalConfiguration.current
+                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = stringResource(R.string.map_geolocation_item_menu_appbar),
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                                fontFamily = MaterialTheme.typography.bodyMedium.fontFamily
+                            )
+                        },
+                        onClick = {
+                            onNavigateToMapOfProperties()
+                            menuExpanded = false
+                        },
+                    )
+                }
                 DropdownMenuItem(
                     text = {
                         Text(

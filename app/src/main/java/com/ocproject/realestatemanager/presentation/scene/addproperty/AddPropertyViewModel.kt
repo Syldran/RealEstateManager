@@ -12,20 +12,24 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropert
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.OnPhotoNameChanged
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.OnPhotoPicked
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.SaveProperty
+
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateForm
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateLatitudeInput
+import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateLongitudeInput
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateNewProperty
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdatePhotos
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateSoldState
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyEvent.UpdateTags
-import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.DecimalFormatter
-import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.IntFormatter
+import com.ocproject.realestatemanager.core.GlobalSnackBarManager
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.PropertyValidator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
+import timber.log.Timber
 import java.util.Calendar
 
 @KoinViewModel
@@ -43,14 +47,23 @@ class AddPropertyViewModel(
     }
 
     fun getProperty() {
-        if (propertyId != null && propertyId != 0L) {
+        if (propertyId != null && propertyId > 0L) {
             viewModelScope.launch {
-                onEvent(UpdateNewProperty(getPropertyDetailsUseCase(propertyId)))
-                onEvent(UpdatePhotos(state.value.newProperty.photoList))
-                if (state.value.newProperty.sold != null) {
+                val property = getPropertyDetailsUseCase(propertyId)
+                onEvent(UpdateNewProperty(property))
+                onEvent(UpdatePhotos(property.photoList))
+                // Initialize soldState for existing properties
+                if (property.sold != -1L) {
                     onEvent(UpdateSoldState(true))
                 } else {
                     onEvent(UpdateSoldState(false))
+                }
+                // Initialize input strings for existing properties
+                if (property.lat != 0.0) {
+                    onEvent(UpdateLatitudeInput(property.lat.toString()))
+                }
+                if (property.lng != 0.0) {
+                    onEvent(UpdateLongitudeInput(property.lng.toString()))
                 }
             }
 
@@ -71,7 +84,7 @@ class AddPropertyViewModel(
                         surfaceArea = 0,
                         price = 0,
                         id = 0L,
-                        sold = null,
+                        sold = -1,
                     )
                 )
             )
@@ -85,7 +98,8 @@ class AddPropertyViewModel(
         var town = ""
         var country = ""
         var code = ""
-    listAddressComponents?.forEach {
+        listAddressComponents?.forEach {
+            Timber.tag("AddressComponents").d("${it.name}")
             if (it.types.contains("street_number")) {
                 address += "${it.name} "
             } else if (it.types.contains("route")) {
@@ -94,7 +108,7 @@ class AddPropertyViewModel(
                 town = it.name
             } else if (it.types.contains("country")) {
                 country = it.name
-            } else if (it.types.contains("postal_code")){
+            } else if (it.types.contains("postal_code")) {
                 code = it.name
             }
         }
@@ -113,7 +127,11 @@ class AddPropertyViewModel(
     fun onEvent(event: AddPropertyEvent) {
         when (event) {
 
-            SaveProperty -> saveProperty(state.value.newProperty)
+            is SaveProperty -> saveProperty(
+                state.value.newProperty,
+                event.successMessage,
+                event.failureMessage
+            )
 
             is UpdateForm -> updateForm(event)
 
@@ -183,9 +201,43 @@ class AddPropertyViewModel(
                     )
                 }
             }
+
+            is UpdateLatitudeInput -> {
+                // Filter out non-numeric characters except decimal point and minus sign
+                val filteredInput = event.input.filter { it.isDigit() || it == '.' || it == '-' }
+                _state.update {
+                    it.copy(
+                        latitudeInput = filteredInput
+                    )
+                }
+                // Also update the property if the input is valid
+                if (filteredInput.isNotEmpty() && filteredInput != "." && filteredInput != "-") {
+                    // Allow valid decimal numbers including those starting with 0
+                    val doubleValue = filteredInput.toDoubleOrNull()
+                    if (doubleValue != null) {
+                        onEvent(UpdateNewProperty(state.value.newProperty.copy(lat = doubleValue)))
+                    }
+                }
+            }
+
+            is UpdateLongitudeInput -> {
+                // Filter out non-numeric characters except decimal point and minus sign
+                val filteredInput = event.input.filter { it.isDigit() || it == '.' || it == '-' }
+                _state.update {
+                    it.copy(
+                        longitudeInput = filteredInput
+                    )
+                }
+                // Also update the property if the input is valid
+                if (filteredInput.isNotEmpty() && filteredInput != "." && filteredInput != "-") {
+                    // Allow valid decimal numbers including those starting with 0
+                    val doubleValue = filteredInput.toDoubleOrNull()
+                    if (doubleValue != null) {
+                        onEvent(UpdateNewProperty(state.value.newProperty.copy(lng = doubleValue)))
+                    }
+                }
+            }
         }
-
-
     }
 
     // Function to add photo from camera.
@@ -223,7 +275,7 @@ class AddPropertyViewModel(
         }
     }
 
-    fun saveProperty(property: Property) {
+    fun saveProperty(property: Property, successMessage: String, failureMessage: String) {
         property.let { property ->
             val result = PropertyValidator.validateProperty(property)
             val errors = listOfNotNull(
@@ -253,28 +305,39 @@ class AddPropertyViewModel(
                 }
 
                 viewModelScope.launch {
-                    if (property.createdDate == null) {
-//                    Timber.tag("AddPropPhotos1").d("${state.value.photoList.size}")
-                        savePropertyUseCase(
-                            property.copy(
-                                photoList = state.value.photoList,
-                                createdDate = Calendar.getInstance().timeInMillis
-                            ),
-                        )
-                    } else {
-//                    Timber.tag("AddPropPhotos2").d("${state.value.photoList.size}")
-                        savePropertyUseCase(
-                            property.copy(
-                                photoList = state.value.photoList,
+                    try {
+                        if (property.createdDate == null) {
+                            savePropertyUseCase(
+                                property.copy(
+                                    photoList = state.value.photoList,
+                                    createdDate = Calendar.getInstance().timeInMillis
+                                ),
                             )
+                        } else {
+                            savePropertyUseCase(
+                                property.copy(
+                                    photoList = state.value.photoList,
+                                )
+                            )
+
+                        }
+                        // Show global toast message confirming property saved
+                        GlobalSnackBarManager.showSnackMsg(
+                            successMessage,
+                            isSuccess = true
                         )
-
+                        delay(100)
+                        // Navigate - global toast will persist across navigation
+                        _state.update {
+                            it.copy(navToPropertyListScreen = true)
+                        }
+                    } catch (e: Exception) {
+                        // Show global failure message
+                        GlobalSnackBarManager.showSnackMsg(
+                            failureMessage,
+                            isSuccess = false
+                        )
                     }
-                }
-
-
-                _state.update {
-                    it.copy(navToPropertyListScreen = true)
                 }
             } else {
                 _state.update {
@@ -295,28 +358,34 @@ class AddPropertyViewModel(
     }
 
     fun updateForm(event: UpdateForm) {
-        val decimalFormatter = DecimalFormatter()
-        val intFormatter = IntFormatter()
         onEvent(
             UpdateNewProperty(
                 state.value.newProperty.copy(
+                    description = event.description ?: state.value.newProperty.description,
                     address = event.address ?: state.value.newProperty.address,
                     town = event.town ?: state.value.newProperty.town,
                     country = event.country ?: state.value.newProperty.country,
-                    areaCode = event.areaCode?.let { intFormatter.cleanup(it) }?.toInt()
-                        ?: state.value.newProperty.areaCode,
-                    lat = event.latitude?.let { decimalFormatter.cleanup(it) }?.toDouble()
-                        ?: state.value.newProperty.lat,
-                    lng = event.longitude?.let { decimalFormatter.cleanup(it) }?.toDouble()
-                        ?: state.value.newProperty.lng,
-                    price = event.price?.let { intFormatter.cleanup(it) }?.toInt()
-                        ?: state.value.newProperty.price,
-                    surfaceArea = event.surfaceArea?.let { intFormatter.cleanup(it) }?.toInt()
+                    areaCode = event.areaCode?.toIntOrNull() ?: state.value.newProperty.areaCode,
+                    price = event.price?.toIntOrNull() ?: state.value.newProperty.price,
+                    surfaceArea = event.surfaceArea?.toIntOrNull()
                         ?: state.value.newProperty.surfaceArea,
+                    lat = event.latitude?.toDoubleOrNull() ?: state.value.newProperty.lat,
+                    lng = event.longitude?.toDoubleOrNull() ?: state.value.newProperty.lng,
                 )
             )
         )
 
+        // Also update the input fields for latitude and longitude
+        event.latitude?.let { lat ->
+            if (lat.isNotEmpty()) {
+                onEvent(UpdateLatitudeInput(lat))
+            }
+        }
+        event.longitude?.let { lng ->
+            if (lng.isNotEmpty()) {
+                onEvent(UpdateLongitudeInput(lng))
+            }
+        }
     }
 
     fun updateTags(event: UpdateTags) {
@@ -391,7 +460,6 @@ class AddPropertyViewModel(
                 }
             }
         }
-
         // Update newProperty interestPoints state with new values from temp list
         onEvent(
             UpdateNewProperty(

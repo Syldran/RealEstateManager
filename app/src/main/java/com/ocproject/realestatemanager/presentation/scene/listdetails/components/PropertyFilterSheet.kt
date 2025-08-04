@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,7 +37,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
@@ -47,12 +47,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -70,24 +75,24 @@ import java.util.Calendar
 fun PropertyFilterSheet(
     state: ListDetailsState,
     onEvent: (ListDetailsEvent) -> Unit,
-    sheetState: SheetState,
     scope: CoroutineScope,
 ) {
     var isAreaCodeListExpended by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetStateFilters = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetStateAreaCodeList = rememberModalBottomSheetState()
 
 
     ModalBottomSheet(
         onDismissRequest = {
             scope.launch {
-                sheetState.hide()
+                sheetStateFilters.hide()
             }.invokeOnCompletion {
-                if (!sheetState.isVisible) {
+                if (!sheetStateFilters.isVisible) {
                     onEvent(ListDetailsEvent.DismissFilter)
                 }
             }
         },
-        sheetState = sheetState
+        sheetState = sheetStateFilters
     ) {
         Box(
             modifier = Modifier
@@ -210,6 +215,9 @@ fun PropertyFilterSheet(
                         horizontalArrangement = Arrangement.Center
                     ) {
 //                        Text(text = "Photos Minimum: ")
+                        val focusRequester = remember { FocusRequester() }
+                        val focusManager = LocalFocusManager.current
+                        
                         OutlinedTextField(
                             shape = RoundedCornerShape(size = 8.dp),
                             colors = TextFieldDefaults.colors(focusedContainerColor = Color.White),
@@ -218,23 +226,31 @@ fun PropertyFilterSheet(
                             placeholder = { Text(stringResource(R.string._0)) },
                             label = { Text(stringResource(R.string.min_photos)) },
                             onValueChange = {
-                                onEvent(
-                                    ListDetailsEvent.UpdateFilter(
-                                        filter = state.filterState.copy(
-                                            minNbrPhotos = if (it.isEmpty()) {
-                                                0
-                                            } else {
-                                                it.toInt()
-                                            },
+                                if (it.isEmpty()) {
+                                    0
+                                } else {
+                                    it.toIntOrNull()
+                                }?.let { nbrPhoto ->
+                                    onEvent(
+                                        ListDetailsEvent.UpdateFilter(
+                                            filter = state.filterState.copy(
+                                                minNbrPhotos = nbrPhoto,
+                                            )
                                         )
                                     )
-                                )
-
-
+                                }
                             },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
-                            )
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    focusRequester.freeFocus()
+                                    focusManager.clearFocus()
+                                }
+                            ),
+                        )
                     }
                 }
 
@@ -381,7 +397,7 @@ fun PropertyFilterSheet(
                                             filter = state.filterState.copy(
                                                 soldDateRange = Range(
                                                     soldDateRangePickerState.selectedStartDateMillis!!,
-                                                    soldDateRangePickerState.selectedStartDateMillis!!
+                                                    selectedSoldDateEnd.timeInMillis
                                                 )
                                             )
                                         )
@@ -469,9 +485,11 @@ fun PropertyFilterSheet(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Text(text = if (state.filterState.areaCodeFilter == null) stringResource(
-                                R.string.area_code
-                            ) else state.filterState.areaCodeFilter.toString())
+                            Text(
+                                text = if (state.filterState.areaCodeFilter == null) stringResource(
+                                    R.string.area_code
+                                ) else state.filterState.areaCodeFilter.toString()
+                            )
                             Icon(
                                 Icons.Default.KeyboardArrowDown,
                                 contentDescription = stringResource(R.string.more_options_icon_content_description)
@@ -607,9 +625,9 @@ fun PropertyFilterSheet(
             IconButton(
                 onClick = {
                     scope.launch {
-                        sheetState.hide()
+                        sheetStateFilters.hide()
                     }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
+                        if (!sheetStateFilters.isVisible) {
                             onEvent(ListDetailsEvent.DismissFilter)
                         }
                     }
@@ -621,14 +639,17 @@ fun PropertyFilterSheet(
                     disabledContentColor = MaterialTheme.colorScheme.secondaryContainer
                 )
             ) {
-                Icon(imageVector = Icons.Rounded.Close, contentDescription = stringResource(R.string.close_icon_content_description))
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = stringResource(R.string.close_icon_content_description)
+                )
             }
             if (isAreaCodeListExpended) {
                 ModalBottomSheet(
                     onDismissRequest = {
                         isAreaCodeListExpended = false
                     },
-                    sheetState = sheetState
+                    sheetState = sheetStateAreaCodeList
                 ) {
                     LazyColumn(
                         modifier = Modifier
@@ -637,7 +658,38 @@ fun PropertyFilterSheet(
                             .height(LocalWindowInfo.current.containerSize.height.dp),
                     ) {
                         item {
-                            HorizontalDivider()
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(
+                                        onClick = {
+                                            onEvent(
+                                                ListDetailsEvent.UpdateFilter(
+                                                    filter = state.filterState.copy(
+                                                        areaCodeFilter = null,
+                                                    )
+                                                )
+                                            )
+                                            isAreaCodeListExpended = false
+                                        }
+                                    ),
+                            ) {
+                                Column {
+                                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
+                                    Text(
+                                        text = "All",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
+                                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                        fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                                    )
+                                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+                                }
+                            }
                         }
                         items(state.areaCodeList) { areaCode ->
                             Row(
@@ -660,8 +712,12 @@ fun PropertyFilterSheet(
                                     Text(
                                         text = "$areaCode",
                                         modifier = Modifier
-                                            .fillMaxWidth(),
-                                        textAlign = TextAlign.Center
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
+                                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                        fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
                                     )
                                     HorizontalDivider(modifier = Modifier.fillMaxWidth())
                                 }

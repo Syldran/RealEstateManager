@@ -57,7 +57,7 @@ class MapOfPropertiesViewModelTest {
                 areaCode = 18290,
                 surfaceArea = 150,
                 price = 150000,
-                sold = null,
+                sold = -1,
                 id = 1L,
             ),
             Property(
@@ -73,7 +73,7 @@ class MapOfPropertiesViewModelTest {
                 areaCode = 18290,
                 surfaceArea = 150,
                 price = 300000,
-                sold = null,
+                sold = -1,
                 id = 2L,
             ),
             Property(
@@ -89,7 +89,7 @@ class MapOfPropertiesViewModelTest {
                 areaCode = 18290,
                 surfaceArea = 150,
                 price = 250000,
-                sold = null,
+                sold = -1,
                 id = 2L,
             )
         )

@@ -2,6 +2,7 @@ package com.ocproject.realestatemanager.presentation.scene.cameraScreen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -9,7 +10,8 @@ import com.ocproject.realestatemanager.presentation.navigation.Screen
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.cameraScreen(
-    navController: NavController
+    navController: NavController,
+    globalSnackbarHostState: SnackbarHostState
 ) {
     composable(route = Screen.CameraScreen.route){
         CameraScreen(
@@ -17,7 +19,8 @@ fun NavGraphBuilder.cameraScreen(
                 // Navigate back to add property screen with the photo
                 navController.previousBackStackEntry?.savedStateHandle?.set("photo_captured", photoBytes)
                 navController.popBackStack()
-            }
+            },
+            globalSnackbarHostState = globalSnackbarHostState
         )
     }
 }

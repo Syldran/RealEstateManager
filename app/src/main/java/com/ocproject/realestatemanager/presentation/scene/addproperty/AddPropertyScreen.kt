@@ -31,8 +31,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -69,7 +69,6 @@ fun AddPropertyScreen(
     navController: NavController,
 ) {
     val scope = rememberCoroutineScope()
-    val snackBarHostState = remember { SnackbarHostState() }
 
     val context = LocalContext.current
     val imagePicker = ImagePicker(
@@ -101,18 +100,20 @@ fun AddPropertyScreen(
             }
     }
 
+    // Global toast handling is now managed at the app level
+
     var schoolChecked by remember { mutableStateOf(false) }
     var parkChecked by remember { mutableStateOf(false) }
     var transportChecked by remember { mutableStateOf(false) }
     var shopChecked by remember { mutableStateOf(false) }
     state.newProperty.interestPoints.forEach {
         when (it) {
-            InterestPoint.PARK -> {
-                parkChecked = true
-            }
-
             InterestPoint.SCHOOL -> {
                 schoolChecked = true
+            }
+
+            InterestPoint.PARK -> {
+                parkChecked = true
             }
 
             InterestPoint.SHOP -> {
@@ -134,9 +135,7 @@ fun AddPropertyScreen(
         modifier = Modifier.padding(horizontal = 16.dp),
         containerColor = colorResource(id = R.color.white),
         contentWindowInsets = WindowInsets.safeDrawing, // Applies safe area to Scaffold content
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        },
+        // Global SnackbarHost is handled in RealEstateManagerApp.kt
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -183,7 +182,7 @@ fun AddPropertyScreen(
                             headlineContent = { Text(stringResource(R.string.take_a_photo)) },
                             leadingContent = {
                                 Icon(
-                                    imageVector = Icons.Filled.Call,
+                                    painter = painterResource(R.drawable.outline_camera_24),
                                     contentDescription = stringResource(R.string.camera)
                                 )
                             },
@@ -199,7 +198,7 @@ fun AddPropertyScreen(
                             headlineContent = { Text(stringResource(R.string.choose_from_gallery)) },
                             leadingContent = {
                                 Icon(
-                                    imageVector = Icons.Filled.Star,
+                                    painter = painterResource(R.drawable.outline_photo_library_24),
                                     contentDescription = stringResource(R.string.gallery)
                                 )
                             },
@@ -216,9 +215,9 @@ fun AddPropertyScreen(
 
 
             Spacer(modifier = Modifier.height(16.dp))
-            AutocompleteSearch(viewModel, scope, snackBarHostState)
-            Spacer(modifier = Modifier.height(16.dp))
+            AutocompleteSearch(viewModel, scope)
             PropertyTextField(
+                modifier = Modifier.padding(8.dp),
                 value = state.newProperty.address,
                 error = state.addressError,
                 onValueChanged = {
@@ -227,8 +226,8 @@ fun AddPropertyScreen(
                 keyboardType = KeyboardType.Text,
                 labelValue = stringResource(R.string.address),
             )
-            Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
+                modifier = Modifier.padding(8.dp),
                 value = state.newProperty.town,
                 error = state.townError,
                 onValueChanged = {
@@ -238,9 +237,9 @@ fun AddPropertyScreen(
                 keyboardType = KeyboardType.Text,
                 labelValue = stringResource(R.string.town)
             )
-            Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (state.newProperty.areaCode == null || state.newProperty.areaCode == 0) "" else state.newProperty.areaCode.toString(),
+                modifier = Modifier.padding(8.dp),
+                value = if (state.newProperty.areaCode == 0) "" else state.newProperty.areaCode.toString(),
                 error = state.areaCodeError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(areaCode = it))
@@ -248,8 +247,8 @@ fun AddPropertyScreen(
                 keyboardType = KeyboardType.Number,
                 labelValue = stringResource(R.string.area_code)
             )
-            Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
+                modifier = Modifier.padding(8.dp),
                 value = state.newProperty.country,
                 error = state.countryError,
                 onValueChanged = {
@@ -258,9 +257,9 @@ fun AddPropertyScreen(
                 keyboardType = KeyboardType.Text,
                 labelValue = stringResource(R.string.country)
             )
-            Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (state.newProperty.price == null || state.newProperty.price == 0) "" else state.newProperty.price.toString(),
+                modifier = Modifier.padding(8.dp),
+                value = if (state.newProperty.price == 0) "" else state.newProperty.price.toString(),
                 error = state.priceError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(price = it))
@@ -268,10 +267,9 @@ fun AddPropertyScreen(
                 keyboardType = KeyboardType.Number,
                 labelValue = stringResource(R.string.price)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-
             PropertyTextField(
-                value = if (state.newProperty.surfaceArea == null || state.newProperty.surfaceArea == 0) "" else state.newProperty.surfaceArea.toString(),
+                modifier = Modifier.padding(8.dp),
+                value = if (state.newProperty.surfaceArea == 0) "" else state.newProperty.surfaceArea.toString(),
                 error = state.surfaceAreaError,
                 onValueChanged = {
                     viewModel.onEvent(AddPropertyEvent.UpdateForm(surfaceArea = it))
@@ -279,39 +277,46 @@ fun AddPropertyScreen(
                 keyboardType = KeyboardType.Number,
                 labelValue = stringResource(R.string.surface_area)
             )
-            Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (state.newProperty.lat == 0.0) "" else state.newProperty.lat.toString(),
+                modifier = Modifier.padding(8.dp),
+                value = if (state.latitudeInput.isNotEmpty()) state.latitudeInput else if (state.newProperty.lat == 0.0) "" else state.newProperty.lat.toString(),
                 error = state.latError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.UpdateForm(latitude = it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateLatitudeInput(it))
                 },
                 keyboardType = KeyboardType.Decimal,
                 labelValue = stringResource(R.string.latitude)
             )
-            Spacer(modifier = Modifier.height(16.dp))
             PropertyTextField(
-                value = if (state.newProperty.lng == 0.0) "" else state.newProperty.lng.toString(),
+                modifier = Modifier.padding(8.dp),
+                value = if (state.longitudeInput.isNotEmpty()) state.longitudeInput else if (state.newProperty.lng == 0.0) "" else state.newProperty.lng.toString(),
                 error = state.lngError,
                 onValueChanged = {
-                    viewModel.onEvent(AddPropertyEvent.UpdateForm(longitude = it))
+                    viewModel.onEvent(AddPropertyEvent.UpdateLongitudeInput(it))
                 },
                 keyboardType = KeyboardType.Decimal,
                 labelValue = stringResource(R.string.longitude)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            PropertyTextField(
+                modifier = Modifier.padding(8.dp),
+                value = state.newProperty.description,
+                error = state.descriptionError,
+                onValueChanged = {
+                    viewModel.onEvent(AddPropertyEvent.UpdateForm(description = it))
+                },
+                keyboardType = KeyboardType.Text,
+                labelValue = stringResource(R.string.description),
+            )
 
             Row {
-
-
                 FilterChip(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
                         schoolChecked = !schoolChecked
                         viewModel.onEvent(
                             AddPropertyEvent.UpdateTags(
-                                park = parkChecked,
                                 school = schoolChecked,
+                                park = parkChecked,
                                 shop = shopChecked,
                                 transport = transportChecked
                             )
@@ -341,8 +346,8 @@ fun AddPropertyScreen(
                         parkChecked = !parkChecked
                         viewModel.onEvent(
                             AddPropertyEvent.UpdateTags(
-                                park = parkChecked,
                                 school = schoolChecked,
+                                park = parkChecked,
                                 shop = shopChecked,
                                 transport = transportChecked
                             )
@@ -371,8 +376,8 @@ fun AddPropertyScreen(
                         shopChecked = !shopChecked
                         viewModel.onEvent(
                             AddPropertyEvent.UpdateTags(
-                                park = parkChecked,
                                 school = schoolChecked,
+                                park = parkChecked,
                                 shop = shopChecked,
                                 transport = transportChecked
                             )
@@ -402,8 +407,8 @@ fun AddPropertyScreen(
                         transportChecked = !transportChecked
                         viewModel.onEvent(
                             AddPropertyEvent.UpdateTags(
-                                park = parkChecked,
                                 school = schoolChecked,
+                                park = parkChecked,
                                 shop = shopChecked,
                                 transport = transportChecked
                             )
@@ -437,7 +442,7 @@ fun AddPropertyScreen(
                             viewModel.onEvent(
                                 AddPropertyEvent.UpdateNewProperty(
                                     state.newProperty.copy(
-                                        sold = null
+                                        sold = -1
                                     )
                                 )
                             )
@@ -469,8 +474,17 @@ fun AddPropertyScreen(
                     },
                 )
             }
+
+
+            val successMessage = stringResource(R.string.property_saved_successfully)
+            val failureMessage = stringResource(R.string.property_save_failed)
             Button(onClick = {
-                viewModel.onEvent(AddPropertyEvent.SaveProperty)
+                viewModel.onEvent(
+                    AddPropertyEvent.SaveProperty(
+                        successMessage = successMessage,
+                        failureMessage = failureMessage
+                    )
+                )
                 if (state.navToPropertyListScreen) {
                     onNavigateToListDetails()
                     viewModel.onEvent(AddPropertyEvent.OnChangeNavigationStatus(true))
@@ -493,7 +507,10 @@ fun AddPropertyScreen(
                 disabledContentColor = MaterialTheme.colorScheme.secondaryContainer
             )
         ) {
-            Icon(imageVector = Icons.Rounded.Close, contentDescription = stringResource(R.string.close))
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = stringResource(R.string.close)
+            )
         }
     }
 }

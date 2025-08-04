@@ -1,11 +1,12 @@
 package com.ocproject.realestatemanager.data.database
 
+
 import android.content.ContentProvider
 import android.content.ContentValues
-import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import androidx.core.net.toUri
+import com.ocproject.realestatemanager.data.entities.PhotoPropertyEntity
 import com.ocproject.realestatemanager.data.entities.PropertyEntity
 import kotlinx.coroutines.runBlocking
 
@@ -16,55 +17,45 @@ class PropertyContentProvider : ContentProvider() {
     }
 
     companion object {
-        // FOR DATA
         const val AUTHORITY = "com.ocproject.realestatemanager.provider"
         const val PROPERTIES_PATH = "properties"
-        val URI_PROPERTY = "content://$AUTHORITY/$PROPERTIES_PATH".toUri()
-        
-        // URI codes
-        const val PROPERTIES = 100
-        const val PROPERTY_WITH_ID = 101
-        
-        // Column names
-        const val COLUMN_ID = "id"
-        const val COLUMN_DESCRIPTION = "description"
-        const val COLUMN_ADDRESS = "address"
-        const val COLUMN_TOWN = "town"
-        const val COLUMN_LAT = "lat"
-        const val COLUMN_LNG = "lng"
-        const val COLUMN_COUNTRY = "country"
-        const val COLUMN_CREATED_DATE = "createdDate"
-        const val COLUMN_AREA_CODE = "areaCode"
-        const val COLUMN_SURFACE_AREA = "surfaceArea"
-        const val COLUMN_PRICE = "price"
-        const val COLUMN_SOLD = "sold"
-        const val COLUMN_INTEREST_POINTS = "interestPoints"
-        
-        const val TABLE_NAME = "PropertyEntity"
-        const val DATABASE_NAME = "PropertiesDatabase"
-        const val DATABASE_VERSION = 1
-        const val CREATE_DB_TABLE =
-            (" CREATE TABLE " + TABLE_NAME
-                    + " (id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + " description TEXT NOT NULL"
-                    + " address TEXT NOT NULL, "
-                    + " town TEXT NOT NULL, "
-                    + " lat REAL NOT NULL, "
-                    + " lng REAL NOT NULL, "
-                    + " country TEXT NOT NULL, "
-                    + " createdDate INTEGER NOT NULL, "
-                    + " areaCode INTEGER, "
-                    + " surfaceArea INTEGER, "
-                    + " price INTEGER, "
-                    + " sold INTEGER, "
-                    + " interestPoints TEXT);")
+        const val PHOTOS_PATH = "photos"
 
-        private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
-            // For the entire properties table
-            addURI(AUTHORITY, PROPERTIES_PATH, PROPERTIES)
-            // For a specific property
-            addURI(AUTHORITY, "$PROPERTIES_PATH/#", PROPERTY_WITH_ID)
-        }
+        val CONTENT_URI_PROPERTIES = "content://$AUTHORITY/$PROPERTIES_PATH".toUri()
+        val CONTENT_URI_PHOTOS = "content://$AUTHORITY/$PHOTOS_PATH".toUri()
+
+        const val PROPERTY_ID = "id"
+        const val PROPERTY_INTEREST_POINTS = "interestPoints"
+        const val PROPERTY_DESCRIPTION = "description"
+        const val PROPERTY_ADDRESS = "address"
+        const val PROPERTY_TOWN = "town"
+        const val PROPERTY_LAT = "lat"
+        const val PROPERTY_LNG = "lng"
+        const val PROPERTY_COUNTRY = "country"
+        const val PROPERTY_CREATED_DATE = "createdDate"
+        const val PROPERTY_AREA_CODE = "areaCode"
+        const val PROPERTY_SURFACE_AREA = "surfaceArea"
+        const val PROPERTY_PRICE = "price"
+        const val PROPERTY_SOLD_DATE = "soldDate"
+
+        const val PHOTO_ID = "id"
+        const val PHOTO_IS_MAIN = "isMain"
+        const val PHOTO_NAME = "name"
+        const val PHOTO_BYTES = "photoBytes"
+        const val PHOTO_PROPERTY_ID = "propertyId"
+
+        private const val PROPERTIES = 1
+        private const val PROPERTY_ID_CODE = 2
+        private const val PHOTOS = 3
+        private const val PHOTO_ID_CODE = 4
+
+        private val uriMatcher =
+            android.content.UriMatcher(android.content.UriMatcher.NO_MATCH).apply {
+                addURI(AUTHORITY, PROPERTIES_PATH, PROPERTIES)
+                addURI(AUTHORITY, "$PROPERTIES_PATH/#", PROPERTY_ID_CODE)
+                addURI(AUTHORITY, PHOTOS_PATH, PHOTOS)
+                addURI(AUTHORITY, "$PHOTOS_PATH/#", PHOTO_ID_CODE)
+            }
     }
 
     override fun onCreate(): Boolean {
@@ -73,85 +64,111 @@ class PropertyContentProvider : ContentProvider() {
 
     override fun query(
         uri: Uri,
-        projection: Array<out String>?,
+        projection: Array<String?>?,
         selection: String?,
-        selectionArgs: Array<out String>?,
+        selectionArgs: Array<String?>?,
         sortOrder: String?
     ): Cursor? {
         return when (uriMatcher.match(uri)) {
             PROPERTIES -> {
                 dao?.getPropertiesWithCursor()
             }
-            PROPERTY_WITH_ID -> {
+
+            PROPERTY_ID_CODE -> {
                 val id = uri.lastPathSegment?.toLongOrNull()
                 if (id != null) {
                     dao?.getPropertyWithCursorById(id)
                 } else {
-                    null
+                    throw IllegalArgumentException("Failed to query row for uri: $uri")
                 }
             }
+
+            PHOTOS -> {
+                dao?.getPhotosWithCursor()
+            }
+
+            PHOTO_ID_CODE -> {
+                val id = uri.lastPathSegment?.toLongOrNull()
+                if (id != null) {
+                    dao?.getPhotoWithCursorById(id)
+                } else {
+                    throw IllegalArgumentException("Failed to query row for uri: $uri")
+                }
+            }
+
             else -> null
         }
     }
 
     override fun getType(uri: Uri): String? {
         return when (uriMatcher.match(uri)) {
-            PROPERTIES -> "vnd.android.cursor.dir/vnd.$AUTHORITY.$PROPERTIES_PATH"
-            PROPERTY_WITH_ID -> "vnd.android.cursor.item/vnd.$AUTHORITY.$PROPERTIES_PATH"
-            else -> null
-        }
-    }
-
-    override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        if (uriMatcher.match(uri) != PROPERTIES) {
-            throw IllegalArgumentException("Invalid URI for insert")
-        }
-        
-        if (values == null) {
-            return null
-        }
-        
-        return runBlocking {
-            try {
-                val property = contentValuesToPropertyEntity(values)
-                val id = dao?.upsertProperty(property)
-                if (id != null && id > 0) {
-                    "content://$AUTHORITY/$PROPERTIES_PATH/$id".toUri()
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                null
+            PROPERTIES -> "vnd.android.cursor.dir/property"
+            PROPERTY_ID_CODE -> "vnd.android.cursor.item/property"
+            PHOTOS -> "vnd.android.cursor.dir/photo"
+            PHOTO_ID_CODE -> "vnd.android.cursor.item/photo"
+            else -> {
+                throw IllegalArgumentException("Failed to query row for uri: $uri")
             }
         }
     }
 
-    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
+    override fun insert(
+        uri: Uri,
+        values: ContentValues?
+    ): Uri? {
+        if (values == null) return null
+
         return when (uriMatcher.match(uri)) {
             PROPERTIES -> {
-                // Delete all properties (not recommended for production)
-                0
+                val property = contentValuesToPropertyEntity(values)
+                runBlocking {
+                    val id = dao?.upsertProperty(property)
+                    id?.let { Uri.withAppendedPath(CONTENT_URI_PROPERTIES, it.toString()) }
+                }
             }
-            PROPERTY_WITH_ID -> {
+
+            PHOTOS -> {
+                val photo = contentValuesToPhotoPropertyEntity(values)
+                runBlocking {
+                    val id = dao?.upsertPhoto(photo)
+                    id?.let { Uri.withAppendedPath(CONTENT_URI_PHOTOS, it.toString()) }
+                }
+            }
+
+            else -> throw IllegalArgumentException("Failed to insert row into uri: $uri")
+        }
+    }
+
+    override fun delete(
+        uri: Uri,
+        selection: String?,
+        selectionArgs: Array<out String?>?
+    ): Int {
+        return when (uriMatcher.match(uri)) {
+            PROPERTY_ID_CODE -> {
                 val id = uri.lastPathSegment?.toLongOrNull()
                 if (id != null) {
                     runBlocking {
-                        try {
-                            val property = dao?.getPropertyDetail(id)
-                            if (property != null) {
-                                dao?.deleteProperty(property.property)
-                                1
-                            } else {
-                                0
-                            }
-                        } catch (e: Exception) {
-                            0
-                        }
+                        val property = dao?.getPropertyDetail(id)
+                        property?.let {
+                            dao?.deleteProperty(it.property)
+                            // 1 Row successfully affected.
+                            1
+                        } ?: 0
                     }
-                } else {
-                    0
-                }
+                } else 0
             }
+
+            PHOTO_ID_CODE -> {
+                val id = uri.lastPathSegment?.toLongOrNull()
+                if (id != null) {
+                    runBlocking {
+                        dao?.deletePhotoById(id)
+                        1
+                    }
+                } else 0
+            }
+
             else -> 0
         }
     }
@@ -160,52 +177,75 @@ class PropertyContentProvider : ContentProvider() {
         uri: Uri,
         values: ContentValues?,
         selection: String?,
-        selectionArgs: Array<out String>?
+        selectionArgs: Array<out String?>?
     ): Int {
         if (values == null) {
+            // 0 Row modified.
             return 0
         }
-        
         return when (uriMatcher.match(uri)) {
-            PROPERTIES -> {
-                // Update multiple properties based on selection
-                0
-            }
-            PROPERTY_WITH_ID -> {
+            PROPERTY_ID_CODE -> {
                 val id = uri.lastPathSegment?.toLongOrNull()
                 if (id != null) {
+                    val property = contentValuesToPropertyEntity(values, id)
                     runBlocking {
-                        try {
-                            val property = contentValuesToPropertyEntity(values, id)
-                            dao?.upsertProperty(property)
-                            1
-                        } catch (e: Exception) {
-                            0
-                        }
+                        dao?.upsertProperty(property)
+                    
+                        1
                     }
-                } else {
-                    0
-                }
+                } else 0
             }
+
+            PHOTO_ID_CODE -> {
+                val id = uri.lastPathSegment?.toLongOrNull()
+                if (id != null) {
+                    val photo = contentValuesToPhotoPropertyEntity(values, id)
+                    runBlocking {
+                        dao?.upsertPhoto(photo)
+                        1
+                    }
+                } else 0
+            }
+
             else -> 0
         }
     }
-    
-    private fun contentValuesToPropertyEntity(values: ContentValues, id: Long = 0L): PropertyEntity {
+
+    private fun contentValuesToPropertyEntity(
+        values: ContentValues,
+        id: Long = 0L
+    ): PropertyEntity {
         return PropertyEntity(
             id = id,
-            description = values.getAsString(COLUMN_DESCRIPTION) ?: "",
-            address = values.getAsString(COLUMN_ADDRESS) ?: "",
-            town = values.getAsString(COLUMN_TOWN) ?: "",
-            lat = values.getAsDouble(COLUMN_LAT) ?: 0.0,
-            lng = values.getAsDouble(COLUMN_LNG) ?: 0.0,
-            country = values.getAsString(COLUMN_COUNTRY) ?: "",
-            createdDate = values.getAsLong(COLUMN_CREATED_DATE) ?: System.currentTimeMillis(),
-            areaCode = values.getAsInteger(COLUMN_AREA_CODE),
-            surfaceArea = values.getAsInteger(COLUMN_SURFACE_AREA),
-            price = values.getAsInteger(COLUMN_PRICE),
-            sold = values.getAsLong(COLUMN_SOLD),
-            interestPoints = emptyList()
+            interestPoints = values.getAsString(PROPERTY_INTEREST_POINTS)?.let {
+                Converters().toListInterestPoint(it)
+            } ?: emptyList(),
+            description = values.getAsString(PROPERTY_DESCRIPTION) ?: "",
+            address = values.getAsString(PROPERTY_ADDRESS) ?: "",
+            town = values.getAsString(PROPERTY_TOWN) ?: "",
+            lat = values.getAsDouble(PROPERTY_LAT) ?: 0.0,
+            lng = values.getAsDouble(PROPERTY_LNG) ?: 0.0,
+            country = values.getAsString(PROPERTY_COUNTRY) ?: "",
+            createdDate = values.getAsLong(PROPERTY_CREATED_DATE) ?: System.currentTimeMillis(),
+            areaCode = values.getAsInteger(PROPERTY_AREA_CODE) ?: 0,
+            surfaceArea = values.getAsInteger(PROPERTY_SURFACE_AREA) ?: 0,
+            price = values.getAsInteger(PROPERTY_PRICE) ?: 0,
+            soldDate = values.getAsLong(PROPERTY_SOLD_DATE) ?: 0L
         )
     }
+
+    private fun contentValuesToPhotoPropertyEntity(
+        values: ContentValues,
+        id: Long = 0L
+    ): PhotoPropertyEntity {
+        return PhotoPropertyEntity(
+            id = id,
+            isMain = values.getAsBoolean(PHOTO_IS_MAIN) ?: false,
+            name = values.getAsString(PHOTO_NAME) ?: "",
+            photoBytes = values.getAsByteArray(PHOTO_BYTES) ?: ByteArray(0),
+            propertyId = values.getAsLong(PHOTO_PROPERTY_ID) ?: 0L
+        )
+    }
+
+
 }

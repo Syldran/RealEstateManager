@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ocproject.realestatemanager.BuildConfig
@@ -53,6 +54,8 @@ import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetail
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsState
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -63,8 +66,10 @@ fun PropertyDetails(
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    LaunchedEffect(state.selectedProperty!!) {
-        viewModel.onEvent(ListDetailsEvent.GetDetails(state.selectedProperty!!.id))
+    LaunchedEffect(state.selectedProperty?.id) {
+        state.selectedProperty?.let { property ->
+            viewModel.onEvent(ListDetailsEvent.GetDetails(property.id))
+        }
     }
     val configuration = LocalConfiguration.current
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -91,6 +96,7 @@ fun PropertyDetailsPortrait(
     navigateBack: () -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit
 ) {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     Box(
         modifier = Modifier
             .background(Color.White)
@@ -155,11 +161,6 @@ fun PropertyDetailsPortrait(
             ) {
                 PhotosComposable(property = state.selectedProperty!!)
             }
-
-//                PagerPhotoDetails(property = state.selectedProperty!!)
-//                PhotosDetailsComposable(
-//                    propertyWithPhotos = property
-//                )
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             Column {
                 Text(
@@ -180,7 +181,8 @@ fun PropertyDetailsPortrait(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
                         .weight(0.5F)
                 ) {
                     Row(
@@ -189,7 +191,7 @@ fun PropertyDetailsPortrait(
                     ) {
                         Icon(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            painter = painterResource(R.drawable.baseline_settings_overscan_24),
                             contentDescription = "Surface Icon",
                         )
                         Column {
@@ -211,8 +213,8 @@ fun PropertyDetailsPortrait(
                     ) {
                         Icon(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            imageVector = Icons.Filled.Lock,
-                            contentDescription = "Surface Icon",
+                            painter = painterResource(R.drawable.baseline_attach_money_24),
+                            contentDescription = "Price Icon",
                         )
                         Column {
                             Text(
@@ -227,10 +229,34 @@ fun PropertyDetailsPortrait(
                             )
                         }
                     }
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.outline_add_home_24),
+                            contentDescription = "Date Added Icon",
+                        )
+                        Column {
+                            Text(
+                                "Date added :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                "${dateFormat.format(state.selectedProperty?.createdDate)}",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
+
                 }
                 VerticalDivider(Modifier.padding(8.dp))
                 Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
                         .weight(0.5F)
                 ) {
 
@@ -255,6 +281,11 @@ fun PropertyDetailsPortrait(
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
                             )
                             Text(
+                                text = state.selectedProperty?.areaCode?.toString() ?: "0",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
                                 state.selectedProperty?.town ?: "",
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
@@ -266,19 +297,28 @@ fun PropertyDetailsPortrait(
                             )
                         }
                     }
-                    if (state.selectedProperty?.sold != null) {
+                    if (state.selectedProperty?.sold != -1L) {
                         Row(
                             modifier = Modifier.padding(8.dp),
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.Center
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                contentScale = ContentScale.Fit,
-                                painter = painterResource(R.drawable.sold_transparent),
-                                contentDescription = "Location Icon",
+                            Icon(
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                                painter = painterResource(R.drawable.outline_sell_24),
+                                contentDescription = "Surface Icon",
                             )
+                            Column {
+                                Text(
+                                    "Date Sold :",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                                Text(
+                                    "${dateFormat.format(state.selectedProperty?.sold)}",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                            }
                         }
                     }
                 }
@@ -350,6 +390,7 @@ fun PropertyDetailsLandscape(
     navigateBack: () -> Unit,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit
 ) {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     Box(
         modifier = Modifier
             .background(Color.White)
@@ -370,23 +411,6 @@ fun PropertyDetailsLandscape(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                FilledTonalIconButton(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    onClick =
-                        {
-                            navigateBack()
-                        },
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
-//                    tint = Color.Green
-                    )
-                }
                 FilledTonalIconButton(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     onClick = {
@@ -415,10 +439,6 @@ fun PropertyDetailsLandscape(
                 PhotosComposable(property = state.selectedProperty!!)
             }
 
-//                PagerPhotoDetails(property = state.selectedProperty!!)
-//                PhotosDetailsComposable(
-//                    propertyWithPhotos = property
-//                )
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             Column {
                 Text(
@@ -439,7 +459,8 @@ fun PropertyDetailsLandscape(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
                         .weight(0.5F)
                 ) {
                     Row(
@@ -470,8 +491,8 @@ fun PropertyDetailsLandscape(
                     ) {
                         Icon(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            imageVector = Icons.Filled.Lock,
-                            contentDescription = "Surface Icon",
+                            painter = painterResource(R.drawable.baseline_attach_money_24),
+                            contentDescription = "Price Icon",
                         )
                         Column {
                             Text(
@@ -486,10 +507,33 @@ fun PropertyDetailsLandscape(
                             )
                         }
                     }
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            painter = painterResource(R.drawable.outline_add_home_24),
+                            contentDescription = "Date Added Icon",
+                        )
+                        Column {
+                            Text(
+                                "Date added :",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                            Text(
+                                "${dateFormat.format(state.selectedProperty?.createdDate)}",
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                            )
+                        }
+                    }
                 }
                 VerticalDivider(Modifier.padding(8.dp))
                 Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
                         .weight(0.5F)
                 ) {
 
@@ -525,19 +569,28 @@ fun PropertyDetailsLandscape(
                             )
                         }
                     }
-                    if (state.selectedProperty?.sold != null) {
+                    if (state.selectedProperty?.sold != -1L) {
                         Row(
                             modifier = Modifier.padding(8.dp),
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.Center
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                contentScale = ContentScale.Fit,
-                                painter = painterResource(R.drawable.sold_transparent),
-                                contentDescription = "Location Icon",
+                            Icon(
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                                painter = painterResource(R.drawable.outline_sell_24),
+                                contentDescription = "Surface Icon",
                             )
+                            Column {
+                                Text(
+                                    "Date Sold :",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                                Text(
+                                    "${dateFormat.format(state.selectedProperty?.sold)}",
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+                                )
+                            }
                         }
                     }
                 }

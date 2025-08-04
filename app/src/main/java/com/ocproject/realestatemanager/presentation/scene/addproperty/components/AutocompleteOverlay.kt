@@ -9,7 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHostState
+import com.ocproject.realestatemanager.core.GlobalSnackBarManager
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,10 +26,9 @@ import com.ocproject.realestatemanager.core.utils.Globals.checkConnectivityForTe
 import com.ocproject.realestatemanager.core.utils.Utils.isInternetAvailable
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
-fun AutocompleteSearch(viewModel: AddPropertyViewModel, scope: CoroutineScope, snackBarHostState: SnackbarHostState) {
+fun AutocompleteSearch(viewModel: AddPropertyViewModel, scope: CoroutineScope) {
     val context = LocalContext.current
     val intentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -82,9 +81,7 @@ fun AutocompleteSearch(viewModel: AddPropertyViewModel, scope: CoroutineScope, s
                     launchAutocompleteOverlay.invoke()
                 } else {
                     checkConnectivityForTest = false
-                    scope.launch {
-                        snackBarHostState.showSnackbar(context.getString(R.string.error_connexion))
-                    }
+                    GlobalSnackBarManager.showSnackMsg(context.getString(R.string.error_connexion), isSuccess = false)
                 }
             }
         ) {

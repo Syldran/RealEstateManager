@@ -7,10 +7,10 @@ sealed interface ListDetailsEvent {
     data class OnClickPropertyDisplayMode(val map: Boolean) : ListDetailsEvent
     data object DismissFilter : ListDetailsEvent
     data object OpenFilter : ListDetailsEvent
-    data class DeleteProperty(val property: Property) : ListDetailsEvent
     data object GetProperties : ListDetailsEvent
+    data class GetPropertiesFiltered(val filter: Filter) : ListDetailsEvent
     data class GetDetails(val propertyId: Long) : ListDetailsEvent
+    data class DeleteProperty(val property: Property) : ListDetailsEvent
     data class UpdateSelectedProperty(val property: Property?) : ListDetailsEvent
-    data object UpdateSortedProperties : ListDetailsEvent
     data class UpdateFilter(val filter: Filter) : ListDetailsEvent
 }

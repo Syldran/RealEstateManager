@@ -68,7 +68,7 @@ class AddPropertyViewModelTest {
             areaCode = 18290,
             surfaceArea = 150,
             price = 150000,
-            sold = null,
+            sold = -1,
             id = 1L,
         )
         coEvery { getPropertyDetails.invoke(any()) } returns property
@@ -94,7 +94,7 @@ class AddPropertyViewModelTest {
             areaCode = 18290,
             surfaceArea = 150,
             price = 150000,
-            sold = null,
+            sold = -1,
             id = 0L,
         )
         val viewModelTest = AddPropertyViewModel(0L, getPropertyDetails, saveProperty)
@@ -120,7 +120,7 @@ class AddPropertyViewModelTest {
             areaCode = 18290,
             surfaceArea = 150,
             price = 300000,
-            sold = null,
+            sold = -1,
             id = 2L,
         )
         val property2 = Property(
@@ -136,22 +136,24 @@ class AddPropertyViewModelTest {
             areaCode = 18290,
             surfaceArea = 150,
             price = 300000,
-            sold = null,
+            sold = -1,
             id = 5L,
         )
         viewModel.saveProperty(
-            property1
+            property1,
+            "Property saved successfully!",
+            "Failed to save property. Please try again."
         )
         advanceUntilIdle()
         coVerify { saveProperty(property1) }
         viewModel.saveProperty(
-            property2
+            property2,
+            "Property saved successfully!",
+            "Failed to save property. Please try again."
         )
         advanceUntilIdle()
         coVerify {
-            saveProperty(
-                any()
-            )
+            saveProperty(any())
         }
     }
 
@@ -167,11 +169,11 @@ class AddPropertyViewModelTest {
             lng = 0.0,
             country = "",
             createdDate = Calendar.getInstance().timeInMillis,
-            areaCode = null,
-            surfaceArea = null,
-            price = null,
+            areaCode = 0,
+            surfaceArea = 0,
+            price = 0,
             id = 1L,
-            sold = null,
+            sold = -1,
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
@@ -195,11 +197,11 @@ class AddPropertyViewModelTest {
             lng = 0.0,
             country = "",
             createdDate = Calendar.getInstance().timeInMillis,
-            areaCode = null,
-            surfaceArea = null,
-            price = null,
+            areaCode = 0,
+            surfaceArea = 0,
+            price = 0,
             id = 1L,
-            sold = null,
+            sold = -1,
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()
@@ -231,11 +233,11 @@ class AddPropertyViewModelTest {
             lng = 0.0,
             country = "",
             createdDate = Calendar.getInstance().timeInMillis,
-            areaCode = null,
-            surfaceArea = null,
-            price = null,
+            areaCode = 0,
+            surfaceArea = 0,
+            price = 0,
             id = 1L,
-            sold = null,
+            sold = -1,
         )
         val viewModelTest = AddPropertyViewModel(1L, getPropertyDetails, saveProperty)
         advanceUntilIdle()

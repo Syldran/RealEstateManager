@@ -70,7 +70,7 @@ fun PropertyListContent(
                     Text(
                         text = stringResource(
                             R.string.list_of_properties,
-                            state.sortedProperties.size
+                            state.properties.size
                         ),
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
@@ -203,7 +203,7 @@ fun PropertyListContent(
                 }
             }
 
-            if (state.sortedProperties.isEmpty()) {
+            if (state.properties.isEmpty()) {
                 item {
                     Box(
                         modifier = Modifier
@@ -224,7 +224,7 @@ fun PropertyListContent(
                 }
             } else {
                 items(
-                    items = state.sortedProperties,
+                    items = state.properties,
                     key = { property ->
                         property.id
                     }
@@ -238,6 +238,7 @@ fun PropertyListContent(
                             }
                             .padding(start = 16.dp, end = 16.dp),
                         onEvent = onEvent,
+                        selectedProperty = state.selectedProperty,
                     )
                 }
             }
@@ -282,7 +283,7 @@ fun MyListPreview() {
             price = 150000,
             surfaceArea = 150,
             areaCode = 18290,
-            sold = null,
+            sold = -1,
         ), Property(
             id = 3L,
             photoList = emptyList(),
@@ -300,8 +301,8 @@ fun MyListPreview() {
             sold = 2500L,
         )
     )
-    val statePreview = ListDetailsState(sortedProperties = propertyList)
-//    val statePreview = ListDetailsState(sortedProperties = emptyList(), isLoadingProgressBar = true)
+    val statePreview = ListDetailsState(properties = propertyList)
+//    val statePreview = ListDetailsState(properties = emptyList(), isLoadingProgressBar = true)
     PropertyListContent(
         state = statePreview,
         onClick = {},

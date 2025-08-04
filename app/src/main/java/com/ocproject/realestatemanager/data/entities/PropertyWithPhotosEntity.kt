@@ -1,4 +1,5 @@
 package com.ocproject.realestatemanager.data.entities
+
 import androidx.room.Embedded
 import androidx.room.Relation
 
@@ -8,5 +9,5 @@ data class PropertyWithPhotosEntity(
         parentColumn = "id",
         entityColumn = "propertyId",
     )
-        val photoList: List<PhotoPropertyEntity>?
+    val photoList: List<PhotoPropertyEntity>?
 )

@@ -19,6 +19,18 @@ class FakePropertiesDao : PropertiesDao {
         TODO("Not yet implemented")
     }
 
+    override fun getPhotosWithCursor(): Cursor {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPhotoWithCursorById(id: Long): Cursor {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPhotosWithCursorByPropertyId(propertyId: Long): Cursor {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun upsertProperty(property: PropertyEntity): Long {
         val propertyWithPhoto = PropertyWithPhotosEntity(property, null)
         propertyList.add(property)
@@ -31,12 +43,124 @@ class FakePropertiesDao : PropertiesDao {
         propertyWithPhotosList.remove(PropertyWithPhotosEntity(property, null))
     }
 
-    override suspend fun upsertPhoto(photoProperty: PhotoPropertyEntity) {
+    override suspend fun upsertPhoto(photoProperty: PhotoPropertyEntity): Long {
         photosProperty.add(photoProperty)
+        return photoProperty.id
+    }
+
+    override suspend fun deletePhoto(photoProperty: PhotoPropertyEntity) {
+        photosProperty.remove(photoProperty)
+    }
+
+    override suspend fun deletePhotoById(photoId: Long) {
+        photosProperty.removeIf { it.id == photoId }
+    }
+
+    override suspend fun getPropertyListPriceASC(
+        areaCode: Int?,
+        interestPoints: String?,
+        minPhotos: Int,
+        minAddedDate: Long,
+        maxAddedDate: Long,
+        minSoldDate: Long,
+        maxSoldDate: Long,
+        sellingStatus: Long?,
+        minPrice: Int,
+        maxPrice: Int,
+        minSurface: Int,
+        maxSurface: Int
+    ): List<PropertyWithPhotosEntity> {
+        return propertyWithPhotosList
     }
 
     override suspend fun deletePicturesOfPropertyByIdProperty(propertyId: Long) {
 
+    }
+
+    override suspend fun getPropertyListPriceDESC(
+        areaCode: Int?,
+        interestPoints: String?,
+        minPhotos: Int,
+        minAddedDate: Long,
+        maxAddedDate: Long,
+        minSoldDate: Long,
+        maxSoldDate: Long,
+        sellingStatus: Long?,
+        minPrice: Int,
+        maxPrice: Int,
+        minSurface: Int,
+        maxSurface: Int
+    ): List<PropertyWithPhotosEntity> {
+        return propertyWithPhotosList
+    }
+
+    override suspend fun getPropertyListDateASC(
+        areaCode: Int?,
+        interestPoints: String?,
+        minPhotos: Int,
+        minAddedDate: Long,
+        maxAddedDate: Long,
+        minSoldDate: Long,
+        maxSoldDate: Long,
+        sellingStatus: Long?,
+        minPrice: Int,
+        maxPrice: Int,
+        minSurface: Int,
+        maxSurface: Int
+    ): List<PropertyWithPhotosEntity> {
+        return propertyWithPhotosList
+    }
+
+    override suspend fun getPropertyListDateDESC(
+        areaCode: Int?,
+        interestPoints: String?,
+        minPhotos: Int,
+        minAddedDate: Long,
+        maxAddedDate: Long,
+        minSoldDate: Long,
+        maxSoldDate: Long,
+        sellingStatus: Long?,
+        minPrice: Int,
+        maxPrice: Int,
+        minSurface: Int,
+        maxSurface: Int
+    ): List<PropertyWithPhotosEntity> {
+        return propertyWithPhotosList
+    }
+
+    override suspend fun getPropertyListSurfaceASC(
+        areaCode: Int?,
+        interestPoints: String?,
+        minPhotos: Int,
+        minAddedDate: Long,
+        maxAddedDate: Long,
+        minSoldDate: Long,
+        maxSoldDate: Long,
+        sellingStatus: Long?,
+        minPrice: Int,
+        maxPrice: Int,
+        minSurface: Int,
+        maxSurface: Int
+    ): List<PropertyWithPhotosEntity> {
+        return propertyWithPhotosList
+    }
+
+    override suspend fun getPropertyListSurfaceDESC(
+        areaCode: Int?,
+        interestPoints: String?,
+        minPhotos: Int,
+        minAddedDate: Long,
+        maxAddedDate: Long,
+        minSoldDate: Long,
+        maxSoldDate: Long,
+        sellingStatus: Long?,
+        minPrice: Int,
+        maxPrice: Int,
+        minSurface: Int,
+        maxSurface: Int
+    ): List<PropertyWithPhotosEntity> {
+
+        return propertyWithPhotosList
     }
 
     override suspend fun getPropertyList(): List<PropertyWithPhotosEntity> {
@@ -57,10 +181,10 @@ class FakePropertiesDao : PropertiesDao {
                 0.0,
                 "",
                 0L,
-                null,
                 0,
                 0,
-                null,
+                0,
+                -1,
                 -1L
             ),
             null

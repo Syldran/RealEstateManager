@@ -6,6 +6,9 @@ import com.ocproject.realestatemanager.domain.models.Property
 object PropertyValidator {
     fun validateProperty(property: Property): ValidationResult {
         var result = ValidationResult()
+        if (property.description.isBlank()) {
+            result = result.copy(descriptionError = "Description can't be empty.")
+        }
         if (property.address.isBlank()) {
             result = result.copy(addressError = "Address can't be empty.")
         }
@@ -22,15 +25,15 @@ object PropertyValidator {
             result = result.copy(lngError = "Longitude can't be empty.")
         }
 
-        if (property.surfaceArea == null || property.surfaceArea == 0) {
+        if (property.surfaceArea == 0) {
             result = result.copy(surfaceAreaError = "Surface area can't be empty.")
         }
 
-        if (property.areaCode == null || property.areaCode == 0) {
+        if (property.areaCode == 0) {
             result = result.copy(areaCodeError = "Area code can't be empty.")
         }
 
-        if (property.price == null || property.price == 0) {
+        if (property.price == 0) {
             result = result.copy(priceError = "Price can't be empty.")
         }
 
@@ -42,6 +45,7 @@ object PropertyValidator {
     }
 
     data class ValidationResult(
+        val descriptionError: String? = null,
         val addressError: String? = null,
         val townError: String? = null,
         val latError: String? = null,

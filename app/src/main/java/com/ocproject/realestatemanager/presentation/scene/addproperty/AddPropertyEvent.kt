@@ -5,9 +5,10 @@ import com.ocproject.realestatemanager.domain.models.Property
 
 sealed interface AddPropertyEvent {
     data class OnPhotoPicked(val listByteArray: List<ByteArray>?) : AddPropertyEvent
-    data object SaveProperty : AddPropertyEvent
+    data class SaveProperty(val successMessage: String, val failureMessage: String) : AddPropertyEvent
     data class OnChangeNavigationStatus(val value : Boolean) : AddPropertyEvent
     data class UpdateForm(
+        val description: String? = null,
         val town: String? = null,
         val address: String? = null,
         val country: String? = null,
@@ -18,10 +19,13 @@ sealed interface AddPropertyEvent {
         val longitude: String? = null,
     ) : AddPropertyEvent
 
+    data class UpdateLatitudeInput(val input: String) : AddPropertyEvent
+    data class UpdateLongitudeInput(val input: String) : AddPropertyEvent
+
     data class UpdateTags(
         val school: Boolean = false,
-        val shop: Boolean = false,
         val park: Boolean = false,
+        val shop: Boolean = false,
         val transport: Boolean = false,
 //        val sold: Long? = null,
     ) : AddPropertyEvent

@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.domain.repositories
 
+import com.ocproject.realestatemanager.core.Filter
 import com.ocproject.realestatemanager.domain.models.Property
 
 interface PropertiesRepository {
@@ -8,6 +9,8 @@ interface PropertiesRepository {
     suspend fun deleteProperty(property: Property)
 
     suspend fun getPropertyList(): List<Property>
+
+    suspend fun getPropertyListFiltered(filter: Filter): List<Property>
 
     suspend fun getProperty(id: Long): Property
 }

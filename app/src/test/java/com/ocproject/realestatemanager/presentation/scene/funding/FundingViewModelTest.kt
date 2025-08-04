@@ -13,7 +13,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.math.pow
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FundingViewModelTest {
@@ -52,11 +51,11 @@ class FundingViewModelTest {
     fun `rating bottom sheet state test`() = runTest {
         viewModel.onEvent(FundingEvent.OpenRatingSelectionSheet)
         advanceUntilIdle()
-        assert(viewModel.state.value.isRatingSelectionSheetOpen)
+        assert(viewModel.state.value.isRatingListSheetOpen)
 
         viewModel.onEvent(FundingEvent.DismissRatingSelectionSheet)
         advanceUntilIdle()
-        assert(!viewModel.state.value.isRatingSelectionSheetOpen)
+        assert(!viewModel.state.value.isRatingListSheetOpen)
     }
 
     @Test

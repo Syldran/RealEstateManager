@@ -1,4 +1,4 @@
-package com.ocproject.realestatemanager.presentation.sharedcomponents
+package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -47,7 +45,7 @@ fun PropertyPhoto(
                 modifier = photoModifier,
                 contentScale = ContentScale.Crop
             )
-            if (propertyWithPhotos?.sold != null) {
+            if (propertyWithPhotos?.sold != -1L) {
                 Image(
                     painter = painterResource(id = R.drawable.sold_png_transparent),
                     contentDescription = "Your Image",
@@ -68,7 +66,7 @@ fun PropertyPhoto(
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
-            if (propertyWithPhotos?.sold != null) {
+            if (propertyWithPhotos?.sold != -1L) {
                 Image(
                     painter = painterResource(id = R.drawable.sold_png_transparent),
                     contentDescription = "Your Image",

@@ -31,8 +31,6 @@ enum class SortType {
     PRICE,
     DATE,
     AREA,
-//    TAGS,
-//    TOWN,
 }
 
 enum class Order {

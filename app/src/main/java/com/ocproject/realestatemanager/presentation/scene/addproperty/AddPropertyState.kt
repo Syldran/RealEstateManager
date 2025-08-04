@@ -4,6 +4,7 @@ import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 
 data class AddPropertyState(
+    val descriptionError: String? = null,
     val addressError: String? = null,
     val townError: String? = null,
     val latError: String? = null,
@@ -25,11 +26,13 @@ data class AddPropertyState(
         lng = 0.0,
         country = "",
         createdDate = null,
-        areaCode = null,
-        surfaceArea = null,
-        price = null,
+        areaCode = 0,
+        surfaceArea = 0,
+        price = 0,
         id = 0L,
-        sold = null,
+        sold = -1,
     ),
     val soldState : Boolean = false,
+    val latitudeInput: String = "",
+    val longitudeInput: String = "",
 )

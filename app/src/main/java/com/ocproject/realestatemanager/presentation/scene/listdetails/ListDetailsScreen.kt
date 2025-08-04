@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,13 +53,14 @@ fun ListDetails(
     onNavigateToMapOfProperties: () -> Unit,
     onNavigateToFundingScreen: () -> Unit,
     currentPosition: LatLng?,
+    globalSnackbarHostState: SnackbarHostState,
 ) {
 
     val state by viewModel.state.collectAsState()
 
 
-    LaunchedEffect(state.properties) {
-        viewModel.onEvent(ListDetailsEvent.GetProperties)
+    LaunchedEffect(state.properties, state.filterState) {
+        viewModel.onEvent(ListDetailsEvent.GetPropertiesFiltered(state.filterState))
     }
 
     ListDetailsContent(
@@ -67,8 +68,9 @@ fun ListDetails(
         onEvent = viewModel::onEvent,
         onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen,
         onNavigateToMapOfProperties = onNavigateToMapOfProperties,
-        onNavigateToFundingScreen = onNavigateToMapOfProperties,
+        onNavigateToFundingScreen = onNavigateToFundingScreen,
         currentPosition = currentPosition,
+        globalSnackbarHostState = globalSnackbarHostState,
     )
 }
 
@@ -81,6 +83,7 @@ fun ListDetailsContent(
     onNavigateToMapOfProperties: () -> Unit,
     onNavigateToFundingScreen: () -> Unit,
     currentPosition: LatLng?,
+    globalSnackbarHostState: SnackbarHostState,
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<Property>()
     val scope = rememberCoroutineScope()
@@ -139,16 +142,24 @@ fun ListDetailsContent(
                                     focusPosition = LatLng(
                                         property.lat,
                                         property.lng,
-                                    )
+                                    ),
+                                    globalSnackbarHostState = globalSnackbarHostState
                                 )
                             }
-                        } else {
+                        } else if (!state.mapMode) {
+
                             Text(
                                 text = stringResource(R.string.empty_list_details_screen_msg),
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(8.dp),
                                 textAlign = TextAlign.Center
+                            )
+                        } else {
+                            MapOfProperties(
+                                currentPosition = currentPosition,
+                                focusPosition = currentPosition,
+                                globalSnackbarHostState = globalSnackbarHostState
                             )
                         }
                     }
@@ -160,7 +171,6 @@ fun ListDetailsContent(
                 PropertyFilterSheet(
                     state = state,
                     onEvent = onEvent,
-                    sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
                     scope = rememberCoroutineScope(),
                 )
             }
@@ -189,6 +199,8 @@ fun ListDetailsContent(
 @Preview
 @Composable
 fun ListDetailsPreview() {
+    // Preview doesn't need globalSnackbarHostState
+    val mockSnackbarHostState = androidx.compose.material3.SnackbarHostState()
     val propertyList = listOf(
         Property(
             id = 1L,
@@ -220,7 +232,7 @@ fun ListDetailsPreview() {
             price = 150000,
             surfaceArea = 150,
             areaCode = 18290,
-            sold = null,
+            sold = -1,
         ), Property(
             id = 3L,
             photoList = emptyList(),
@@ -238,9 +250,9 @@ fun ListDetailsPreview() {
             sold = 2500L,
         )
     )
+
     val statePreview = ListDetailsState(
         properties = propertyList,
-        sortedProperties = propertyList,
         mapMode = false,
         filterState = Filter(
             sortType = SortType.PRICE,
@@ -259,6 +271,7 @@ fun ListDetailsPreview() {
             areaCodeFilter =  null,
             minNbrPhotos = 0,
         ),
+        areaCodeList = emptyList()
     )
     ListDetailsContent(
         state = statePreview,
@@ -266,6 +279,7 @@ fun ListDetailsPreview() {
         onNavigateToAddPropertyScreen = {},
         onNavigateToMapOfProperties = {},
         onNavigateToFundingScreen = {},
-        currentPosition = LatLng(5.2, 5.8)
+        currentPosition = LatLng(5.2, 5.8),
+        globalSnackbarHostState = mockSnackbarHostState
     )
 }

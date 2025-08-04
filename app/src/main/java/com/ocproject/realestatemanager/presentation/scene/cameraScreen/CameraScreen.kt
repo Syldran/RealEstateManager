@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -20,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,13 +36,17 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ocproject.realestatemanager.R
+import com.ocproject.realestatemanager.core.GlobalSnackBarManager
+import com.ocproject.realestatemanager.presentation.scene.cameraScreen.utils.bitmapToByteArray
+import com.ocproject.realestatemanager.presentation.scene.cameraScreen.utils.imageProxyToBitmapWithRotation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CameraScreen(
-    onPhotoCaptured: (ByteArray) -> Unit = {}
+    onPhotoCaptured: (ByteArray) -> Unit = {},
+    globalSnackbarHostState: SnackbarHostState,
 ) {
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -138,25 +142,35 @@ private fun captureImage(
     imageCapture.takePicture(ContextCompat.getMainExecutor(context), object :
         ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
-            // Convert image to ByteArray
-            val buffer = image.planes[0].buffer
-            val bytes = ByteArray(buffer.remaining())
-            buffer.get(bytes)
+            // Convert image to Bitmap with proper rotation correction
+            val bitmap = imageProxyToBitmapWithRotation(image)
+
+            // Convert bitmap to ByteArray
+            val photoBytes = bitmapToByteArray(bitmap)
+
+            // Recycle the bitmap to free memory
+            bitmap.recycle()
 
             // Return photo by Callback
-            onPhotoCaptured(bytes)
+            onPhotoCaptured(photoBytes)
 
-            val toast = Toast.makeText(context,
-                context.getString(R.string.photo_captured_successfully), Toast.LENGTH_LONG)
-            toast.show()
+            // Show success message using GlobalSnackBar
+            GlobalSnackBarManager.showSnackMsg(
+                context.getString(R.string.photo_captured_successfully),
+                isSuccess = true
+            )
+            
             super.onCaptureSuccess(image)
             image.close()
         }
 
         override fun onError(exception: ImageCaptureException) {
-            val toast = Toast.makeText(context,
-                context.getString(R.string.capture_failed), Toast.LENGTH_LONG)
-            toast.show()
+            // Show error message using GlobalSnackBar
+            GlobalSnackBarManager.showSnackMsg(
+                context.getString(R.string.capture_failed),
+                isSuccess = false
+            )
+            
             super.onError(exception)
         }
     })

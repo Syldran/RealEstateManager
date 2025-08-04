@@ -43,7 +43,7 @@
     <string name="transport">Transport</string>
     <string name="done_icon_content_description">Done icon</string>
     <string name="close_icon_content_description">Close</string>
-    <string name="photo_captured_successfully">Photo captured successfully</string>
+    <string name="photo_captured_successfully">Photo captured successfully!</string>
     <string name="capture_failed">Capture failed</string>
     <string name="ask_permissions">Ask permissions</string>
     <string name="permissions_camera_required">Permissions camera required</string>
@@ -54,6 +54,7 @@
     <string name="camera">Camera</string>
     <string name="choose_from_gallery">Choose from Gallery</string>
     <string name="gallery">Gallery</string>
+    <string name="description">Description</string>
     <string name="address">Address</string>
     <string name="town">Town</string>
     <string name="country">Country</string>
@@ -69,4 +70,6 @@
     <string name="error_connexion">Error connexion</string>
     <string name="search_button_icon">Search button icon</string>
     <string name="select_location">Select Location</string>
+    <string name="property_saved_successfully">Property saved successfully!</string>
+    <string name="property_save_failed">Failed to save property. Please try again.</string>
 </resources>

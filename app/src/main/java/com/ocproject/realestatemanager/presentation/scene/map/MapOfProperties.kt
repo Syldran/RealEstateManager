@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +37,7 @@ fun MapOfProperties(
     mapViewModel: MapOfPropertiesViewModel = koinViewModel(),
     currentPosition: LatLng?,
     focusPosition: LatLng?,
-
+    globalSnackbarHostState: SnackbarHostState,
     ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
