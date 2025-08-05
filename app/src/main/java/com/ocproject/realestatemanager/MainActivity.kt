@@ -65,10 +65,12 @@ class MainActivity : ComponentActivity() {
     private var locationRequired: Boolean = false
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // enableEdgeToEdge is only available on Android 8.0+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            enableEdgeToEdge()
+        }
         setContent {
             var showPermissionResult by remember { mutableStateOf(false) }
             var currentPosition: LatLng? = null

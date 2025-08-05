@@ -60,7 +60,6 @@ import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
 import com.ocproject.realestatemanager.R
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPropertyScreen(

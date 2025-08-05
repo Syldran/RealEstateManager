@@ -14,6 +14,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,6 +49,7 @@ import com.ocproject.realestatemanager.R
 import com.ocproject.realestatemanager.core.GlobalSnackBarManager
 import com.ocproject.realestatemanager.presentation.scene.cameraScreen.utils.bitmapToByteArray
 import com.ocproject.realestatemanager.presentation.scene.cameraScreen.utils.imageProxyToBitmapWithRotation
+import com.ocproject.realestatemanager.presentation.scene.cameraScreen.CameraScreenLegacy
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import androidx.core.app.ActivityCompat
@@ -58,12 +60,19 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.activity.ComponentActivity
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CameraScreen(
     onPhotoCaptured: (ByteArray) -> Unit = {},
     navigateBack: () -> Unit = {},
 ) {
+    // Use legacy camera for Android 6.0-7.1, CameraX for Android 8.0+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        CameraScreenLegacy(
+            onPhotoCaptured = onPhotoCaptured,
+            navigateBack = navigateBack
+        )
+        return
+    }
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -123,7 +132,7 @@ fun CameraScreen(
             val cameraProvider = context.getCameraProvider()
             cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageCapture)
-            preview.surfaceProvider = previewView.surfaceProvider
+            preview.setSurfaceProvider(previewView.surfaceProvider)
         }
     }
 
@@ -154,7 +163,7 @@ fun CameraScreen(
                     // Navigation button similar to PropertyDetails
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         FilledTonalIconButton(
                             modifier = Modifier.padding(horizontal = 8.dp),
@@ -245,13 +254,16 @@ fun CameraScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
     suspendCoroutine { continuation ->
         ProcessCameraProvider.getInstance(this).also { cameraProvider ->
             cameraProvider.addListener({
                 continuation.resume(cameraProvider.get())
-            }, ContextCompat.getMainExecutor(this))
+            }, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ContextCompat.getMainExecutor(this)
+            } else {
+                java.util.concurrent.Executors.newSingleThreadExecutor()
+            })
         }
     }
 
@@ -262,8 +274,13 @@ private fun captureImage(
     onPhotoCaptured: (ByteArray) -> Unit
 ) {
 
-    imageCapture.takePicture(ContextCompat.getMainExecutor(context), object :
-        ImageCapture.OnImageCapturedCallback() {
+    imageCapture.takePicture(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ContextCompat.getMainExecutor(context)
+        } else {
+            java.util.concurrent.Executors.newSingleThreadExecutor()
+        }, 
+        object : ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
             // Convert image to Bitmap with proper rotation correction
             val bitmap = imageProxyToBitmapWithRotation(image)

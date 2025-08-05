@@ -7,7 +7,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.ocproject.realestatemanager.presentation.navigation.Screen
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.cameraScreen(
     navController: NavController
 ) {

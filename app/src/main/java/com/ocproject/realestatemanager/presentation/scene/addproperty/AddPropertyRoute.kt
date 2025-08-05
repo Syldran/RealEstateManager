@@ -13,7 +13,6 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.addPropertyScreen(navController: NavController) {
     composable(
         route = Screen.AddPropertyScreen.route + "/{id}",

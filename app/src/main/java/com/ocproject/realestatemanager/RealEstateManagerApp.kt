@@ -22,8 +22,8 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.addPropert
 import com.ocproject.realestatemanager.presentation.scene.cameraScreen.cameraScreen
 import com.ocproject.realestatemanager.presentation.scene.funding.fundingScreen
 import com.ocproject.realestatemanager.presentation.scene.listdetails.listDetailsScreen
+import com.ocproject.realestatemanager.core.utils.AndroidVersionUtils
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun RealEstateManagerApp(
@@ -31,6 +31,43 @@ fun RealEstateManagerApp(
     darkTheme: Boolean,
     dynamicColor: Boolean,
 ) {
+    // Check if Material 3 Adaptive is supported
+    if (!AndroidVersionUtils.supportsMaterial3Adaptive()) {
+        // Fallback for older Android versions
+        RealEstateManagerTheme(
+            darkTheme = darkTheme,
+            dynamicColor = false, // Disable dynamic color for older versions
+        ) {
+            val navController = rememberNavController()
+            val snackBarHostState = remember { SnackbarHostState() }
+            val snackBarState by GlobalSnackBarManager.snackBarState.collectAsState()
+            
+            LaunchedEffect(snackBarState) {
+                if (snackBarState.isVisible && snackBarState.message != null) {
+                    snackBarHostState.showSnackbar(
+                        message = snackBarState.message!!,
+                        duration = SnackbarDuration.Short
+                    )
+                    GlobalSnackBarManager.hideToast()
+                }
+            }
+
+            Scaffold(
+                snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+            ) { paddingValues ->
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.ListDetailsScreen.route
+                ) {
+                    listDetailsScreen(navController, currentLocation, snackBarHostState)
+                    addPropertyScreen(navController)
+                    fundingScreen(navController)
+                    cameraScreen(navController)
+                }
+            }
+        }
+        return
+    }
     RealEstateManagerTheme(
         darkTheme = darkTheme,
         dynamicColor = dynamicColor,
