@@ -32,6 +32,15 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.CancellationTokenSource
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
 
@@ -61,9 +70,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var locationText by remember { mutableStateOf("No location obtained :(") }
             var showPermissionResult by remember { mutableStateOf(false) }
-            var permissionResultText by remember { mutableStateOf("Permission Granted...") }
             var currentPosition: LatLng? = null
             var currentPositionState by remember {
                 mutableStateOf(currentPosition)
@@ -74,34 +81,27 @@ class MainActivity : ComponentActivity() {
                 onPermissionGranted = {
                     // Callback when permission is granted
                     showPermissionResult = true
-                    permissionResultText = "Permission Granted..."
-                    // Attempt to get the last known user location
-                    getLastUserLocation(
-                        onGetLastLocationSuccess = {
+                    // Attempt to get the current user location first
+                    getCurrentLocation(
+                        onGetCurrentLocationSuccess = {
+                            // Current location obtained
                             currentPositionState = LatLng(it.first, it.second)
-                            locationText =
-                                "Location using LAST-LOCATION: LATITUDE: ${it.first}, LONGITUDE: ${it.second}"
                         },
-                        onGetLastLocationFailed = { exception ->
-                            showPermissionResult = true
-                            locationText =
-                                exception.localizedMessage ?: "Error Getting Last Location"
-                        },
-                        onGetLastLocationIsNull = {
-                            // Attempt to get the current user location
-                            getCurrentLocation(
-                                onGetCurrentLocationSuccess = {
+                        onGetCurrentLocationFailed = {
+                            // Fallback to last known location if current location fails
+                            getLastUserLocation(
+                                onGetLastLocationSuccess = {
                                     currentPositionState = LatLng(it.first, it.second)
-                                    locationText =
-                                        "Location using CURRENT-LOCATION: LATITUDE: ${it.first}, LONGITUDE: ${it.second}"
                                 },
-                                onGetCurrentLocationFailed = {
+                                onGetLastLocationFailed = { exception ->
+                                    // Both current and last location failed
                                     currentPosition = null
-
                                     showPermissionResult = true
-                                    locationText =
-                                        it.localizedMessage
-                                            ?: "Error Getting Current Location"
+                                },
+                                onGetLastLocationIsNull = {
+                                    // Last location is null, no location available
+                                    currentPosition = null
+                                    showPermissionResult = true
                                 }
                             )
                         }
@@ -110,7 +110,6 @@ class MainActivity : ComponentActivity() {
                 onPermissionDenied = {
                     // Callback when permission is denied
                     showPermissionResult = true
-                    permissionResultText = "Permission Denied :("
                 },
             )
             Column(
@@ -118,16 +117,8 @@ class MainActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Display a message indicating the permission request process
-//                Text(
-//                    text = "Requesting location permission...",
-//                    textAlign = TextAlign.Center
-//                )
 
-                // Display permission result and location information if available
                 if (showPermissionResult) {
-//                    Text(text = permissionResultText, textAlign = TextAlign.Center)
-//                    Text(text = locationText, textAlign = TextAlign.Center)
                     RealEstateManagerApp(
                         currentLocation = currentPositionState,
                         darkTheme = isSystemInDarkTheme(),
@@ -145,6 +136,7 @@ class MainActivity : ComponentActivity() {
         onGetLastLocationFailed: (Exception) -> Unit,
         onGetLastLocationIsNull: () -> Unit
     ) {
+        Timber.d("🔍 Attempting to get last known location...")
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         // Check if location permissions are granted
         if (areLocationPermissionsGranted()) {
@@ -162,6 +154,8 @@ class MainActivity : ComponentActivity() {
                     // If an error occurs, invoke the failure callback with the exception
                     onGetLastLocationFailed(exception)
                 }
+        } else {
+        // Permissions not granted
         }
     }
 
@@ -171,6 +165,9 @@ class MainActivity : ComponentActivity() {
         onGetCurrentLocationFailed: (Exception) -> Unit,
         priority: Boolean = true
     ) {
+        // Initialize fusedLocationProviderClient
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        
         // Determine the accuracy priority based on the 'priority' parameter
         val accuracy = if (priority) Priority.PRIORITY_HIGH_ACCURACY
         else Priority.PRIORITY_BALANCED_POWER_ACCURACY
@@ -185,12 +182,14 @@ class MainActivity : ComponentActivity() {
                     // If location is not null, invoke the success callback with latitude and longitude
                     onGetCurrentLocationSuccess(Pair(it.latitude, it.longitude))
                 }?.run {
-                    //Location null do something
+                    onGetCurrentLocationFailed(Exception("Current location is null"))
                 }
             }.addOnFailureListener { exception ->
                 // If an error occurs, invoke the failure callback with the exception
                 onGetCurrentLocationFailed(exception)
             }
+        } else {
+            // something
         }
     }
 
@@ -209,6 +208,36 @@ fun RequestLocationPermissionUsingRememberLauncherForActivityResult(
     onPermissionGranted: () -> Unit,
     onPermissionDenied: () -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = LocalContext.current as? ComponentActivity
+    var showRationaleDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+    
+    // Check if permissions are already granted
+    val arePermissionsAlreadyGranted = remember {
+        ActivityCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+        ActivityCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+    
+    // Check if we should show rationale
+    val shouldShowRationale = remember {
+        activity?.let { act ->
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                act,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) || ActivityCompat.shouldShowRequestPermissionRationale(
+                act,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        } ?: false
+    }
+    
     // 1. Create a stateful launcher using rememberLauncherForActivityResult
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -218,21 +247,126 @@ fun RequestLocationPermissionUsingRememberLauncherForActivityResult(
             acc && next
         }
 
-        // 3. Invoke the appropriate callback based on the permission result
+        // 3. Handle permission results
         if (arePermissionsGranted) {
             onPermissionGranted.invoke()
         } else {
-            onPermissionDenied.invoke()
+            // Check if user permanently denied permissions
+            val permanentlyDenied = permissionsMap.any { (permission, granted) ->
+                !granted && activity?.let { act ->
+                    !ActivityCompat.shouldShowRequestPermissionRationale(act, permission)
+                } ?: true
+            }
+            
+            if (permanentlyDenied) {
+                showSettingsDialog = true
+            } else {
+                onPermissionDenied.invoke()
+            }
         }
     }
 
-    // 4. Launch the permission request on composition
+    // 4. Launch the permission request only if permissions are not already granted
     LaunchedEffect(Unit) {
-        locationPermissionLauncher.launch(
-            arrayOf(
-                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-            )
+        if (!arePermissionsAlreadyGranted) {
+            if (shouldShowRationale) {
+                showRationaleDialog = true
+            } else {
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    )
+                )
+            }
+        } else {
+            // If permissions are already granted, call the success callback
+            onPermissionGranted.invoke()
+        }
+    }
+    
+    // Dialog to explain why we need location permission
+    if (showRationaleDialog) {
+        AlertDialog(
+            onDismissRequest = { 
+                showRationaleDialog = false
+                onPermissionDenied.invoke()
+            },
+            title = { Text("Location required.") },
+            text = { 
+                Text(
+                    stringResource(R.string.application_needs_your_location_to_show_you_on_map) +
+                            stringResource(R.string.your_location_is_used_only_locally_and_never_shared)
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showRationaleDialog = false
+                        locationPermissionLauncher.launch(
+                            arrayOf(
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            )
+                        )
+                    }
+                ) {
+                    Text("Authorise")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { 
+                        showRationaleDialog = false
+                        onPermissionDenied.invoke()
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+    
+    // Dialog to guide user to settings if permissions are permanently denied
+    if (showSettingsDialog) {
+        AlertDialog(
+            onDismissRequest = { 
+                showSettingsDialog = false
+                onPermissionDenied.invoke()
+            },
+            title = { Text("Permissions denied.") },
+            text = { 
+                Text(
+                    "Location permissions have been definitely refused.\n\n" +
+                    "To use application fully, " +
+                    "please activate them in settings."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showSettingsDialog = false
+                        // Open app settings
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
+                        onPermissionDenied.invoke()
+                    }
+                ) {
+                    Text("Settings")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { 
+                        showSettingsDialog = false
+                        onPermissionDenied.invoke()
+                    }
+                ) {
+                    Text("Proceed without location.")
+                }
+            }
         )
     }
 }

@@ -10,6 +10,7 @@ import com.ocproject.realestatemanager.data.entities.PropertyWithPhotosEntity
 import com.ocproject.realestatemanager.data.toPhotoPropertyEntity
 import com.ocproject.realestatemanager.data.toProperty
 import com.ocproject.realestatemanager.data.toPropertyEntity
+import com.ocproject.realestatemanager.di.testDatabaseModule
 import com.ocproject.realestatemanager.domain.models.PhotoProperty
 import com.ocproject.realestatemanager.domain.models.Property
 import kotlinx.coroutines.test.runTest
@@ -17,6 +18,10 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.context.GlobalContext.stopKoin
+import org.koin.java.KoinJavaComponent.getKoin
 import java.util.Calendar
 import kotlin.assert
 
@@ -25,7 +30,6 @@ import kotlin.assert
 class DBTest {
 
     private lateinit var propertiesDao: PropertiesDao
-    private lateinit var db: PropertiesDatabase
 
     var propertiesToAdd = listOf(
         Property(
@@ -129,18 +133,18 @@ class DBTest {
     )
 
     @Before
-    fun createDb() {
-        db = Room.inMemoryDatabaseBuilder(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            PropertiesDatabase::class.java
-        ).allowMainThreadQueries()
-            .build()
-        propertiesDao = db.dao
+    fun setup() {
+        stopKoin() // Stop prod modules.
+        startKoin {
+            androidContext(InstrumentationRegistry.getInstrumentation().targetContext)
+            modules(testDatabaseModule)
+        }
+        propertiesDao = getKoin().get()
     }
 
     @After
-    fun closeDb() {
-        db.close()
+    fun tearDown() {
+        stopKoin()
     }
 
     @Test

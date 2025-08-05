@@ -55,6 +55,7 @@ import com.ocproject.realestatemanager.presentation.scene.addproperty.components
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PhotosComposable
 import com.ocproject.realestatemanager.presentation.scene.addproperty.components.PropertyTextField
 import com.ocproject.realestatemanager.presentation.scene.addproperty.utils.ImagePicker
+import com.ocproject.realestatemanager.core.utils.AdaptiveDimensions
 import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
 import com.ocproject.realestatemanager.R
@@ -132,7 +133,7 @@ fun AddPropertyScreen(
     }
 
     Scaffold(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = AdaptiveDimensions.getSpacingMedium()),
         containerColor = colorResource(id = R.color.white),
         contentWindowInsets = WindowInsets.safeDrawing, // Applies safe area to Scaffold content
         // Global SnackbarHost is handled in RealEstateManagerApp.kt
@@ -144,7 +145,7 @@ fun AddPropertyScreen(
                 .padding(contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(AdaptiveDimensions.getSpacingXLarge() * 2))
 
 
             // Display already added photos
@@ -156,7 +157,7 @@ fun AddPropertyScreen(
             // Add photos button
             Button(
                 onClick = { showPhotoOptionsBottomSheet = true },
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = AdaptiveDimensions.getSpacingMedium())
             ) {
                 Text(stringResource(R.string.add_a_photo))
             }
@@ -170,12 +171,12 @@ fun AddPropertyScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
+                            .padding(AdaptiveDimensions.getSpacingMedium())
                     ) {
                         Text(
                             text = stringResource(R.string.choose_a_photo),
                             style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier.padding(bottom = 16.dp)
+                            modifier = Modifier.padding(bottom = AdaptiveDimensions.getSpacingMedium())
                         )
 
                         ListItem(
@@ -516,12 +517,16 @@ fun AddPropertyScreen(
                         failureMessage = failureMessage
                     )
                 )
+            }) {
+                Text(text = stringResource(R.string.save_property))
+            }
+            
+            // Observe navigation state changes
+            LaunchedEffect(state.navToPropertyListScreen) {
                 if (state.navToPropertyListScreen) {
                     onNavigateToListDetails()
                     viewModel.onEvent(AddPropertyEvent.OnChangeNavigationStatus(true))
                 }
-            }) {
-                Text(text = stringResource(R.string.save_property))
             }
             Spacer(modifier = Modifier.height(16.dp))
 

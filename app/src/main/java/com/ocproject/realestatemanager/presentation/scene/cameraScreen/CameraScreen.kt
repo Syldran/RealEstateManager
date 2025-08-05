@@ -16,9 +16,18 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,12 +50,19 @@ import com.ocproject.realestatemanager.presentation.scene.cameraScreen.utils.bit
 import com.ocproject.realestatemanager.presentation.scene.cameraScreen.utils.imageProxyToBitmapWithRotation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import androidx.core.app.ActivityCompat
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.activity.ComponentActivity
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CameraScreen(
     onPhotoCaptured: (ByteArray) -> Unit = {},
-    globalSnackbarHostState: SnackbarHostState,
+    navigateBack: () -> Unit = {},
 ) {
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -69,12 +85,37 @@ fun CameraScreen(
             ) == PackageManager.PERMISSION_GRANTED
         )
     }
+    
+    var showCameraRationaleDialog by remember { mutableStateOf(false) }
+    var showCameraSettingsDialog by remember { mutableStateOf(false) }
+    val activity = LocalContext.current as? ComponentActivity
 
     // Launcher for asking permissions
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasCameraPermission = isGranted
+        if (!isGranted) {
+            // Check if user permanently denied camera permission
+            if (activity?.let { act ->
+                !ActivityCompat.shouldShowRequestPermissionRationale(act, Manifest.permission.CAMERA)
+            } ?: true) {
+                showCameraSettingsDialog = true
+            }
+        }
+    }
+
+    // Only request camera permission if not already granted
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) {
+            if (activity?.let { act ->
+                ActivityCompat.shouldShowRequestPermissionRationale(act, Manifest.permission.CAMERA)
+            } ?: false) {
+                showCameraRationaleDialog = true
+            } else {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
     }
 
     LaunchedEffect(hasCameraPermission) {
@@ -110,15 +151,97 @@ fun CameraScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(stringResource(R.string.permissions_camera_required))
-                    Button(
-                        onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }
+                    // Navigation button similar to PropertyDetails
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center
                     ) {
-                        Text(stringResource(R.string.ask_permissions))
+                        FilledTonalIconButton(
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            onClick = { navigateBack() },
+                            colors = IconButtonDefaults.filledTonalIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
                     }
+                    Text(stringResource(R.string.permissions_camera_required))
                 }
             }
         }
+    }
+    
+    // Dialog to explain why we need camera permission
+    if (showCameraRationaleDialog) {
+        AlertDialog(
+            onDismissRequest = { showCameraRationaleDialog = false },
+            title = { Text("Camera required") },
+            text = { 
+                Text(
+                    "Application need your phone camera to :\n\n" +
+                    "• capture photo of properties.\n\n" +
+                    "Photos are saved locally and your device."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showCameraRationaleDialog = false
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                ) {
+                    Text("Authorise")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showCameraRationaleDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+    
+    // Dialog to guide user to settings if camera permission is permanently denied
+    if (showCameraSettingsDialog) {
+        AlertDialog(
+            onDismissRequest = { showCameraSettingsDialog = false },
+            title = { Text("Permission caméra refusée") },
+            text = { 
+                Text(
+                    "Access has been denied for good.\n\n" +
+                    "To capture photo of property , " +
+                    "please enable use in settings."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showCameraSettingsDialog = false
+                        // Open app settings
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
+                    }
+                ) {
+                    Text("Settings")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showCameraSettingsDialog = false }
+                ) {
+                    Text("Proceed without camera")
+                }
+            }
+        )
     }
 }
 

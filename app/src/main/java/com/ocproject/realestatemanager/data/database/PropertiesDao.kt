@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import androidx.room.Upsert
 import com.ocproject.realestatemanager.data.entities.PhotoPropertyEntity
 import com.ocproject.realestatemanager.data.entities.PropertyEntity
@@ -12,6 +13,22 @@ import com.ocproject.realestatemanager.data.entities.PropertyWithPhotosEntity
 
 @Dao
 interface PropertiesDao {
+
+//    @Query("SELECT * FROM PropertyEntity")
+//    fun getAllCursor(): Cursor
+//
+//    @Query("SELECT * FROM PropertyEntity WHERE id = :id")
+//    fun getByIdCursor(id: Long): Cursor
+//
+//    @Transaction
+//    @Query("SELECT * FROM PropertyEntity")
+//    fun getAllWithPhotosCursor(): Cursor
+//
+//    @Transaction
+//    @Query("SELECT * FROM PropertyEntity WHERE id = :id")
+//    fun getWithPhotosByIdCursor(id: Long): Cursor
+
+//////////////////////////////////
 
     @Query("SELECT * FROM PropertyEntity")
     fun getPropertiesWithCursor(): Cursor
@@ -43,6 +60,12 @@ interface PropertiesDao {
 
     @Query("DELETE FROM PhotoPropertyEntity WHERE id = :photoId")
     suspend fun deletePhotoById(photoId: Long)
+
+    @Query("DELETE FROM PropertyEntity")
+    suspend fun deleteAllProperties(): Int
+
+    @Query("DELETE FROM PhotoPropertyEntity")
+    suspend fun deleteAllPhotos(): Int
 
     @Transaction
     @Query(

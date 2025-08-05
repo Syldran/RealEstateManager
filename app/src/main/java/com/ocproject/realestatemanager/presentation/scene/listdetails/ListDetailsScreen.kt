@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -36,11 +35,12 @@ import com.ocproject.realestatemanager.core.SellingStatus
 import com.ocproject.realestatemanager.core.SortType
 import com.ocproject.realestatemanager.core.utils.Range
 import com.ocproject.realestatemanager.domain.models.Property
+import com.ocproject.realestatemanager.presentation.scene.listdetails.components.MapOfProperties
 import com.ocproject.realestatemanager.presentation.scene.listdetails.components.PropertyDetails
 import com.ocproject.realestatemanager.presentation.scene.listdetails.components.PropertyFilterSheet
 import com.ocproject.realestatemanager.presentation.scene.listdetails.components.PropertyList
 import com.ocproject.realestatemanager.presentation.scene.listdetails.components.PropertyListTopBar
-import com.ocproject.realestatemanager.presentation.scene.map.MapOfProperties
+import com.ocproject.realestatemanager.core.utils.AdaptiveDimensions
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
@@ -50,10 +50,8 @@ import java.util.Calendar
 fun ListDetails(
     viewModel: ListDetailsViewModel = koinViewModel(),
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
-    onNavigateToMapOfProperties: () -> Unit,
     onNavigateToFundingScreen: () -> Unit,
     currentPosition: LatLng?,
-    globalSnackbarHostState: SnackbarHostState,
 ) {
 
     val state by viewModel.state.collectAsState()
@@ -67,10 +65,8 @@ fun ListDetails(
         state = state,
         onEvent = viewModel::onEvent,
         onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen,
-        onNavigateToMapOfProperties = onNavigateToMapOfProperties,
         onNavigateToFundingScreen = onNavigateToFundingScreen,
         currentPosition = currentPosition,
-        globalSnackbarHostState = globalSnackbarHostState,
     )
 }
 
@@ -80,10 +76,8 @@ fun ListDetailsContent(
     state: ListDetailsState,
     onEvent: (ListDetailsEvent) -> Unit,
     onNavigateToAddPropertyScreen: (Long?) -> Unit,
-    onNavigateToMapOfProperties: () -> Unit,
     onNavigateToFundingScreen: () -> Unit,
     currentPosition: LatLng?,
-    globalSnackbarHostState: SnackbarHostState,
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator<Property>()
     val scope = rememberCoroutineScope()
@@ -92,7 +86,6 @@ fun ListDetailsContent(
             state = state,
             onEvent = onEvent,
             onNavigateToAddPropertyScreen = onNavigateToAddPropertyScreen,
-            onNavigateToMapOfProperties = onNavigateToMapOfProperties,
             onNavigateToFundingScreen = onNavigateToFundingScreen,
             modifier = Modifier
         )
@@ -100,7 +93,7 @@ fun ListDetailsContent(
             navigator = navigator,
             listPane = {
                 Box(
-                    modifier = Modifier.weight(1 / 4F)
+                    modifier = Modifier.weight(if (AdaptiveDimensions.isTablet()) 1 / 3F else 1 / 4F)
                 ) {
                     PropertyList(
                         onClick = { property ->
@@ -119,7 +112,7 @@ fun ListDetailsContent(
             detailPane = {
                 AnimatedPane {
                     Box(
-                        modifier = Modifier.weight(3 / 4F)
+                        modifier = Modifier.weight(if (AdaptiveDimensions.isTablet()) 2 / 3F else 3 / 4F)
                     ) {
                         val property = state.selectedProperty
                         if (property != null) {
@@ -138,12 +131,18 @@ fun ListDetailsContent(
                                 )
                             } else {
                                 MapOfProperties(
+                                    state = state,
+                                    onEvent = onEvent,
                                     currentPosition = currentPosition,
                                     focusPosition = LatLng(
                                         property.lat,
                                         property.lng,
                                     ),
-                                    globalSnackbarHostState = globalSnackbarHostState
+                                    navigateBack = {
+                                        scope.launch {
+                                            navigator.navigateBack()
+                                        }
+                                    },
                                 )
                             }
                         } else if (!state.mapMode) {
@@ -152,14 +151,20 @@ fun ListDetailsContent(
                                 text = stringResource(R.string.empty_list_details_screen_msg),
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(8.dp),
+                                    .padding(AdaptiveDimensions.getSpacingSmall()),
                                 textAlign = TextAlign.Center
                             )
                         } else {
                             MapOfProperties(
+                                state = state,
+                                onEvent = onEvent,
                                 currentPosition = currentPosition,
                                 focusPosition = currentPosition,
-                                globalSnackbarHostState = globalSnackbarHostState
+                                navigateBack = {
+                                    scope.launch {
+                                        navigator.navigateBack()
+                                    }
+                                },
                             )
                         }
                     }
@@ -239,7 +244,7 @@ fun ListDetailsPreview() {
             type = "Apartment",
             nbrRoom = 2,
             realEstateAgent = "Jane Smith",
-        ),         Property(
+        ), Property(
             id = 3L,
             photoList = emptyList(),
             interestPoints = listOf(InterestPoint.SCHOOL),
@@ -277,7 +282,7 @@ fun ListDetailsPreview() {
             tagTransport = false,
             tagShop = false,
             tagPark = false,
-            areaCodeFilter =  null,
+            areaCodeFilter = null,
             typeHousing = null,
             minNbrPhotos = 0,
         ),
@@ -287,9 +292,7 @@ fun ListDetailsPreview() {
         state = statePreview,
         onEvent = {},
         onNavigateToAddPropertyScreen = {},
-        onNavigateToMapOfProperties = {},
         onNavigateToFundingScreen = {},
         currentPosition = LatLng(5.2, 5.8),
-        globalSnackbarHostState = mockSnackbarHostState
     )
 }

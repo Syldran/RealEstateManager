@@ -28,7 +28,6 @@ class InstrumentedTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    // use createAndroidComposeRule<YourActivity>() if you need access to an activity
     @Test
     fun useAppContext() {
         // Context of the app under test.
@@ -36,6 +35,7 @@ class InstrumentedTest {
         assertEquals("com.ocproject.realestatemanager", appContext.packageName)
     }
 
+    // To test with and without internet enable.
     @Test
     fun testInternetOnAutocomplete() {
         // Start app

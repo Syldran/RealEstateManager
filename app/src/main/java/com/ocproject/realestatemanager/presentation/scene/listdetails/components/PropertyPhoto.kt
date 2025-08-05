@@ -27,7 +27,6 @@ fun PropertyPhoto(
     propertyWithPhotos: Property?,
     modifier: Modifier = Modifier,
     iconSize: Dp = 25.dp,
-//    isSold: Boolean = false,
 ) {
     val bitmap = if (propertyWithPhotos?.photoList.isNullOrEmpty()) {
         null

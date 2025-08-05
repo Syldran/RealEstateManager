@@ -36,7 +36,6 @@ fun PropertyListTopBar(
     onEvent: (ListDetailsEvent) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToAddPropertyScreen: (propertyId: Long?) -> Unit,
-    onNavigateToMapOfProperties: () -> Unit,
     onNavigateToFundingScreen: () -> Unit,
 ) {
     var menuExpanded by remember {
@@ -97,23 +96,6 @@ fun PropertyListTopBar(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
-                val configuration = LocalConfiguration.current
-                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = stringResource(R.string.map_geolocation_item_menu_appbar),
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                                fontFamily = MaterialTheme.typography.bodyMedium.fontFamily
-                            )
-                        },
-                        onClick = {
-                            onNavigateToMapOfProperties()
-                            menuExpanded = false
-                        },
-                    )
-                }
                 DropdownMenuItem(
                     text = {
                         Text(

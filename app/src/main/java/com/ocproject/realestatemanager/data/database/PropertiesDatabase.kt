@@ -16,21 +16,5 @@ import com.ocproject.realestatemanager.data.entities.PropertyEntity
 )
 @TypeConverters(Converters::class)
 abstract class PropertiesDatabase: RoomDatabase() {
-    companion object {
-        @Volatile
-        private var INSTANCE: PropertiesDatabase? = null
-
-        fun getInstance(context: Context): PropertiesDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    PropertiesDatabase::class.java,
-                    "properties.db"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
     abstract val dao: PropertiesDao
 }

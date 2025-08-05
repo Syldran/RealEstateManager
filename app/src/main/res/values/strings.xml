@@ -75,4 +75,6 @@
     <string name="type">Type</string>
     <string name="number_of_rooms">Number of rooms</string>
     <string name="real_estate_agent">Real estate agent</string>
+    <string name="your_location_is_used_only_locally_and_never_shared">Your location is used only locally and never shared.</string>
+    <string name="application_needs_your_location_to_show_you_on_map">Application needs your location to show you on map.\n</string>
 </resources>

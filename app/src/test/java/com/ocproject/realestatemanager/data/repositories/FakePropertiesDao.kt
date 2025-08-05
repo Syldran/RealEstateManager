@@ -56,6 +56,19 @@ class FakePropertiesDao : PropertiesDao {
         photosProperty.removeIf { it.id == photoId }
     }
 
+    override suspend fun deleteAllProperties(): Int {
+        val count = propertyList.size
+        propertyList.clear()
+        propertyWithPhotosList.clear()
+        return count
+    }
+
+    override suspend fun deleteAllPhotos(): Int {
+        val count = photosProperty.size
+        photosProperty.clear()
+        return count
+    }
+
     override suspend fun getPropertyListPriceASC(
         areaCode: Int?,
         type: String?,

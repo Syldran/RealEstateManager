@@ -9,7 +9,6 @@ import com.ocproject.realestatemanager.domain.usecases.SavePropertyUseCase
 import com.ocproject.realestatemanager.presentation.scene.addproperty.AddPropertyViewModel
 import com.ocproject.realestatemanager.presentation.scene.funding.FundingViewModel
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsViewModel
-import com.ocproject.realestatemanager.presentation.scene.map.MapOfPropertiesViewModel
 import org.koin.core.module.dsl.*
 import org.koin.dsl.module
 
@@ -67,9 +66,6 @@ val appModule = module {
         )
     }
 
-    viewModel {
-        MapOfPropertiesViewModel()
-    }
     viewModel {
         FundingViewModel()
     }

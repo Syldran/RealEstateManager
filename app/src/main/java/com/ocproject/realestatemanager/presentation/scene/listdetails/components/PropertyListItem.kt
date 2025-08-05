@@ -1,5 +1,6 @@
 package com.ocproject.realestatemanager.presentation.scene.listdetails.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +24,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ocproject.realestatemanager.core.InterestPoint
-import com.ocproject.realestatemanager.core.utils.UtilsKotlin
 import com.ocproject.realestatemanager.domain.models.Property
 import com.ocproject.realestatemanager.presentation.scene.listdetails.ListDetailsEvent
 
@@ -51,15 +51,15 @@ fun PropertyListItemContent(
     selectedProperty: Property? = null,
 ) {
     val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val isSelected = selectedProperty?.id == propertyWithPhotos.id
-    
+
     val backgroundColor = if (isLandscape && isSelected) {
         MaterialTheme.colorScheme.primaryContainer
     } else {
         Color.Transparent
     }
-    
+
     Row(
         modifier = modifier
             .background(backgroundColor)
@@ -71,26 +71,23 @@ fun PropertyListItemContent(
             modifier = Modifier.size(50.dp),
 
             )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.wrapContentWidth()) {
+        Column(modifier = Modifier.wrapContentWidth().padding(horizontal= 16.dp)) {
 
-            Text("Type: ${propertyWithPhotos.type}")
+            Text(propertyWithPhotos.type)
             Text(
-                "City: ${propertyWithPhotos.town}"
+                propertyWithPhotos.town
             )
             Text("$: ${propertyWithPhotos.price}")
         }
-
-        Spacer(modifier = Modifier.width(16.dp))
-        IconButton(
-            onClick = { onEvent(ListDetailsEvent.DeleteProperty(propertyWithPhotos)) },
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Delete,
-                contentDescription = "Delete",
-
-                )
-        }
+    //        IconButton(
+//            onClick = { onEvent(ListDetailsEvent.DeleteProperty(propertyWithPhotos)) },
+//        ) {
+//            Icon(
+//                imageVector = Icons.Rounded.Delete,
+//                contentDescription = "Delete",
+//
+//                )
+//        }
     }
     HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 }

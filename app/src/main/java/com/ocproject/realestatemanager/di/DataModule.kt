@@ -13,13 +13,28 @@ val dataModule = module {
         Room.databaseBuilder(
             androidContext(),
             PropertiesDatabase::class.java,
-            "properties.db"
+            "rem_database.db"
         ).build()
     }
 
     single {
         get<PropertiesDatabase>().dao
     }
+
+    single<PropertiesRepository> { LocalPropertiesRepository(get()) }
+}
+
+val testDatabaseModule = module {
+    single {
+        Room.inMemoryDatabaseBuilder(
+            get(),
+            PropertiesDatabase::class.java,
+        )
+            .allowMainThreadQueries() // Only for testing
+            .build()
+    }
+
+    single { get<PropertiesDatabase>().dao }
 
     single<PropertiesRepository> { LocalPropertiesRepository(get()) }
 }

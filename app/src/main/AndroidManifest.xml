@@ -47,8 +47,8 @@
         <provider
             android:name="com.ocproject.realestatemanager.data.database.PropertyContentProvider"
             android:authorities="com.ocproject.realestatemanager.provider"
-            android:exported="true"
             android:enabled="true"
+            android:exported="false"
             tools:ignore="Instantiatable" />
     </application>
 

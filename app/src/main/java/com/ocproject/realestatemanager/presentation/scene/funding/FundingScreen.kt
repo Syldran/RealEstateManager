@@ -43,6 +43,7 @@ import com.ocproject.realestatemanager.presentation.scene.funding.FundingViewMod
 import com.ocproject.realestatemanager.presentation.scene.funding.FundingViewModel.Companion.displayInterest
 import com.ocproject.realestatemanager.presentation.scene.funding.FundingViewModel.Companion.displayPercent
 import com.ocproject.realestatemanager.presentation.scene.funding.FundingViewModel.Companion.displayTotalCost
+import com.ocproject.realestatemanager.core.utils.AdaptiveDimensions
 import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
@@ -83,7 +84,7 @@ fun FundingContentLandscape(
     onEvent: (FundingEvent) -> Unit
 ) {
     Scaffold(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = Modifier.padding(horizontal = AdaptiveDimensions.getSpacingMedium()),
         containerColor = colorResource(id = R.color.white),
         contentWindowInsets = WindowInsets.safeDrawing, // Applies safe area to Scaffold content
 
@@ -319,7 +320,7 @@ fun FundingContentPortrait(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp)
+                    .padding(vertical = AdaptiveDimensions.getSpacingMedium())
                     .border(1.dp, shape = RectangleShape, color = Color.Black)
                     .clickable(
                         true,
@@ -333,7 +334,7 @@ fun FundingContentPortrait(
 
                 Text(
                     modifier = Modifier
-                        .padding(8.dp),
+                        .padding(AdaptiveDimensions.getSpacingSmall()),
                     text = state.chosenText
                 )
 

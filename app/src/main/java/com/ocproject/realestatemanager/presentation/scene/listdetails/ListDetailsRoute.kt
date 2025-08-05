@@ -18,15 +18,10 @@ fun NavGraphBuilder.listDetailsScreen(navController: NavController, currentPosit
             onNavigateToAddPropertyScreen = {
                 navController.navigate(Screen.AddPropertyScreen.withArgs(it?:0), navOptions)
             },
-            onNavigateToMapOfProperties = {
-                navController.navigate(Screen.MapOfPropertiesScreen.route)
-            },
             onNavigateToFundingScreen = {
                 navController.navigate(Screen.FundingScreen.route)
             },
             currentPosition = currentPosition,
-            globalSnackbarHostState = globalSnackbarHostState
         )
-
     }
 }
