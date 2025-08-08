@@ -212,6 +212,7 @@ class ListDetailsViewModel(
                                     properties = propertiesDataState.data
                                 )
                             }
+                            getAreaCodes()
                             setMaxPrice()
                             setMaxSurface()
                         }
@@ -249,7 +250,9 @@ class ListDetailsViewModel(
                                     properties = propertiesDataState.data
                                 )
                             }
+                            setMaxPrice()
                             getAreaCodes()
+                            setMaxSurface()
                         }
                     }
                 }.launchIn(viewModelScope)

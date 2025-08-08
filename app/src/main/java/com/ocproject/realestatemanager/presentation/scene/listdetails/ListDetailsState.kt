@@ -27,7 +27,7 @@ data class ListDetailsState(
         dateRange = Range(0L, Calendar.getInstance().timeInMillis + 12583060),
         soldDateRange = Range(0L, Calendar.getInstance().timeInMillis + 12583060),
         surfaceRange = Range(0, Int.MAX_VALUE),
-        sellingStatus = SellingStatus.ALL,
+        sellingStatus = SellingStatus.PURCHASABLE,
         tagSchool = false,
         tagPark = false,
         tagShop = false,
