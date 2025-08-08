@@ -14,21 +14,6 @@ import com.ocproject.realestatemanager.data.entities.PropertyWithPhotosEntity
 @Dao
 interface PropertiesDao {
 
-//    @Query("SELECT * FROM PropertyEntity")
-//    fun getAllCursor(): Cursor
-//
-//    @Query("SELECT * FROM PropertyEntity WHERE id = :id")
-//    fun getByIdCursor(id: Long): Cursor
-//
-//    @Transaction
-//    @Query("SELECT * FROM PropertyEntity")
-//    fun getAllWithPhotosCursor(): Cursor
-//
-//    @Transaction
-//    @Query("SELECT * FROM PropertyEntity WHERE id = :id")
-//    fun getWithPhotosByIdCursor(id: Long): Cursor
-
-//////////////////////////////////
 
     @Query("SELECT * FROM PropertyEntity")
     fun getPropertiesWithCursor(): Cursor
